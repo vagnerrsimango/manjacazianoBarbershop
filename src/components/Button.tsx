@@ -10,11 +10,13 @@ export default function Button({
 }: ButtonProps) {
   return (
     <NButton
-      w="full"
+      mt={2}
+      w={100}
       h={12}
-      rounded="sm"
+      borderWidth={0}
+      borderRadius={0}
       textTransform="uppercase"
-      bg={type == "SECONDARY" ? "red.500" : "secondary.500"}
+      bg={"primary.300"}
       {...rest}
       _pressed={{
         bg: type == "SECONDARY" ? "red.600" : "yellow.600",
@@ -28,7 +30,7 @@ export default function Button({
         color={type == "SECONDARY" ? "white" : "white"}
         fontFamily="heading"
         textTransform={"uppercase"}
-        fontWeight="bold"
+        fontWeight="normal"
       >
         {title}
       </Text>
