@@ -3,8 +3,9 @@ interface ButtonProps extends IButtonProps {
   title: string;
   type?: "PRIMARY" | "SECONDARY";
 }
-export default function Button({
+export default function MyButton({
   title,
+  bg,
   type = "PRIMARY",
   ...rest
 }: ButtonProps) {
@@ -16,7 +17,7 @@ export default function Button({
       borderWidth={0}
       borderRadius={0}
       textTransform="uppercase"
-      bg={"primary.300"}
+      bg={bg || "primary.300"} // Use the passed bg prop or fallback to a default value
       {...rest}
       _pressed={{
         bg: type == "SECONDARY" ? "red.600" : "primary.400",

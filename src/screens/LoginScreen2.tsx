@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Box, Text, Modal, Icon } from "native-base";
 import { theme } from "../utils/theme";
 import Input from "../components/Input";
-import MyButton from "../components/MyButton";
+import Button from "../components/MyButton";
 import { useNavigation } from "@react-navigation/native";
 
-export default function LoginScreen() {
+export default function LoginScreen2() {
   const navigation = useNavigation();
   const [showModal, setShowModal] = useState(false);
 
@@ -26,7 +26,7 @@ export default function LoginScreen() {
         Por favor insira o seu PIN de 6 dígitos
       </Text>
       <Input placeholder="PIN" />
-      <MyButton title="Entrar" onPress={handleEnter} />
+      <Button title="Entrar" onPress={handleEnter} />
     </Box>
   );
 }
