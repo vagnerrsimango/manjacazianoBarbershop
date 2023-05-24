@@ -7,7 +7,7 @@ export const theme = extendTheme({
       100: "#F2F2F2",//bg white
       200: "#E8E8E8", //bg button grey
       300: "#727272", //grey in the buttons
-      400: "#727272", //grey in the buttons
+      400: "#FDAD11", //main orange
       500: "#0172BD",
       600: "#73494949",
       900: "#29ABE2",

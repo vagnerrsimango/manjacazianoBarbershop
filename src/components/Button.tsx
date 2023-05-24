@@ -19,7 +19,7 @@ export default function Button({
       bg={"primary.300"}
       {...rest}
       _pressed={{
-        bg: type == "SECONDARY" ? "red.600" : "yellow.600",
+        bg: type == "SECONDARY" ? "red.600" : "primary.400",
       }}
       _loading={{
         _spinner: { color: "black" },
