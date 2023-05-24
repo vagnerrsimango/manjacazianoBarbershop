@@ -8,7 +8,13 @@ export default function AppRoutes() {
   const Stack = createStackNavigator();
   return (
     <Stack.Navigator initialRouteName="LoginProcess">
-      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen name="Login2" component={LoginScreen2} />
       <Stack.Screen name="Home" component={HomeScreen} />
     </Stack.Navigator>
