@@ -1,8 +1,7 @@
 import React from "react";
-import { Box, Text, Modal, Icon, Flex, Button, VStack } from "native-base";
+import { Box, Text, Modal, Icon, Flex } from "native-base";
+import Input from "../components/Input";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import MyButton from "../components/MyButton";
-import CutSelection from "../components/CutSelection";
 
 export default function AdminScreen() {
   return (
@@ -21,51 +20,15 @@ export default function AdminScreen() {
             Manjacaziano
           </Text>
         </Box>
-        <Box>
-          <Text fontSize="lg" color="primary.300" fontWeight="thin">
-            Jorge
-          </Text>
-        </Box>
+        <Flex direction="row" alignItems="center">
+          <Input width={200} placeholder="Pesquisar" />
+          <MaterialCommunityIcons
+            name="magnify"
+            size={24}
+            color="primary.300"
+          />
+        </Flex>
       </Flex>
-      <Box flex={1} alignItems="center" justifyContent="center">
-        <Text fontSize="lg" color="primary.300" fontWeight="thin">
-          POR FAVOR, SELECIONE O SERVIÇO DESEJADO
-        </Text>
-        <Flex direction="row">
-          <CutSelection mr={10} my={1} />
-          <CutSelection my={1} />
-        </Flex>
-        <Text
-          fontSize="lg"
-          color="primary.300"
-          fontWeight="thin"
-          marginTop={"10"}
-        >
-          Serviços Selecionados
-        </Text>
-        <Flex direction="row">
-          <MyButton title="Cortar" bg="primary.400" mr={2} />
-          <MyButton title="Lavar" bg="primary.400" mr={2} />
-          <MyButton title="Alinhar" mr={2} />
-        </Flex>
-        <Flex direction="row" mt={4}>
-          <Box bg="primary.200" w={200} h={12} borderRadius={4} pr={2}>
-            <Text fontSize="sm" color="black" fontWeight="thin"></Text>
-          </Box>
-          <Box
-            bg="primary.300"
-            w={8}
-            h={12}
-            borderRadius={2}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Text fontSize="sm" color="#fff" fontWeight="thin">
-              MZN
-            </Text>
-          </Box>
-        </Flex>
-      </Box>
     </Box>
   );
 }
