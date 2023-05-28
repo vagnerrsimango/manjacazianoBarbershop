@@ -42,7 +42,7 @@ export default function LoginScreen() {
         Iniciar sessão
       </Text>
       <Text fontSize="sm" color="primary.300" fontWeight={"thin"}>
-        Por favor insira o seu PIN de 6 dígitos
+        Por favor insira o seu PIN de 4 dígitos
       </Text>
       <Input
         placeholder="PIN"
