@@ -3,6 +3,7 @@ interface ButtonProps extends IButtonProps {
   title: string;
   type?: "PRIMARY" | "SECONDARY";
 }
+
 export default function MyButton({
   title,
   bg,
