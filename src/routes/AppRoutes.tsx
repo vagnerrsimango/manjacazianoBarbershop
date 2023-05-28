@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen2 from "../screens/LoginScreen2";
+import AdminScreen from "../screens/AdminScreen";
 
 export default function AppRoutes() {
   const Stack = createStackNavigator();
@@ -17,6 +18,7 @@ export default function AppRoutes() {
       />
       <Stack.Screen name="Login2" component={LoginScreen2} />
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Admin" component={AdminScreen} />
     </Stack.Navigator>
   );
 }

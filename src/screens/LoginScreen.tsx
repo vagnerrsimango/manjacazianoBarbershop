@@ -11,14 +11,26 @@ import { User } from "phosphor-react-native";
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [showModal, setShowModal] = useState(false);
+  const [pin, setPin] = useState(""); // State to store the input value
 
   const handleEnter = () => {
-    navigation.navigate("Home");
+    if (pin === "0000") {
+      navigation.navigate("Home");
+    } else if (pin === "1111") {
+      navigation.navigate("Admin");
+    } else {
+      console.log("Invalid input");
+    }
+  };
+
+  const handleInputChange = (value) => {
+    setPin(value); // Update the input value state
   };
 
   const hanlePinRecover = () => {
     setShowModal(true);
   };
+
   return (
     <Box
       bg={"primary.100"}
@@ -32,7 +44,13 @@ export default function LoginScreen() {
       <Text fontSize="sm" color="primary.300" fontWeight={"thin"}>
         Por favor insira o seu PIN de 6 dígitos
       </Text>
-      <Input placeholder="PIN" width={"50%"} mt={"16"} />
+      <Input
+        placeholder="PIN"
+        value={pin} // Set the value prop to the input value state
+        onChangeText={handleInputChange} // Handle input changes
+        width={"50%"}
+        mt={"16"}
+      />
       <MyButton title="Entrar" onPress={handleEnter} mt={"16"} width={"xs"} />
 
       <Box position={"absolute"} bottom={"1"}>
