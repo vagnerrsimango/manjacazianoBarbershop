@@ -3,10 +3,12 @@ import { Box, Text, Modal, Icon, Flex, Button, VStack } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MyButton from "../components/MyButton";
 import CutSelection from "../components/CutSelection";
+import Header from "../components/Header";
 
 export default function HomeScreen() {
   return (
     <Box bg="primary.100" flex={1}>
+      <Header title="Main" />
       <Flex
         direction="row"
         justifyContent="space-between"
@@ -15,18 +17,7 @@ export default function HomeScreen() {
         top={0}
         left={0}
         right={0}
-      >
-        <Box>
-          <Text fontSize="lg" color="primary.300" fontWeight="thin">
-            Manjacaziano
-          </Text>
-        </Box>
-        <Box>
-          <Text fontSize="lg" color="primary.300" fontWeight="thin">
-            Jorge
-          </Text>
-        </Box>
-      </Flex>
+      ></Flex>
       <Box flex={1} alignItems="center" justifyContent="center">
         <Text fontSize="lg" color="primary.300" fontWeight="thin">
           POR FAVOR, SELECIONE O SERVIÇO DESEJADO

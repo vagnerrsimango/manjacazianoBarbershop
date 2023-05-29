@@ -10,7 +10,12 @@ import AdminUsers from "../screens/AdminUsers";
 export default function AppRoutes() {
   const Stack = createStackNavigator();
   return (
-    <Stack.Navigator initialRouteName="LoginProcess">
+    <Stack.Navigator
+      initialRouteName="LoginProcess"
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
         name="Login"
         component={LoginScreen}

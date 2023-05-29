@@ -4,13 +4,13 @@ export const theme = extendTheme({
   colors: {
     // Add new color
     primary: {
-      100: "#F2F2F2",//bg white
+      100: "#F2F2F2", //bg white
       200: "#E8E8E8", //bg button grey
       300: "#727272", //grey in the buttons
       400: "#FDAD11", //main orange
       500: "#f09d0d",
       600: "#73494949",
-      700: '#3A3A3A',
+      700: "#3A3A3A",
       900: "#29ABE2",
     },
 
@@ -31,6 +31,10 @@ export const theme = extendTheme({
     // Redefining only one shade, rest of the color will remain same.
     amber: {
       400: "#d97706",
+    },
+
+    grat: {
+      100: "#f5f5f5",
     },
   },
   fontSizes: {
