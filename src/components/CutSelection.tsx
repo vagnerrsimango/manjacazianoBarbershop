@@ -2,16 +2,15 @@ import React from "react";
 import { Box, Icon, Button, VStack, Flex } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const CutSelection = ({ ...rest }) => {
+interface IcutSession {
+  children: React.ReactNode;
+}
+
+const CutSelection = ({ children, ...rest }: IcutSession) => {
   return (
-    <Box {...rest} mt={10}>
+    <Box mt={10} {...rest}>
       <Flex direction="row" alignItems="center" mt={4}>
-        <Icon
-          as={MaterialCommunityIcons}
-          name="scissors-cutting"
-          size={100}
-          color="primary.300"
-        />
+        {children}
         <VStack ml={4} alignItems="center">
           <Button
             size="sm"

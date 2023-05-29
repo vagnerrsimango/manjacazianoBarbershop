@@ -1,5 +1,7 @@
 import React from "react";
-import { Box, Center, HStack, Text, Image, Stack } from "native-base";
+import { Box, Center, HStack, Text, Image, Stack, useTheme } from "native-base";
+import { MainLogo } from "../utils/Icons";
+import { User } from "phosphor-react-native";
 // import { useUser } from "../hooks/useUser";
 interface HeaderProps {
   title: string;
@@ -8,6 +10,7 @@ interface HeaderProps {
 }
 export default function Header({ title, leftRad, rightRad }: HeaderProps) {
   // const { user } = useUser();
+  const { colors } = useTheme();
   return (
     <HStack
       bgColor={"gray.100"}
@@ -19,26 +22,19 @@ export default function Header({ title, leftRad, rightRad }: HeaderProps) {
       borderBottomRightRadius={rightRad}
     >
       <HStack mt={4}>
-        <Image source={require("../assets/logo.png")} alt="Manjacaziano" />
+        <MainLogo width={200} height={200} />
       </HStack>
-      <HStack mt={4}>
+      <HStack mt={4} justifyItems={"center"} alignItems={"center"}>
         <Text
-          fontWeight={"medium"}
-          fontSize={"md"}
-          textTransform={"uppercase"}
+          fontWeight={"semibold"}
+          fontSize={"xs"}
           color={"primary.300"}
+          px={1}
         >
-          {title}
+          Lázaro
         </Text>
-        <Text
-          ml={2}
-          fontWeight={"medium"}
-          fontSize={"md"}
-          textTransform={"uppercase"}
-          color={"primary.300"}
-        >
-          {title}
-        </Text>
+
+        <User size={20} color={colors.primary["300"]} weight="fill" />
       </HStack>
     </HStack>
   );

@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MyButton from "../components/MyButton";
 import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
+import { BeardLogo, HairLogo } from "../utils/Icons";
 
 export default function HomeScreen() {
   return (
@@ -23,8 +24,12 @@ export default function HomeScreen() {
           POR FAVOR, SELECIONE O SERVIÇO DESEJADO
         </Text>
         <Flex direction="row">
-          <CutSelection mr={10} my={1} />
-          <CutSelection my={1} />
+          <CutSelection mr={10} my={1}>
+            <BeardLogo />
+          </CutSelection>
+          <CutSelection my={1}>
+            <HairLogo />
+          </CutSelection>
         </Flex>
         <Text
           fontSize="lg"
