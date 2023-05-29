@@ -13,7 +13,7 @@ export default function Header({ title, leftRad, rightRad }: HeaderProps) {
   const { colors } = useTheme();
   return (
     <HStack
-      bgColor={"gray.100"}
+      bgColor={"primary.100"}
       h={"20"}
       px={"32"}
       justifyContent={"space-between"}

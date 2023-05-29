@@ -5,6 +5,7 @@ import MyButton from "../components/MyButton";
 import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
 import { BeardLogo, HairLogo } from "../utils/Icons";
+import Input from "../components/Input";
 
 export default function HomeScreen() {
   return (
@@ -25,10 +26,14 @@ export default function HomeScreen() {
         </Text>
         <Flex direction="row">
           <CutSelection mr={10} my={1}>
-            <BeardLogo />
+            <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
+              <BeardLogo />
+            </Box>
           </CutSelection>
           <CutSelection my={1}>
-            <HairLogo />
+            <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
+              <HairLogo />
+            </Box>
           </CutSelection>
         </Flex>
         <Text
@@ -40,26 +45,47 @@ export default function HomeScreen() {
           Serviços Selecionados
         </Text>
         <Flex direction="row">
-          <MyButton title="Cortar" bg="primary.400" mr={2} />
-          <MyButton title="Lavar" bg="primary.400" mr={2} />
-          <MyButton title="Alinhar" mr={2} />
+          <MyButton
+            title="Cortar"
+            bg="primary.400"
+            mr={2}
+            rounded={"4"}
+            weight="900"
+          />
+          <MyButton
+            title="Lavar"
+            bg="primary.400"
+            mr={2}
+            rounded={"4"}
+            weight="900"
+          />
+          <MyButton title="Alinhar" mr={2} rounded={"4"} weight="900" />
         </Flex>
-        <Flex direction="row" mt={4}>
-          <Box bg="primary.200" w={200} h={12} borderRadius={4} pr={2}>
-            <Text fontSize="sm" color="black" fontWeight="thin"></Text>
-          </Box>
-          <Box
+
+        <Flex
+          direction="row"
+          mt={4}
+          p={"2"}
+          w={"30%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          <Input
+            textAlign={"center"}
+            fontSize={"xl"}
             bg="primary.300"
-            w={8}
-            h={12}
-            borderRadius={2}
             alignItems="center"
             justifyContent="center"
-          >
-            <Text fontSize="sm" color="#fff" fontWeight="thin">
-              MZN
-            </Text>
-          </Box>
+            placeholder="1,000.00"
+            letterSpacing={2}
+            w={"90%"}
+            rounded={0}
+            InputRightElement={
+              <Button rounded={4} h={"100%"} bg="gray.400">
+                Mts
+              </Button>
+            }
+          />
         </Flex>
       </Box>
     </Box>

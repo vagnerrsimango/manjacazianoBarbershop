@@ -6,7 +6,7 @@ import MyButton from "../components/MyButton";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomModal from "../components/CustomModal";
-import { User } from "phosphor-react-native";
+import { Lock, User } from "phosphor-react-native";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -48,10 +48,15 @@ export default function LoginScreen() {
         placeholder="PIN"
         value={pin} // Set the value prop to the input value state
         onChangeText={handleInputChange} // Handle input changes
-        width={"50%"}
+        width={"40%"}
         mt={"16"}
+        InputLeftElement={
+          <Box pl={4}>
+            <Lock size={20} color={theme.colors.primary["300"]} weight="fill" />
+          </Box>
+        }
       />
-      <MyButton title="Entrar" onPress={handleEnter} mt={"16"} width={"xs"} />
+      <MyButton title="Entrar" onPress={handleEnter} mt={"12"} width={"xs"} />
 
       <Box position={"absolute"} bottom={"1"}>
         <TouchableOpacity onPress={hanlePinRecover}>

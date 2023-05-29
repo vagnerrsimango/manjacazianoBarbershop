@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Icon, Button, VStack, Flex } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import ServiceSelector from "./ServiceSelector";
 
 interface IcutSession {
   children: React.ReactNode;
@@ -12,60 +13,9 @@ const CutSelection = ({ children, ...rest }: IcutSession) => {
       <Flex direction="row" alignItems="center" mt={4}>
         {children}
         <VStack ml={4} alignItems="center">
-          <Button
-            size="sm"
-            colorScheme="primary"
-            endIcon={
-              <Icon
-                as={MaterialCommunityIcons}
-                name="plus"
-                size={4}
-                color="white"
-              />
-            }
-            bg="primary.400"
-            width={100}
-            _pressed={{ bg: "primary.500" }}
-            {...rest}
-          >
-            Cortar
-          </Button>
-          <Button
-            size="sm"
-            colorScheme="primary"
-            endIcon={
-              <Icon
-                as={MaterialCommunityIcons}
-                name="plus"
-                size={4}
-                color="white"
-              />
-            }
-            bg="primary.400"
-            width={100}
-            _pressed={{ bg: "primary.500" }}
-            {...rest}
-          >
-            Alinhar
-          </Button>
-          <Button
-            size="sm"
-            colorScheme="primary"
-            endIcon={
-              <Icon
-                as={MaterialCommunityIcons}
-                name="plus"
-                size={4}
-                color="white"
-              />
-            }
-            bg="primary.400"
-            width={100}
-            _pressed={{ bg: "primary.500" }}
-            {...rest}
-          >
-            Lavar
-          </Button>
+          <ServiceSelector />
+          <ServiceSelector />
+          <ServiceSelector />
         </VStack>
       </Flex>
     </Box>

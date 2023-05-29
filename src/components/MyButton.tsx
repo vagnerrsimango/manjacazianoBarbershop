@@ -2,11 +2,13 @@ import { Button as NButton, Text, IButtonProps } from "native-base";
 interface ButtonProps extends IButtonProps {
   title: string;
   type?: "PRIMARY" | "SECONDARY";
+  weight?: string;
 }
 
 export default function MyButton({
   title,
   bg,
+  weight = "normal",
   type = "PRIMARY",
   ...rest
 }: ButtonProps) {
@@ -32,7 +34,7 @@ export default function MyButton({
         color={type == "SECONDARY" ? "white" : "white"}
         fontFamily="heading"
         textTransform={"uppercase"}
-        fontWeight="normal"
+        fontWeight={weight}
       >
         {title}
       </Text>
