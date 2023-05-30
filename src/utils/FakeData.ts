@@ -1,41 +1,41 @@
 export const hairServices = [
   {
     id: 1,
-    name: "Lavar",
+    name: 'Lavar 2',
     price: 100,
-    categoty: "Cabelo",
+    categoty: 'Cabelo',
   },
   {
     id: 2,
-    name: "Alinhar",
+    name: 'Alinhar',
     price: 200,
-    categoty: "Cabelo",
+    categoty: 'Cabelo',
   },
   {
     id: 3,
-    name: "Cortar",
+    name: 'Cortar',
     price: 300,
-    categoty: "Barba",
+    categoty: 'Barba',
   },
 ];
 
 export const beardServices = [
   {
     id: 4,
-    name: "Cortar",
+    name: 'Cortar',
     price: 400,
-    categoty: "Barba",
+    categoty: 'Barba',
   },
   {
     id: 5,
-    name: "Alinhar",
+    name: 'Alinhar',
     price: 100,
-    categoty: "Barba",
+    categoty: 'Barba',
   },
   {
     id: 6,
-    name: "Lavar",
+    name: 'Lavar',
     price: 100,
-    categoty: "Barba",
+    categoty: 'Barba',
   },
 ];

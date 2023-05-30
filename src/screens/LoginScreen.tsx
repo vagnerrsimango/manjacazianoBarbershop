@@ -60,13 +60,7 @@ export default function LoginScreen() {
           </Box>
         }
       />
-      <MyButton
-        title="Entrar"
-        onPress={handleEnter}
-        mt={"12"}
-        width={"xs"}
-        isLoading={loading}
-      />
+      <MyButton title="Entrar" onPress={handleEnter} mt={"12"} width={"xs"} />
 
       <Box position={"absolute"} bottom={"1"}>
         <TouchableOpacity onPress={handlePinRecover}>
