@@ -1,39 +1,41 @@
-import { Button as NButton, Text, IButtonProps } from "native-base";
+import { Button as NButton, Text, IButtonProps } from 'native-base';
 interface ButtonProps extends IButtonProps {
   title: string;
-  type?: "PRIMARY" | "SECONDARY";
+  type?: 'PRIMARY' | 'SECONDARY';
   weight?: string;
+  height?: number;
 }
 
 export default function MyButton({
   title,
   bg,
-  weight = "normal",
-  type = "PRIMARY",
+  weight = 'normal',
+  type = 'PRIMARY',
+  height = 12,
   ...rest
 }: ButtonProps) {
   return (
     <NButton
       mt={2}
       w={100}
-      h={12}
+      h={height}
       borderWidth={0}
       borderRadius={0}
       textTransform="uppercase"
-      bg={bg || type == "SECONDARY" ? "primary.400" : "primary.300"} // Use the passed bg prop or fallback to a default value
+      bg={bg || type == 'SECONDARY' ? 'primary.400' : 'primary.300'} // Use the passed bg prop or fallback to a default value
       {...rest}
       _pressed={{
-        bg: type == "SECONDARY" ? "primary.300" : "primary.400",
+        bg: type == 'SECONDARY' ? 'primary.300' : 'primary.400',
       }}
       _loading={{
-        _spinner: { color: "black" },
+        _spinner: { color: 'black' },
       }}
     >
       <Text
         fontSize="xs"
-        color={type == "SECONDARY" ? "white" : "white"}
+        color={type == 'SECONDARY' ? 'white' : 'white'}
         fontFamily="heading"
-        textTransform={"uppercase"}
+        textTransform={'uppercase'}
         fontWeight={weight}
       >
         {title}

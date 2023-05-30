@@ -6,10 +6,13 @@ export default function Tag({ title }: ITag) {
   return (
     <MyButton
       title={title}
-      bg="primary.400"
+      bg="primary.600"
       mr={2}
       rounded={'4'}
-      weight="900"
+      weight="700"
+      height={8}
+      type="PRIMARY"
+      p={6}
     />
   );
 }
