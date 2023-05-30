@@ -1,16 +1,27 @@
 import React from "react";
 import { Box, Center, HStack, Text, Image, Stack, useTheme } from "native-base";
 import { MainLogo } from "../utils/Icons";
-import { User } from "phosphor-react-native";
+import { ArrowLeft, User } from "phosphor-react-native";
+import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 // import { useUser } from "../hooks/useUser";
 interface HeaderProps {
   title: string;
   leftRad?: number;
   rightRad?: number;
+  back?: boolean;
 }
-export default function Header({ title, leftRad, rightRad }: HeaderProps) {
+export default function Header({
+  title,
+  leftRad,
+  rightRad,
+  back = false,
+}: HeaderProps) {
   // const { user } = useUser();
   const { colors } = useTheme();
+
+  const navigation = useNavigation();
+
   return (
     <HStack
       bgColor={"primary.100"}
@@ -21,6 +32,12 @@ export default function Header({ title, leftRad, rightRad }: HeaderProps) {
       borderBottomLeftRadius={leftRad}
       borderBottomRightRadius={rightRad}
     >
+      {back ? (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <ArrowLeft size={40} color={colors.primary["300"]} weight="regular" />
+        </TouchableOpacity>
+      ) : null}
+
       <HStack mt={4}>
         <MainLogo width={200} height={200} />
       </HStack>

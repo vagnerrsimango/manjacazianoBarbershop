@@ -20,10 +20,10 @@ export default function MyButton({
       borderWidth={0}
       borderRadius={0}
       textTransform="uppercase"
-      bg={bg || "primary.300"} // Use the passed bg prop or fallback to a default value
+      bg={bg || type == "SECONDARY" ? "primary.400" : "primary.300"} // Use the passed bg prop or fallback to a default value
       {...rest}
       _pressed={{
-        bg: type == "SECONDARY" ? "red.600" : "primary.400",
+        bg: type == "SECONDARY" ? "primary.300" : "primary.400",
       }}
       _loading={{
         _spinner: { color: "black" },

@@ -6,8 +6,10 @@ import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
 import { BeardLogo, HairLogo } from "../utils/Icons";
 import Input from "../components/Input";
+import { useNavigation } from "@react-navigation/native";
 
 export default function HomeScreen() {
+  const natigation = useNavigation();
   return (
     <Box bg="primary.100" flex={1}>
       <Header title="Main" />
@@ -87,6 +89,13 @@ export default function HomeScreen() {
             }
           />
         </Flex>
+
+        <MyButton
+          title="Avançar"
+          type="SECONDARY"
+          rounded={2}
+          onPress={() => natigation.navigate("Checkout")}
+        />
       </Box>
     </Box>
   );

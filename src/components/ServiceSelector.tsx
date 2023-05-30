@@ -1,7 +1,9 @@
 import { Button, HStack, Text } from "native-base";
 import { Plus } from "phosphor-react-native";
+import { useState } from "react";
 
 export default function ServiceSelector() {
+  const [pressed, setPressed] = useState(false);
   return (
     <HStack
       justifyContent={"space-between"}
@@ -21,7 +23,15 @@ export default function ServiceSelector() {
         Cortar
       </Text>
 
-      <Button ml={"8"} backgroundColor={"primary.300"}>
+      <Button
+        ml={"8"}
+        backgroundColor={!pressed ? "primary.300" : "primary.400"}
+        _pressed={{
+          bg: "primary.400",
+          opacity: 0.7,
+        }}
+        onPress={() => setPressed(!pressed)}
+      >
         <Plus size={16} color="white" weight="bold" />
       </Button>
     </HStack>
