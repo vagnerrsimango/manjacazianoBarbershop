@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Text, Modal, Icon, Center } from "native-base";
+import { Box, Text, Modal, Icon, Center, Image } from "native-base";
 import { theme } from "../utils/theme";
 import Input from "../components/Input";
 import MyButton from "../components/MyButton";
@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomModal from "../components/CustomModal";
 import { Lock, User } from "phosphor-react-native";
+import { BubblesBG } from "../utils/Icons";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -30,7 +31,7 @@ export default function LoginScreen() {
     setPin(value); // Update the input value state
   };
 
-  const hanlePinRecover = () => {
+  const handlePinRecover = () => {
     setShowModal(true);
   };
 
@@ -68,7 +69,7 @@ export default function LoginScreen() {
       />
 
       <Box position={"absolute"} bottom={"1"}>
-        <TouchableOpacity onPress={hanlePinRecover}>
+        <TouchableOpacity onPress={handlePinRecover}>
           <Text
             fontSize="md"
             color="primary.400"
@@ -81,14 +82,15 @@ export default function LoginScreen() {
       </Box>
 
       <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
-        <Box>
+        <Box textAlign="center">
+          <BubblesBG />
           <Text
-            textTransform={"uppercase"}
-            size={"lg"}
-            fontWeight={"bold"}
-            color={"primary.400"}
+            textAlign={"center"}
+            fontSize="xl"
+            color="primary.400"
+            fontWeight="bold"
           >
-            Tens novo pin{" "}
+            Seja bem-vindo
           </Text>
         </Box>
       </CustomModal>

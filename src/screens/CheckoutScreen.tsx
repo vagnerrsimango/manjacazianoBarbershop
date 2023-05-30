@@ -1,13 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Text, Flex, Button, HStack, VStack } from "native-base";
 import MyButton from "../components/MyButton";
 import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
 import { BeardLogo, HairLogo } from "../utils/Icons";
+import CustomModal from "../components/CustomModal";
 import Input from "../components/Input";
 import CustomerDataForm from "../components/CustomerDataFrom";
 
 export default function CheckoutScreen() {
+  const [showModal, setShowModal] = useState(false);
+
+  const showSucess = () => {
+    setShowModal(true);
+  };
+
   return (
     <Box bg="primary.100" flex={1}>
       <Header title="Main" back />
@@ -113,8 +120,26 @@ export default function CheckoutScreen() {
           tem um valor remanescente de 100,00 mts
         </Text>
 
-        <MyButton title="Finalizar" type="SECONDARY" rounded={4} />
+        <MyButton
+          title="Finalizar"
+          type="SECONDARY"
+          rounded={4}
+          onPress={showSucess}
+        />
       </Box>
+
+      <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
+        <Box>
+          <Text
+            textTransform={"uppercase"}
+            size={"lg"}
+            fontWeight={"bold"}
+            color={"primary.400"}
+          >
+            Tens novo pin{" "}
+          </Text>
+        </Box>
+      </CustomModal>
     </Box>
   );
 }
