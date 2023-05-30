@@ -4,6 +4,9 @@ interface ButtonProps extends IButtonProps {
   type?: 'PRIMARY' | 'SECONDARY';
   weight?: string;
   height?: number;
+  fontSize?: string | number;
+  textPadding?: string | number;
+  bg?: string;
 }
 
 export default function MyButton({
@@ -12,6 +15,8 @@ export default function MyButton({
   weight = 'normal',
   type = 'PRIMARY',
   height = 12,
+  fontSize = 'xs',
+  textPadding,
   ...rest
 }: ButtonProps) {
   return (
@@ -22,7 +27,7 @@ export default function MyButton({
       borderWidth={0}
       borderRadius={0}
       textTransform="uppercase"
-      bg={bg || type == 'SECONDARY' ? 'primary.400' : 'primary.300'} // Use the passed bg prop or fallback to a default value
+      bg={bg} // Use the passed bg prop or fallback to a default value
       {...rest}
       _pressed={{
         bg: type == 'SECONDARY' ? 'primary.300' : 'primary.400',
@@ -32,7 +37,8 @@ export default function MyButton({
       }}
     >
       <Text
-        fontSize="xs"
+        p={textPadding}
+        fontSize={fontSize}
         color={type == 'SECONDARY' ? 'white' : 'white'}
         fontFamily="heading"
         textTransform={'uppercase'}
