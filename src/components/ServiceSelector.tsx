@@ -2,7 +2,21 @@ import { Button, HStack, Text } from "native-base";
 import { Plus } from "phosphor-react-native";
 import { useState } from "react";
 
-export default function ServiceSelector() {
+export interface IServiceSelectorProps {
+  id?: string | number;
+  name?: string;
+  price?: number;
+  category?: "Cabelo" | "Barba" | "Cabelo e Barba";
+}
+
+export interface IServiceSelectorComponentProps extends IServiceSelectorProps {
+  service: IServiceSelectorProps;
+  handlePressed: (service: IServiceSelectorProps) => void;
+}
+export default function ServiceSelector({
+  service,
+  handlePressed,
+}: IServiceSelectorComponentProps) {
   const [pressed, setPressed] = useState(false);
   return (
     <HStack
@@ -13,6 +27,7 @@ export default function ServiceSelector() {
       alignItems={"center"}
       rounded={2}
       my={1}
+      ml={4}
     >
       <Text
         color={"primary.300"}
@@ -20,7 +35,7 @@ export default function ServiceSelector() {
         fontSize={"sm"}
         px={4}
       >
-        Cortar
+        {service?.name}
       </Text>
 
       <Button
@@ -30,7 +45,10 @@ export default function ServiceSelector() {
           bg: "primary.400",
           opacity: 0.7,
         }}
-        onPress={() => setPressed(!pressed)}
+        onPress={() => {
+          setPressed(!pressed);
+          handlePressed(service);
+        }}
       >
         <Plus size={16} color="white" weight="bold" />
       </Button>

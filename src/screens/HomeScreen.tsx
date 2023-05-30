@@ -7,9 +7,12 @@ import Header from "../components/Header";
 import { BeardLogo, HairLogo } from "../utils/Icons";
 import Input from "../components/Input";
 import { useNavigation } from "@react-navigation/native";
+import { beardServices, hairServices } from "../utils/FakeData";
 
 export default function HomeScreen() {
   const natigation = useNavigation();
+  const data = hairServices;
+  const data2 = beardServices;
   return (
     <Box bg="primary.100" flex={1}>
       <Header title="Main" />
@@ -27,12 +30,12 @@ export default function HomeScreen() {
           POR FAVOR, SELECIONE O SERVIÇO DESEJADO
         </Text>
         <Flex direction="row">
-          <CutSelection mr={10} my={1}>
+          <CutSelection mr={10} my={1} data={data}>
             <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <BeardLogo />
             </Box>
           </CutSelection>
-          <CutSelection my={1}>
+          <CutSelection my={1} data={data2}>
             <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <HairLogo />
             </Box>

@@ -13,7 +13,10 @@ export default function LoginScreen() {
   const [showModal, setShowModal] = useState(false);
   const [pin, setPin] = useState(""); // State to store the input value
 
+  const [loading, setLoading] = useState(false); // State to indicate if button is loading or not
+
   const handleEnter = () => {
+    setLoading(!loading);
     if (pin === "0000") {
       navigation.navigate("Home");
     } else if (pin === "1111") {
@@ -56,7 +59,13 @@ export default function LoginScreen() {
           </Box>
         }
       />
-      <MyButton title="Entrar" onPress={handleEnter} mt={"12"} width={"xs"} />
+      <MyButton
+        title="Entrar"
+        onPress={handleEnter}
+        mt={"12"}
+        width={"xs"}
+        isLoading={loading}
+      />
 
       <Box position={"absolute"} bottom={"1"}>
         <TouchableOpacity onPress={hanlePinRecover}>
