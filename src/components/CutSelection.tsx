@@ -1,9 +1,9 @@
-import React from 'react';
-import { Box, Icon, Button, VStack, Flex } from 'native-base';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ServiceSelector, { IServiceSelectorProps } from './ServiceSelector';
-import { FlatList } from 'react-native-gesture-handler';
-import { useCart } from '../utils/LocalHooks';
+import React from "react";
+import { Box, Icon, Button, VStack, Flex } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import ServiceSelector, { IServiceSelectorProps } from "./ServiceSelector";
+import { FlatList } from "react-native-gesture-handler";
+import { useCart } from "../utils/LocalHooks";
 
 interface IcutSession {
   children: React.ReactNode;
@@ -11,11 +11,14 @@ interface IcutSession {
 }
 
 const CutSelection = ({ children, data = [], ...rest }: IcutSession) => {
-  const { setServices } = useCart();
+  const { services, setServices } = useCart();
 
   const handleCartItems = (item: IServiceSelectorProps) => {
-    console.log('teste' + item.id);
-    setServices([item]);
+    console.log("teste" + item.id);
+
+    // services.push(item);
+    // setServices(services);
+    setServices((prev) => [...prev, item]);
   };
   return (
     <Box mt={10} {...rest}>

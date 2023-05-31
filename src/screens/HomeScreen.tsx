@@ -1,22 +1,27 @@
-import React, { useState } from 'react';
-import { Box, Text, Modal, Icon, Flex, Button, VStack } from 'native-base';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import MyButton from '../components/MyButton';
-import CutSelection from '../components/CutSelection';
-import Header from '../components/Header';
-import { BeardLogo, HairLogo } from '../utils/Icons';
-import Input from '../components/Input';
-import { useNavigation } from '@react-navigation/native';
-import { beardServices, hairServices } from '../utils/FakeData';
-import { FlatList } from 'react-native-gesture-handler';
-import Tag from '../components/Tag';
-import { useCart } from '../utils/LocalHooks';
+import React, { useEffect, useState } from "react";
+import { Box, Text, Modal, Icon, Flex, Button, VStack } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import MyButton from "../components/MyButton";
+import CutSelection from "../components/CutSelection";
+import Header from "../components/Header";
+import { BeardLogo, HairLogo } from "../utils/Icons";
+import Input from "../components/Input";
+import { useNavigation } from "@react-navigation/native";
+import { beardServices, hairServices } from "../utils/FakeData";
+import { FlatList } from "react-native-gesture-handler";
+import Tag from "../components/Tag";
+import { useCart } from "../utils/LocalHooks";
 
 export default function HomeScreen() {
   const natigation = useNavigation();
-  const { services } = useCart();
+  const { services, setServices } = useCart();
   const [auxServices, setAuxServices] = useState(services);
-  console.log(auxServices);
+
+  // useEffect(() => {
+  //   setServices((prev) => [...prev, ...services]);
+  // }, [services]);
+
+  console.log(services);
   const data = hairServices;
   const data2 = beardServices;
   return (
@@ -37,12 +42,12 @@ export default function HomeScreen() {
         </Text>
         <Flex direction="row">
           <CutSelection mr={10} my={1} data={data}>
-            <Box backgroundColor={'gray.100'} p={'4'} rounded={'4'}>
+            <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <BeardLogo />
             </Box>
           </CutSelection>
           <CutSelection my={1} data={data2}>
-            <Box backgroundColor={'gray.100'} p={'4'} rounded={'4'}>
+            <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <HairLogo />
             </Box>
           </CutSelection>
@@ -51,35 +56,36 @@ export default function HomeScreen() {
           fontSize="lg"
           color="primary.300"
           fontWeight="thin"
-          marginTop={'10'}
+          marginTop={"10"}
         >
           Serviços Selecionados
         </Text>
         <FlatList
-          data={auxServices}
-          renderItem={(item) => <Tag title="yyttt" />}
+          horizontal
+          data={services}
+          renderItem={({ item }) => <Tag title={item.name} />}
         />
 
         <Flex
           direction="row"
-          mt={4}
-          p={'2'}
-          w={'30%'}
-          justifyContent={'center'}
-          alignItems={'center'}
+          mt={1}
+          p={"2"}
+          w={"30%"}
+          justifyContent={"center"}
+          alignItems={"center"}
         >
           <Input
-            textAlign={'center'}
-            fontSize={'xl'}
+            textAlign={"center"}
+            fontSize={"xl"}
             bg="primary.300"
             alignItems="center"
             justifyContent="center"
             placeholder="1,000.00"
             letterSpacing={2}
-            w={'90%'}
+            w={"90%"}
             rounded={0}
             InputRightElement={
-              <Button rounded={4} h={'100%'} bg="gray.400">
+              <Button rounded={4} h={"100%"} bg="gray.400">
                 Mts
               </Button>
             }
@@ -90,7 +96,7 @@ export default function HomeScreen() {
           title="Avançar"
           type="SECONDARY"
           rounded={2}
-          onPress={() => natigation.navigate('Checkout')}
+          onPress={() => natigation.navigate("Checkout")}
         />
       </Box>
     </Box>

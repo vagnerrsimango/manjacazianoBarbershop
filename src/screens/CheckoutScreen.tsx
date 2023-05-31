@@ -1,16 +1,43 @@
-import React, { useState } from "react";
-import { Box, Text, Flex, Button, HStack, VStack } from "native-base";
+import React, { useEffect, useState } from "react";
+import { Box, Text, Flex, Button, HStack, VStack, Center } from "native-base";
 import MyButton from "../components/MyButton";
 import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
-import { BeardLogo, HairLogo } from "../utils/Icons";
+import { BeardLogo, BubblesBG, HairLogo } from "../utils/Icons";
 import CustomModal from "../components/CustomModal";
 import Input from "../components/Input";
 import CustomerDataForm from "../components/CustomerDataFrom";
+import { useCart } from "../utils/LocalHooks";
+import { FlatList } from "react-native-gesture-handler";
+import Tag from "../components/Tag";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CheckoutScreen() {
   const [showModal, setShowModal] = useState(false);
 
+  const { services } = useCart();
+  const [total, setTotal] = useState(0);
+  const [paid, setPaid] = useState(0);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    let auxTotal = 0;
+
+    if (services.length > 0) {
+      auxTotal = services.reduce((prev, current) => {
+        auxTotal += current.price;
+        return auxTotal;
+      }, 0);
+
+      setTotal(auxTotal);
+      setPaid(auxTotal);
+    }
+    console.log(
+      "🚀 ~ file: CheckoutScreen.tsx:29 ~ useEffect ~ auxTotal:",
+      auxTotal
+    );
+  }, []);
   const showSucess = () => {
     setShowModal(true);
   };
@@ -32,55 +59,37 @@ export default function CheckoutScreen() {
           POR FAVOR, CONFIRME OS SERVIÇOS SELECIONADOS
         </Text>
         <HStack>
-          <VStack>
-            <Text
-              fontSize="md"
-              color="primary.300"
-              fontWeight="600"
-              marginTop={"10"}
-              textTransform={"uppercase"}
-            >
-              Cabelo
-            </Text>
+          <Center
+            flexDirection={"row"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <FlatList
+              data={services}
+              horizontal
+              renderItem={({ item }) => <Tag title={item.name} />}
+            />
 
-            <Flex direction="row">
-              <MyButton
-                title="Cortar"
-                bg="primary.300"
-                mr={2}
-                rounded={"4"}
-                weight="900"
-              />
-              <MyButton
-                title="Lavar"
-                bg="primary.400"
-                mr={2}
-                rounded={"4"}
-                weight="900"
-              />
-            </Flex>
-          </VStack>
-          <VStack>
-            <Text
-              fontSize="md"
-              color="primary.300"
-              fontWeight="600"
-              marginTop={"10"}
-              textTransform={"uppercase"}
+            <Box
+              background={"red.500"}
+              mt={2}
+              w={"30%"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              rounded={2}
             >
-              BARBA
-            </Text>
-
-            <Flex direction="row">
-              <MyButton
-                title="Cortar"
-                bg="primary.300"
-                mr={2}
-                rounded={"4"}
-                weight="900"
-              />
-            </Flex>
-          </VStack>
+              <Text
+                fontSize="md"
+                color="white"
+                fontWeight="600"
+                textTransform={"uppercase"}
+                padding={1}
+              >
+                {total}
+                Mts
+              </Text>
+            </Box>
+          </Center>
         </HStack>
 
         <CustomerDataForm />
@@ -99,7 +108,9 @@ export default function CheckoutScreen() {
             bg="primary.300"
             alignItems="center"
             justifyContent="center"
-            placeholder="1,000.00"
+            onChangeText={(value) => setPaid(parseInt(value))}
+            value={paid.toString()}
+            color={"primary.400"}
             letterSpacing={2}
             w={"90%"}
             rounded={0}
@@ -128,15 +139,22 @@ export default function CheckoutScreen() {
         />
       </Box>
 
-      <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
-        <Box>
+      <CustomModal
+        opened={showModal}
+        onClose={() => {
+          setShowModal(false);
+          navigation.navigate("Login");
+        }}
+      >
+        <Box textAlign="center">
+          <BubblesBG />
           <Text
-            textTransform={"uppercase"}
-            size={"lg"}
-            fontWeight={"bold"}
-            color={"primary.400"}
+            textAlign={"center"}
+            fontSize="xl"
+            color="primary.400"
+            fontWeight="bold"
           >
-            Tens novo pin{" "}
+            Venda feita com sucesso
           </Text>
         </Box>
       </CustomModal>
