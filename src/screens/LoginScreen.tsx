@@ -8,11 +8,14 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomModal from "../components/CustomModal";
 import { Lock, User } from "phosphor-react-native";
 import { BubblesBG } from "../utils/Icons";
+import useUser from "../utils/hooks/UserHook";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [showModal, setShowModal] = useState(false);
   const [pin, setPin] = useState(""); // State to store the input value
+
+  const { loginWithPin } = useUser();
 
   const [loading, setLoading] = useState(false); // State to indicate if button is loading or not
 
@@ -60,7 +63,7 @@ export default function LoginScreen() {
           </Box>
         }
       />
-      <MyButton title="Entrar" onPress={handleEnter} mt={"12"} width={"xs"} />
+      <MyButton title="Entrar" onPress={loginWithPin} mt={"12"} width={"xs"} />
 
       <Box position={"absolute"} bottom={"1"}>
         <TouchableOpacity onPress={handlePinRecover}>

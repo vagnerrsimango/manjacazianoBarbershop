@@ -1,7 +1,7 @@
 export const hairServices = [
   {
     id: 1,
-    name: 'Lavar 2',
+    name: 'Lavar',
     price: 100,
     categoty: 'Cabelo',
   },
