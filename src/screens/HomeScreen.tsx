@@ -15,7 +15,25 @@ import { useCart } from "../utils/LocalHooks";
 export default function HomeScreen() {
   const natigation = useNavigation();
   const { services, setServices } = useCart();
-  const [auxServices, setAuxServices] = useState(services);
+
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    let auxTotal = 0;
+
+    if (services.length > 0) {
+      auxTotal = services.reduce((prev, current) => {
+        auxTotal += current.price;
+        return auxTotal;
+      }, 0);
+
+      setTotal(auxTotal);
+    }
+    console.log(
+      "🚀 ~ file: CheckoutScreen.tsx:29 ~ useEffect ~ auxTotal:",
+      auxTotal
+    );
+  }, []);
 
   // useEffect(() => {
   //   setServices((prev) => [...prev, ...services]);
@@ -80,7 +98,9 @@ export default function HomeScreen() {
             bg="primary.300"
             alignItems="center"
             justifyContent="center"
-            placeholder="1,000.00"
+            placeholder="0,0"
+            value={total.toString()}
+            editable={false}
             letterSpacing={2}
             w={"90%"}
             rounded={0}

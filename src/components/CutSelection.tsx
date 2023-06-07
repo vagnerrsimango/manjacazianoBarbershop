@@ -14,10 +14,20 @@ const CutSelection = ({ children, data = [], ...rest }: IcutSession) => {
   const { services, setServices } = useCart();
 
   const handleCartItems = (item: IServiceSelectorProps) => {
-    console.log("teste" + item.id);
-
     // services.push(item);
     // setServices(services);
+
+    services.map((service) => {
+      if (service.id === item.id) {
+        console.log("antes", services.length);
+        console.log("removido", service);
+        services.splice(services.indexOf(service), 1);
+
+        setServices((prev) => services);
+        console.log("depois", services.length);
+        return;
+      }
+    });
     setServices((prev) => [...prev, item]);
   };
   return (
