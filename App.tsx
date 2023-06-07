@@ -4,15 +4,16 @@ import AppRoutes from "./src/routes/AppRoutes";
 import { NativeBaseProvider } from "native-base";
 import { theme } from "./src/utils/theme";
 import CartContextProvider from "./src/utils/CartContexProvider";
+import UserProvider from "./src/utils/UserProvider";
 
 export default function App() {
   return (
-    <NavigationContainer>
+    <UserProvider>
       <NativeBaseProvider theme={theme}>
         <CartContextProvider>
           <AppRoutes />
         </CartContextProvider>
       </NativeBaseProvider>
-    </NavigationContainer>
+    </UserProvider>
   );
 }
