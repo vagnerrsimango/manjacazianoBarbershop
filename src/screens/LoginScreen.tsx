@@ -15,20 +15,7 @@ export default function LoginScreen() {
   const [showModal, setShowModal] = useState(false);
   const [pin, setPin] = useState(""); // State to store the input value
 
-  const { loginWithPin } = useUser();
-
-  const [loading, setLoading] = useState(false); // State to indicate if button is loading or not
-
-  const handleEnter = () => {
-    setLoading(!loading);
-    if (pin === "0000") {
-      navigation.navigate("Home");
-    } else if (pin === "1111") {
-      navigation.navigate("Admin");
-    } else {
-      console.log("Invalid input");
-    }
-  };
+  const { loginWithPin, loading } = useUser();
 
   const handleInputChange = (value) => {
     setPin(value); // Update the input value state
@@ -63,7 +50,13 @@ export default function LoginScreen() {
           </Box>
         }
       />
-      <MyButton title="Entrar" onPress={loginWithPin} mt={"12"} width={"xs"} />
+      <MyButton
+        title="Entrar"
+        onPress={() => loginWithPin(pin)}
+        mt={"12"}
+        width={"xs"}
+        isLoading={loading}
+      />
 
       <Box position={"absolute"} bottom={"1"}>
         <TouchableOpacity onPress={handlePinRecover}>

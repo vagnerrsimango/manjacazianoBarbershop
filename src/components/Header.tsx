@@ -4,6 +4,7 @@ import { MainLogo } from "../utils/Icons";
 import { ArrowLeft, User } from "phosphor-react-native";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import useUser from "../utils/hooks/UserHook";
 // import { useUser } from "../hooks/useUser";
 interface HeaderProps {
   title: string;
@@ -21,6 +22,7 @@ export default function Header({
   const { colors } = useTheme();
 
   const navigation = useNavigation();
+  const { user } = useUser();
 
   return (
     <HStack
@@ -48,7 +50,7 @@ export default function Header({
           color={"primary.300"}
           px={1}
         >
-          Lázaro
+          {user?.name}
         </Text>
 
         <User size={20} color={colors.primary["300"]} weight="fill" />
