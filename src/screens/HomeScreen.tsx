@@ -4,21 +4,37 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MyButton from "../components/MyButton";
 import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
-import { BeardLogo, HairLogo } from "../utils/Icons";
+import { BeardLogo, ComboLogo, HairLogo } from "../utils/Icons";
 import Input from "../components/Input";
 import { useNavigation } from "@react-navigation/native";
 import { beardServices, hairServices } from "../utils/FakeData";
 import { FlatList } from "react-native-gesture-handler";
 import Tag from "../components/Tag";
 import { useCart } from "../utils/LocalHooks";
+import api from "../utils/network/api";
+import {
+  IServiceResponse,
+  IStandardResponse,
+} from "../utils/interface/Responses";
 
 export default function HomeScreen() {
   const natigation = useNavigation();
   const { services, setServices } = useCart();
+  const [dataService, setDataService] = useState<IServiceResponse>(
+    {} as IServiceResponse
+  );
 
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
+    async function getDataService() {
+      const response = await api.get("/services");
+      const data: IServiceResponse = response.data;
+
+      setDataService(data);
+    }
+
+    getDataService();
     let auxTotal = 0;
 
     if (services.length > 0) {
@@ -29,10 +45,6 @@ export default function HomeScreen() {
 
       setTotal(auxTotal);
     }
-    console.log(
-      "🚀 ~ file: CheckoutScreen.tsx:29 ~ useEffect ~ auxTotal:",
-      auxTotal
-    );
   }, []);
 
   // useEffect(() => {
@@ -59,12 +71,17 @@ export default function HomeScreen() {
           POR FAVOR, SELECIONE O SERVIÇO DESEJADO
         </Text>
         <Flex direction="row">
-          <CutSelection mr={10} my={1} data={data}>
+          <CutSelection mr={10} my={1} data={dataService.data?.comboService}>
+            <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
+              <ComboLogo />
+            </Box>
+          </CutSelection>
+          <CutSelection mr={10} my={1} data={dataService.data?.beardService}>
             <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <BeardLogo />
             </Box>
           </CutSelection>
-          <CutSelection my={1} data={data2}>
+          <CutSelection my={1} data={dataService.data?.hairService}>
             <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <HairLogo />
             </Box>
@@ -92,7 +109,7 @@ export default function HomeScreen() {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Input
+          {/* <Input
             textAlign={"center"}
             fontSize={"xl"}
             bg="primary.300"
@@ -109,7 +126,7 @@ export default function HomeScreen() {
                 Mts
               </Button>
             }
-          />
+          /> */}
         </Flex>
 
         <MyButton

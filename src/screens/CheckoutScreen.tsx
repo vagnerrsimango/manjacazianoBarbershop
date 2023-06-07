@@ -11,6 +11,7 @@ import { useCart } from "../utils/LocalHooks";
 import { FlatList } from "react-native-gesture-handler";
 import Tag from "../components/Tag";
 import { useNavigation } from "@react-navigation/native";
+import useUser from "../utils/hooks/UserHook";
 
 export default function CheckoutScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -18,6 +19,8 @@ export default function CheckoutScreen() {
   const { services } = useCart();
   const [total, setTotal] = useState(0);
   const [paid, setPaid] = useState(0);
+  const { setUser } = useUser();
+  const { setServices } = useCart();
 
   const navigation = useNavigation();
 
@@ -26,7 +29,7 @@ export default function CheckoutScreen() {
 
     if (services.length > 0) {
       auxTotal = services.reduce((prev, current) => {
-        auxTotal += current.price;
+        auxTotal += Number(current.price);
         return auxTotal;
       }, 0);
 
@@ -40,6 +43,8 @@ export default function CheckoutScreen() {
   }, []);
   const showSucess = () => {
     setShowModal(true);
+    setUser(null);
+    setServices([]);
   };
 
   return (
@@ -143,7 +148,6 @@ export default function CheckoutScreen() {
         opened={showModal}
         onClose={() => {
           setShowModal(false);
-          navigation.navigate("Login");
         }}
       >
         <Box textAlign="center">

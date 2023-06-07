@@ -23,7 +23,7 @@ export default function UserProvider({ children }: Props) {
       const token = myResponse.data;
       const user = await getUserByToken(token);
       console.log(
-        "🚀 ~ file: UserProvider.tsx:25 ~ loginWithPin ~ user:",
+        "🚀 ~ file: UserProviddder.tsx:25 ~ loginWithPin ~ user:",
         user
       );
 
