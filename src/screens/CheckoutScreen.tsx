@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, Flex, Button, HStack, VStack, Center } from "native-base";
+import {
+  Box,
+  Text,
+  Flex,
+  Button,
+  HStack,
+  VStack,
+  Center,
+  Checkbox,
+} from "native-base";
 import MyButton from "../components/MyButton";
 import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
@@ -15,13 +24,12 @@ import useUser from "../utils/hooks/UserHook";
 
 export default function CheckoutScreen() {
   const [showModal, setShowModal] = useState(false);
-
+  const [isChecked, setIsChecked] = useState(false);
   const { services } = useCart();
   const [total, setTotal] = useState(0);
   const [paid, setPaid] = useState(0);
   const { setUser } = useUser();
   const { setServices } = useCart();
-
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -43,8 +51,12 @@ export default function CheckoutScreen() {
   }, []);
   const showSucess = () => {
     setShowModal(true);
-    setUser(null);
+    // setUser(null);
     setServices([]);
+  };
+
+  const setDebtState = (value) => {
+    setIsChecked(value);
   };
 
   return (
@@ -120,21 +132,31 @@ export default function CheckoutScreen() {
             w={"90%"}
             rounded={0}
             InputRightElement={
-              <Button rounded={4} h={"100%"} bg="gray.400">
-                Mts
-              </Button>
+              <Checkbox
+                shadow={2}
+                value="test"
+                height={"48"}
+                size={"lg"}
+                accessibilityLabel="This is a dummy checkbox"
+                background={"primary.200"}
+                padding={"2"}
+                marginRight={"1"}
+                onChange={(value) => setDebtState(value)}
+              />
             }
           />
         </Flex>
 
-        <Text
-          textTransform={"uppercase"}
-          color={"red.500"}
-          fontWeight={"bold"}
-          mb={2}
-        >
-          tem um valor remanescente de 100,00 mts
-        </Text>
+        {isChecked ? null : (
+          <Text
+            textTransform={"uppercase"}
+            color={"red.500"}
+            fontWeight={"bold"}
+            mb={2}
+          >
+            tem um valor remanescente de 100,00 mts
+          </Text>
+        )}
 
         <MyButton
           title="Finalizar"
