@@ -10,17 +10,16 @@ import {
   Checkbox,
 } from "native-base";
 import MyButton from "../components/MyButton";
-import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
-import { BeardLogo, BubblesBG, HairLogo } from "../utils/Icons";
+import { BubblesBG } from "../utils/Icons";
 import CustomModal from "../components/CustomModal";
 import Input from "../components/Input";
 import CustomerDataForm from "../components/CustomerDataFrom";
 import { useCart } from "../utils/LocalHooks";
 import { FlatList } from "react-native-gesture-handler";
 import Tag from "../components/Tag";
-import { useNavigation } from "@react-navigation/native";
 import useUser from "../utils/hooks/UserHook";
+import api from "../utils/network/api";
 
 export default function CheckoutScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -30,7 +29,6 @@ export default function CheckoutScreen() {
   const [paid, setPaid] = useState(0);
   const { setUser } = useUser();
   const { setServices } = useCart();
-  const navigation = useNavigation();
 
   useEffect(() => {
     let auxTotal = 0;
@@ -49,10 +47,31 @@ export default function CheckoutScreen() {
       auxTotal
     );
   }, []);
-  const showSucess = () => {
-    setShowModal(true);
-    // setUser(null);
-    setServices([]);
+  const showSucess = async () => {
+    console.log(services[0].price);
+
+    let postList: any = [];
+
+    services.forEach((service) => {
+      postList.push({
+        product_id: Number(service.id),
+        price: Number(service.price),
+      });
+    });
+
+    console.log("my array", postList);
+    const response = await api.post("/sale", {
+      client_id: 1,
+      soldList: postList,
+    });
+
+    // console.log(response.data.success);
+    if (response.data.success == true) {
+      setShowModal(true);
+      setServices([]);
+    } else {
+      alert("Falha ao efectuar a venda!");
+    }
   };
 
   const setDebtState = (value) => {
@@ -170,6 +189,7 @@ export default function CheckoutScreen() {
         opened={showModal}
         onClose={() => {
           setShowModal(false);
+          setUser(null);
         }}
       >
         <Box textAlign="center">
