@@ -13,13 +13,13 @@ interface SVGProps {
 export const MainLogo = ({ width = 100, height = 100, color }: SVGProps) => {
   return <Logo width={width} height={height} color={color} />;
 };
-export const HairLogo = ({ width = 100, height = 100, color }: SVGProps) => {
+export const HairLogo = ({ width = 50, height = 50, color }: SVGProps) => {
   return <Hair width={width} height={height} color={color} />;
 };
-export const BeardLogo = ({ width = 100, height = 100, color }: SVGProps) => {
+export const BeardLogo = ({ width = 50, height = 50, color }: SVGProps) => {
   return <Beard width={width} height={height} color={color} />;
 };
-export const ComboLogo = ({ width = 100, height = 100, color }: SVGProps) => {
+export const ComboLogo = ({ width = 50, height = 50, color }: SVGProps) => {
   return <Combo width={width} height={height} color={color} />;
 };
 export const BubblesBG = ({ width = 340, height = 100, color }: SVGProps) => {

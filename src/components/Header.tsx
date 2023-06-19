@@ -43,6 +43,7 @@ export default function Header({
       <HStack mt={4}>
         <MainLogo width={200} height={200} />
       </HStack>
+
       <HStack mt={4} justifyItems={"center"} alignItems={"center"}>
         <Text
           fontWeight={"semibold"}

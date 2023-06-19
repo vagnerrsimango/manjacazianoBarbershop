@@ -8,22 +8,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomModal from "../components/CustomModal";
 import { Lock, User } from "phosphor-react-native";
 import { BubblesBG } from "../utils/Icons";
-import useUser from "../utils/hooks/UserHook";
 
-export default function LoginScreen() {
-  const navigation = useNavigation();
-  const [showModal, setShowModal] = useState(false);
-  const [pin, setPin] = useState(""); // State to store the input value
-
-  const { loginWithPin, loading } = useUser();
-
-  const handleInputChange = (value) => {
-    setPin(value); // Update the input value state
-  };
-
-  const handlePinRecover = () => {
-    setShowModal(true);
-  };
+export default function BarberScreen() {
+  const handleInputChange = (value) => {};
 
   return (
     <Box
@@ -40,9 +27,9 @@ export default function LoginScreen() {
       </Text>
       <Input
         placeholder="PIN"
-        value={pin} // Set the value prop to the input value state
+        // Set the value prop to the input value state
         onChangeText={handleInputChange} // Handle input changes
-        width={"xs"}
+        width={"40%"}
         mt={"16"}
         InputLeftElement={
           <Box pl={4}>
@@ -50,16 +37,10 @@ export default function LoginScreen() {
           </Box>
         }
       />
-      <MyButton
-        title="Entrar"
-        onPress={() => loginWithPin(pin)}
-        mt={"12"}
-        width={"xs"}
-        isLoading={loading}
-      />
+      <MyButton title="Entrar" mt={"12"} width={"xs"} />
 
       <Box position={"absolute"} bottom={"1"}>
-        <TouchableOpacity onPress={handlePinRecover}>
+        <TouchableOpacity>
           <Text
             fontSize="md"
             color="primary.400"
@@ -70,20 +51,6 @@ export default function LoginScreen() {
           </Text>
         </TouchableOpacity>
       </Box>
-
-      <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
-        <Box textAlign="center">
-          <BubblesBG />
-          <Text
-            textAlign={"center"}
-            fontSize="xl"
-            color="primary.400"
-            fontWeight="bold"
-          >
-            Seja bem-vindo
-          </Text>
-        </Box>
-      </CustomModal>
     </Box>
   );
 }
