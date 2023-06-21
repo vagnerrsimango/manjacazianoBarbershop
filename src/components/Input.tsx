@@ -21,6 +21,7 @@ export default function Input({
       height={height}
       width={width}
       mt={8}
+      color={"#000"}
       bgColor={"primary.200"}
       borderWidth={0}
       borderRadius={0}
