@@ -12,10 +12,7 @@ import { FlatList } from "react-native-gesture-handler";
 import Tag from "../components/Tag";
 import { useCart } from "../utils/LocalHooks";
 import api from "../utils/network/api";
-import {
-  IServiceResponse,
-  IStandardResponse,
-} from "../utils/interface/Responses";
+import { IServiceResponse } from "../utils/interface/Responses";
 
 export default function HomeScreen() {
   const natigation = useNavigation();
@@ -23,8 +20,6 @@ export default function HomeScreen() {
   const [dataService, setDataService] = useState<IServiceResponse>(
     {} as IServiceResponse
   );
-
-  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     async function getDataService() {

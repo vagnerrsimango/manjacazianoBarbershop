@@ -28,7 +28,7 @@ export default function CheckoutScreen() {
     client_name: "",
     client_phone: "",
     isChecked: false,
-    paid: 0,
+    paid: "",
   };
   const [showModal, setShowModal] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -48,7 +48,7 @@ export default function CheckoutScreen() {
         return auxTotal;
       }, 0);
       setTotal(auxTotal);
-      setInputs((prev) => ({ ...prev, paid: auxTotal }));
+      setInputs((prev) => ({ ...prev, paid: auxTotal.toString() }));
     }
     console.log(
       "🚀 ~ file: CheckoutScreen.tsx:29 ~ useEffect ~ auxTotal:",
@@ -248,7 +248,7 @@ export default function CheckoutScreen() {
             fontWeight={"bold"}
             mb={2}
           >
-            tem um valor remanescente de {total - inputs.paid},00 mts
+            tem um valor remanescente de {total - Number(inputs.paid)},00 mts
           </Text>
         )}
 
