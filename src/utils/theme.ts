@@ -12,7 +12,7 @@ export const theme = extendTheme({
       600: "#73494949",
       700: "#3A3A3A",
       800: "#FF0202", //saldo vermelho
-      900: "#29ABE2",
+      900: "42CE00", //saldo positivo
     },
 
     gray: {
