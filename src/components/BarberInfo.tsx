@@ -2,8 +2,10 @@ import React from "react";
 import { Box, Text } from "native-base";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BeardLogo, ComboLogo, HairLogo } from "../utils/Icons";
+import useUser from "../utils/hooks/UserHook";
 
 const BarberInfo = () => {
+  const { user } = useUser();
   return (
     <Box
       mx={10}
@@ -17,7 +19,7 @@ const BarberInfo = () => {
         Agente
       </Text>
       <Text fontSize="md" fontWeight="bold" mb={2} color="primary.300">
-        Elton Jorge
+        {user.name}
       </Text>
       <Box flexDirection="row" alignItems="center" mb={2}>
         <Box flexDirection="row" alignItems="center">
@@ -43,7 +45,7 @@ const BarberInfo = () => {
         Bónus Acumulado
       </Text>
       <Text fontSize="md" mb={2} color="primary.400">
-        $XXXX
+        {user.balace}
       </Text>
     </Box>
   );

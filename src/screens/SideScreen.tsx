@@ -4,8 +4,11 @@ import Header from "../components/Header";
 import Icon from "react-native-vector-icons/FontAwesome";
 import BarberInfo from "../components/BarberInfo";
 import MyButton from "../components/MyButton";
+import useUser from "../utils/hooks/UserHook";
 
 const SideScreen = () => {
+  const { user } = useUser();
+  console.log(user);
   const data = [
     {
       id: 1,
