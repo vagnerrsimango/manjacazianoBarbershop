@@ -31,7 +31,7 @@ export default function CheckoutScreen() {
     paid: "",
   };
   const [showModal, setShowModal] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [loading, isLoading] = useState(false);
   const [inputs, setInputs] = useState(inputsInitalState);
   const { services } = useCart();
   const [total, setTotal] = useState(0);
@@ -72,6 +72,7 @@ export default function CheckoutScreen() {
   };
 
   const showSucess = async () => {
+    isLoading(true);
     if (total == 0 || !inputs.paid) {
       return Toast.show({
         title: "Selecione os serviços e inclua o valor pago pelo cliente",
@@ -106,6 +107,7 @@ export default function CheckoutScreen() {
     } else {
       alert("Falha ao efectuar a venda!");
     }
+    isLoading(false);
   };
 
   return (
@@ -256,6 +258,7 @@ export default function CheckoutScreen() {
           title="Finalizar"
           type="SECONDARY"
           rounded={4}
+          isLoading={loading}
           onPress={showSucess}
         />
       </Box>
