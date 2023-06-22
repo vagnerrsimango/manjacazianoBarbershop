@@ -40,21 +40,8 @@ export default function Header({
         </TouchableOpacity>
       ) : null}
 
-      <HStack mt={4}>
+      <HStack mt={8}>
         <MainLogo width={200} height={200} />
-      </HStack>
-
-      <HStack mt={4} justifyItems={"center"} alignItems={"center"}>
-        <Text
-          fontWeight={"semibold"}
-          fontSize={"xs"}
-          color={"primary.300"}
-          px={1}
-        >
-          {user?.name}
-        </Text>
-
-        <User size={20} color={colors.primary["300"]} weight="fill" />
       </HStack>
     </HStack>
   );

@@ -45,7 +45,7 @@ const BarberInfo = () => {
         Bónus Acumulado
       </Text>
       <Text fontSize="md" mb={2} color="primary.400">
-        {user.balace}
+        {Number(user.balance).toFixed(0)} MT
       </Text>
     </Box>
   );
