@@ -4,6 +4,7 @@ export declare global {
       Home: {};
       Admin: {};
       Checkout: {};
+      Debts: undefined;
     }
   }
 }

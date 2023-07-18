@@ -4,6 +4,8 @@ import Beard from "../assets/services/beard.svg";
 import Combo from "../assets/services/combo.svg";
 import Bubbles from "../assets/services/Check + Bubles.svg";
 
+import MenuIcon from "../assets/menu.svg";
+
 interface SVGProps {
   width?: string | number;
   height?: string | number;
@@ -24,4 +26,7 @@ export const ComboLogo = ({ width = 100, height = 100, color }: SVGProps) => {
 };
 export const BubblesBG = ({ width = 340, height = 100, color }: SVGProps) => {
   return <Bubbles width={width} height={height} color={color} />;
+};
+export const MenuSvg = ({ width = 340, height = 100, color }: SVGProps) => {
+  return <MenuSvg width={width} height={height} color={color} />;
 };

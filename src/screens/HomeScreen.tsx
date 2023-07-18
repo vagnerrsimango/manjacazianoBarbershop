@@ -15,7 +15,7 @@ import api from "../utils/network/api";
 import { IServiceResponse } from "../utils/interface/Responses";
 
 export default function HomeScreen() {
-  const natigation = useNavigation();
+  const navigation = useNavigation();
   const { services, setServices } = useCart();
   const [dataService, setDataService] = useState<IServiceResponse>(
     {} as IServiceResponse
@@ -128,7 +128,7 @@ export default function HomeScreen() {
           title="Avançar"
           type="SECONDARY"
           rounded={2}
-          onPress={() => natigation.navigate("Checkout")}
+          onPress={() => navigation.navigate("Checkout")}
         />
       </Box>
     </Box>
