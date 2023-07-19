@@ -15,12 +15,14 @@ import api from "../utils/network/api";
 import { IServiceResponse } from "../utils/interface/Responses";
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
+  const natigation = useNavigation();
   const { services, setServices } = useCart();
+  const [total, setTotal] = useState(0);
   const [dataService, setDataService] = useState<IServiceResponse>(
     {} as IServiceResponse
   );
 
+  const uniqueIds = new Set();
   useEffect(() => {
     async function getDataService() {
       const response = await api.get("/services");
@@ -32,6 +34,14 @@ export default function HomeScreen() {
     getDataService();
     let auxTotal = 0;
 
+    // for (let i = 0; i < services.length; i++) {
+    //   if (services[i].id === services[i++]) {
+    //     console.log(
+    //       "position" + services[i] + "and" + services[i++] + "duplicated"
+    //     );
+    //   }
+    // }
+
     if (services.length > 0) {
       auxTotal = services.reduce((prev, current) => {
         auxTotal += current.price;
@@ -40,13 +50,13 @@ export default function HomeScreen() {
 
       setTotal(auxTotal);
     }
-  }, []);
+  }, [services]);
 
   // useEffect(() => {
   //   setServices((prev) => [...prev, ...services]);
   // }, [services]);
 
-  console.log(services);
+  console.log(services.length);
   const data = hairServices;
   const data2 = beardServices;
   return (
@@ -128,7 +138,7 @@ export default function HomeScreen() {
           title="Avançar"
           type="SECONDARY"
           rounded={2}
-          onPress={() => navigation.navigate("Checkout")}
+          onPress={() => natigation.navigate("Checkout")}
         />
       </Box>
     </Box>

@@ -19,15 +19,20 @@ const CutSelection = ({ children, data = [], ...rest }: IcutSession) => {
 
     services.map((service) => {
       if (service.id === item.id) {
-        console.log("antes", services.length);
-        console.log("removido", service);
-        services.splice(services.indexOf(service), 1);
+        const updatedItems = services.filter(
+          (element) => element.id !== item.id
+        );
+        console.log(
+          "🚀 ~ file: CutSelection.tsx:25 ~ services.map ~ updatedItems:",
+          updatedItems.length
+        );
 
-        setServices((prev) => services);
-        console.log("depois", services.length);
-        return;
+        setServices([]);
+
+        return null;
       }
     });
+
     setServices((prev) => [...prev, item]);
   };
   return (
