@@ -9,6 +9,7 @@ import {
   Stack,
   Icon,
   useToast,
+  Select,
 } from "native-base";
 import MyButton from "../components/MyButton";
 import Header from "../components/Header";
@@ -22,6 +23,7 @@ import useUser from "../utils/hooks/UserHook";
 import api from "../utils/network/api";
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomInput from "../components/Input";
+import CustomSelect from "../components/Select";
 
 export default function CheckoutScreen() {
   const inputsInitalState = {
@@ -205,6 +207,8 @@ export default function CheckoutScreen() {
             }
             placeholder="Contacto"
           />
+
+          <CustomSelect />
         </Stack>
 
         <Flex

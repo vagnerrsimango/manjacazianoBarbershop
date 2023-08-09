@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import MyButton from "../components/MyButton";
 import CutSelection from "../components/CutSelection";
 import Header from "../components/Header";
-import { BeardLogo, ComboLogo, HairLogo } from "../utils/Icons";
+import { BeardLogo, ComboLogo, ExtraLogo, HairLogo } from "../utils/Icons";
 import Input from "../components/Input";
 import { useNavigation } from "@react-navigation/native";
 import { beardServices, hairServices } from "../utils/FakeData";
@@ -29,6 +29,10 @@ export default function HomeScreen() {
       const data: IServiceResponse = response.data;
 
       setDataService(data);
+      console.log(
+        "🚀 ~ file: HomeScreen.tsx:32 ~ getDataService ~ data:",
+        data
+      );
     }
 
     getDataService();
@@ -75,7 +79,7 @@ export default function HomeScreen() {
         <Text fontSize="lg" color="primary.300" fontWeight="thin">
           POR FAVOR, SELECIONE O SERVIÇO DESEJADO
         </Text>
-        <Flex direction="row">
+        <Flex direction="row" px={4}>
           <CutSelection mr={10} my={1} data={dataService.data?.comboService}>
             <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <ComboLogo />
@@ -92,6 +96,12 @@ export default function HomeScreen() {
             </Box>
           </CutSelection>
         </Flex>
+
+        <CutSelection my={1} data={dataService.data?.extraService}>
+          <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
+            <ExtraLogo />
+          </Box>
+        </CutSelection>
         <Text
           fontSize="lg"
           color="primary.300"

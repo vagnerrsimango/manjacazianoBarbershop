@@ -44,6 +44,7 @@ export default function LoginScreen() {
         onChangeText={handleInputChange} // Handle input changes
         width={"40%"}
         mt={"16"}
+        type="password"
         InputLeftElement={
           <Box pl={4}>
             <Lock size={20} color={theme.colors.primary["300"]} weight="fill" />

@@ -41,8 +41,8 @@ export default function Header({
         </TouchableOpacity>
       ) : null}
 
-      <HStack mt={4}>
-        <MainLogo width={200} height={200} />
+      <HStack mt={"16"}>
+        <MainLogo />
       </HStack>
       <HStack mt={4} justifyItems={"center"} alignItems={"center"}>
         {/* <Text
