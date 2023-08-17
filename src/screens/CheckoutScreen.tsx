@@ -24,6 +24,8 @@ import api from "../utils/network/api";
 import { MaterialIcons } from "@expo/vector-icons";
 import CustomInput from "../components/Input";
 import CustomSelect from "../components/Select";
+import AutoCompleteInput from "../components/AutoCompletInput";
+import AutoCompleteInputComp from "../components/AutoCompletInput";
 
 export default function CheckoutScreen() {
   const inputsInitalState = {
@@ -210,7 +212,7 @@ export default function CheckoutScreen() {
 
           <CustomSelect />
         </Stack>
-
+        {/* <AutoCompleteInputComp /> */}
         <Flex
           direction="row"
           mt={4}

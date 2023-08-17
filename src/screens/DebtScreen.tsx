@@ -19,6 +19,7 @@ export default function DebtScreen() {
   const [clients, setClients] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState({});
 
   const handlePaySuccess = () => {
     setShowModal2(true);
@@ -61,32 +62,42 @@ export default function DebtScreen() {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Button onPress={() => setShowModal(true)}>
-            <Box
-              borderBottomWidth="1"
-              borderColor="primary.300"
-              pl={["0", "4"]}
-              pr={["0", "5"]}
-              py="2"
-            >
-              {clients.length > 0 ? (
-                <FlatList
-                  data={clients}
-                  renderItem={(item) => <ClientList item={item.item} />}
-                />
-              ) : null}
-            </Box>
-          </Button>
+          <Box
+            borderBottomWidth="1"
+            borderColor="primary.300"
+            pl={["0", "4"]}
+            pr={["0", "5"]}
+            py="2"
+          >
+            {clients.length > 0 ? (
+              <FlatList
+                data={clients}
+                renderItem={(item) => (
+                  <ClientList
+                    item={item.item}
+                    callModal={() => {
+                      setSelectedCustomer(item.item);
+                      setShowModal(true);
+                    }}
+                  />
+                )}
+              />
+            ) : null}
+          </Box>
 
           <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
             <Modal.Content maxWidth="400px" bg={"white"}>
               <Flex direction="column" alignItems="center" mt={8}>
+                <Text color={"primary.300"}>{selectedCustomer.name}</Text>
+
                 <Input placeholder="Valor a pagar" width={"xs"} />
                 <MyButton
                   title="Pagar"
                   mt={"4"}
+                  bgColor={"primary.500"}
                   width={"xs"}
                   mb={"10"}
+                  rounded={6}
                   onPress={handlePaySuccess}
                 />
               </Flex>
