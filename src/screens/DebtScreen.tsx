@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  Box,
-  Button,
-  VStack,
-  FlatList,
-  HStack,
-  Icon,
-  Avatar,
-  Spacer,
-} from "native-base";
+import { Text, Box, VStack, FlatList, Modal, Button, Flex } from "native-base";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import Header from "../components/Header";
-import MyButton from "../components/MyButton";
-import useUser from "../utils/hooks/UserHook";
-import { FontAwesome } from "react-native-vector-icons";
 import api from "../utils/network/api";
 import ClientList from "../components/ClientList";
-// import TextUpper from "../components/TextUpper";
+import Input from "../components/Input";
+import MyButton from "../components/MyButton";
+import CustomModal from "../components/CustomModal";
+import { BubblesBG } from "../utils/Icons";
+
 export default function DebtScreen() {
   const tableData = [
     { id: 1, name: "John Doe", age: 25 },
@@ -25,6 +17,12 @@ export default function DebtScreen() {
   ];
 
   const [clients, setClients] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+
+  const handlePaySuccess = () => {
+    setShowModal2(true);
+  };
 
   useEffect(() => {
     async function getClients() {
@@ -63,23 +61,61 @@ export default function DebtScreen() {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <Box
-            borderBottomWidth="1"
-            _dark={{
-              borderColor: "muted.50",
-            }}
-            borderColor="muted.800"
-            pl={["0", "4"]}
-            pr={["0", "5"]}
-            py="2"
-          >
-            {clients.length > 0 ? (
-              <FlatList
-                data={clients}
-                renderItem={(item) => <ClientList item={item.item} />}
-              />
-            ) : null}
-          </Box>
+          <Button onPress={() => setShowModal(true)}>
+            <Box
+              borderBottomWidth="1"
+              borderColor="primary.300"
+              pl={["0", "4"]}
+              pr={["0", "5"]}
+              py="2"
+            >
+              {clients.length > 0 ? (
+                <FlatList
+                  data={clients}
+                  renderItem={(item) => <ClientList item={item.item} />}
+                />
+              ) : null}
+            </Box>
+          </Button>
+
+          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+            <Modal.Content maxWidth="400px" bg={"white"}>
+              <Flex direction="column" alignItems="center" mt={8}>
+                <Input placeholder="Valor a pagar" width={"xs"} />
+                <MyButton
+                  title="Pagar"
+                  mt={"4"}
+                  width={"xs"}
+                  mb={"10"}
+                  onPress={handlePaySuccess}
+                />
+              </Flex>
+              <Modal.CloseButton />
+              <Modal.Footer
+                justifyContent="center"
+                bg={"white"}
+                alignItems="center"
+              >
+                <Button.Group space={2}>
+                  <MyButton title="Ver cortes" width={"xs"} />
+                </Button.Group>
+              </Modal.Footer>
+            </Modal.Content>
+          </Modal>
+
+          <CustomModal opened={showModal2} onClose={() => setShowModal2(false)}>
+            <Box textAlign="center">
+              <BubblesBG />
+              <Text
+                textAlign={"center"}
+                fontSize="xl"
+                color="primary.400"
+                fontWeight="bold"
+              >
+                Pagamento efectuado com sucesso!!
+              </Text>
+            </Box>
+          </CustomModal>
         </Box>
       </VStack>
     </VStack>

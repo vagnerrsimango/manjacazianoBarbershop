@@ -1,22 +1,25 @@
 import React from "react";
-import { Avatar, HStack, VStack, Text, Spacer, Image } from "native-base";
+import { Box, HStack, VStack, Text, Spacer, Image } from "native-base";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default function ClientList({ item }) {
   return (
-    <>
-      <HStack space={[2, 3]} justifyContent="space-between" w={"50%"} mt={2}>
-        <Image size="48px" source={require("../assets/client.png")} />
-        <VStack>
-          <Text color="black" bold>
+    <Box borderWidth={1} borderColor="black" borderRadius={8} p={3} mb={4}>
+      <HStack space={[2, 3]} justifyContent="space-between" w={"80%"} mt={2}>
+        <Icon name="user-circle" size={48} color="black" />
+        <VStack ml={"10"}>
+          <Text color="black" bold fontSize="md">
             {item.name}
           </Text>
-          <Text color={"red.500"}>{item.balance}</Text>
+          <Text fontSize="md" color="black" alignSelf="flex-start">
+            {item.phone}
+          </Text>
         </VStack>
         <Spacer />
-        <Text fontSize="xs" color="coolGray.800" alignSelf="flex-start">
-          {item.phone}
+        <Text color={"red.500"} fontSize="md">
+          {item.balance}
         </Text>
       </HStack>
-    </>
+    </Box>
   );
 }
