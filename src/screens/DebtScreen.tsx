@@ -27,12 +27,10 @@ export default function DebtScreen() {
       id: Number(selectedCustomer.id),
       balance: Number(valueToPay),
     });
-    console.log(
-      "🚀 ~ file: DebtScreen.tsx:31 ~ handlePaySuccess ~ data:",
-      data
-    );
 
-    setShowModal2(true);
+    if (data.success == true) setShowModal2(true);
+
+    setShowModal(false);
   };
 
   useEffect(() => {
