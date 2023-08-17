@@ -36,7 +36,12 @@ export default function CustomMenu() {
           >
             Dividas
           </Menu.Item>
-          <Menu.Item color={"primary.300"}>Clientes</Menu.Item>
+          <Menu.Item
+            color={"primary.300"}
+            onPress={() => navigation.navigate("Clients")}
+          >
+            Clientes
+          </Menu.Item>
         </Menu.OptionGroup>
       </Menu>
     </Box>

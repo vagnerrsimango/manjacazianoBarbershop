@@ -9,7 +9,7 @@ import MyButton from "../components/MyButton";
 import CustomModal from "../components/CustomModal";
 import { BubblesBG } from "../utils/Icons";
 
-export default function DebtScreen() {
+export default function ClientScreen() {
   const tableData = [
     { id: 1, name: "John Doe", age: 25 },
     { id: 2, name: "Jane Smith", age: 30 },
@@ -17,27 +17,17 @@ export default function DebtScreen() {
   ];
 
   const [clients, setClients] = useState([]);
-  const [valueToPay, setValueToPay] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState({});
 
-  const handlePaySuccess = async () => {
-    const { data } = await api.put("/clients/put", {
-      id: Number(selectedCustomer.id),
-      balance: Number(valueToPay),
-    });
-    console.log(
-      "🚀 ~ file: DebtScreen.tsx:31 ~ handlePaySuccess ~ data:",
-      data
-    );
-
+  const handlePaySuccess = () => {
     setShowModal2(true);
   };
 
   useEffect(() => {
     async function getClients() {
-      const response = await api.get("/clients/debt");
+      const response = await api.get("/clients/all");
       console.log(
         "🚀 ~ file: DebtScreen.tsx:32 ~ getClients ~ response:",
         response.data
@@ -62,7 +52,7 @@ export default function DebtScreen() {
           rounded={6}
         >
           <Text fontWeight={"bold"} fontSize={"20"}>
-            Lista de Dividas
+            Lista de Clientes
           </Text>
         </Box>
         <Box
@@ -87,7 +77,6 @@ export default function DebtScreen() {
                     item={item.item}
                     callModal={() => {
                       setSelectedCustomer(item.item);
-                      setShowModal(true);
                     }}
                   />
                 )}
@@ -100,12 +89,7 @@ export default function DebtScreen() {
               <Flex direction="column" alignItems="center" mt={8}>
                 <Text color={"primary.300"}>{selectedCustomer.name}</Text>
 
-                <Input
-                  placeholder="Valor a pagar"
-                  width={"xs"}
-                  value={valueToPay}
-                  onChangeText={setValueToPay}
-                />
+                <Input placeholder="Valor a pagar" width={"xs"} />
                 <MyButton
                   title="Pagar"
                   mt={"4"}
@@ -117,7 +101,7 @@ export default function DebtScreen() {
                 />
               </Flex>
               <Modal.CloseButton />
-              {/* <Modal.Footer
+              <Modal.Footer
                 justifyContent="center"
                 bg={"white"}
                 alignItems="center"
@@ -125,7 +109,7 @@ export default function DebtScreen() {
                 <Button.Group space={2}>
                   <MyButton title="Ver cortes" width={"xs"} />
                 </Button.Group>
-              </Modal.Footer> */}
+              </Modal.Footer>
             </Modal.Content>
           </Modal>
 
