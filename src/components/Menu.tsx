@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Divider, Menu, Pressable } from "native-base";
 import { Hamburger, List } from "phosphor-react-native";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, BackHandler } from "react-native";
 import useUser from "../utils/hooks/UserHook";
 import { useNavigation } from "@react-navigation/native";
 
@@ -41,6 +41,12 @@ export default function CustomMenu() {
             onPress={() => navigation.navigate("Clients")}
           >
             Clientes
+          </Menu.Item>
+          <Menu.Item
+            color={"primary.300"}
+            onPress={() => BackHandler.exitApp()}
+          >
+            Sair
           </Menu.Item>
         </Menu.OptionGroup>
       </Menu>

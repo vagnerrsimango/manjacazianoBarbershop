@@ -11,7 +11,7 @@ import { BubblesBG } from "../utils/Icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 
-export default function DebtScreen() {
+export default function ClientDebt() {
   const tableData = [
     { id: 1, name: "John Doe", age: 25 },
     { id: 2, name: "Jane Smith", age: 30 },
@@ -64,7 +64,7 @@ export default function DebtScreen() {
           rounded={6}
         >
           <Text fontWeight={"bold"} fontSize={"20"}>
-            Lista de Dividas
+            Lista de Cortes
           </Text>
         </Box>
         <Box
@@ -96,49 +96,6 @@ export default function DebtScreen() {
               />
             ) : null}
           </Box>
-
-          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-            <Modal.Content maxWidth="400px" bg={"white"}>
-              <Flex direction="column" alignItems="center" mt={8}>
-                <Text color={"primary.300"}>{selectedCustomer.name}</Text>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("ClientDebts")}
-                >
-                  <Ionicons name="md-eye" size={32} color="grey" />
-                </TouchableOpacity>
-                <Input
-                  placeholder="Valor a pagar"
-                  width={"xs"}
-                  value={valueToPay}
-                  onChangeText={setValueToPay}
-                />
-                <MyButton
-                  title="Pagar"
-                  mt={"4"}
-                  bgColor={"primary.500"}
-                  width={"xs"}
-                  mb={"10"}
-                  rounded={6}
-                  onPress={handlePaySuccess}
-                />
-              </Flex>
-              <Modal.CloseButton />
-            </Modal.Content>
-          </Modal>
-
-          <CustomModal opened={showModal2} onClose={() => setShowModal2(false)}>
-            <Box textAlign="center">
-              <BubblesBG />
-              <Text
-                textAlign={"center"}
-                fontSize="xl"
-                color="primary.400"
-                fontWeight="bold"
-              >
-                Pagamento efectuado com sucesso!
-              </Text>
-            </Box>
-          </CustomModal>
         </Box>
       </VStack>
     </VStack>
