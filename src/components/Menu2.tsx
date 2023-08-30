@@ -5,7 +5,7 @@ import { TouchableOpacity } from "react-native";
 import useUser from "../utils/hooks/UserHook";
 import { useNavigation } from "@react-navigation/native";
 
-export default function CustomMenu() {
+export default function Menu2() {
   const { user, setUser } = useUser();
   const navigation = useNavigation();
   const logoutHandler = () => {
@@ -13,7 +13,7 @@ export default function CustomMenu() {
   };
 
   return (
-    <Box w="90%" alignItems="flex-end">
+    <Box w="45%" alignItems="flex-end">
       <Menu
         w="150"
         px={4}
@@ -23,30 +23,30 @@ export default function CustomMenu() {
               accessibilityLabel="More options menu"
               {...triggerProps}
             >
-              <List size={60} />
+              <List size={30} />
             </TouchableOpacity>
           );
         }}
       >
         <Menu.OptionGroup
-          defaultValue={user.name}
-          title={user.name}
+          defaultValue={"Dívidas"}
+          title={"Dívidas"}
           type="radio"
         >
           <Menu.Item
             color={"amber.800"}
             onPress={() => navigation.navigate("Debts")}
           >
-            Dividas
+            A-Z
           </Menu.Item>
           <Menu.Item
             color={"primary.300"}
             onPress={() => navigation.navigate("Clients")}
           >
-            Clientes
+            Valor
           </Menu.Item>
           <Menu.Item color={"primary.300"} onPress={logoutHandler}>
-            Sair
+            Data
           </Menu.Item>
         </Menu.OptionGroup>
       </Menu>

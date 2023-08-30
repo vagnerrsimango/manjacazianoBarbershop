@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Text, Box, VStack, FlatList, Modal, Button, Flex } from "native-base";
+import {
+  Text,
+  Box,
+  VStack,
+  FlatList,
+  Modal,
+  Button,
+  Flex,
+  Select,
+} from "native-base";
 import { TouchableOpacity } from "react-native";
 import Header from "../components/Header";
 import api from "../utils/network/api";
@@ -10,6 +19,7 @@ import CustomModal from "../components/CustomModal";
 import { BubblesBG } from "../utils/Icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import Menu2 from "../components/Menu2";
 
 export default function DebtScreen() {
   const tableData = [
@@ -23,6 +33,8 @@ export default function DebtScreen() {
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState({});
+  const [shouldOverlapWithTrigger] = React.useState(false);
+  const [position, setPosition] = React.useState("auto");
 
   const navigation = useNavigation();
 
@@ -44,7 +56,6 @@ export default function DebtScreen() {
         "🚀 ~ file: DebtScreen.tsx:32 ~ getClients ~ response:",
         response.data
       );
-
       setClients(response.data.clients);
     }
 
@@ -67,6 +78,7 @@ export default function DebtScreen() {
             Lista de Dividas
           </Text>
         </Box>
+        <Menu2 />
         <Box
           w={"60%"}
           mt={8}
