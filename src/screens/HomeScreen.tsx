@@ -13,11 +13,14 @@ import Tag from "../components/Tag";
 import { useCart } from "../utils/LocalHooks";
 import api from "../utils/network/api";
 import { IServiceResponse } from "../utils/interface/Responses";
+import ServiceSkeleton from "../components/ServiceSkeleton";
 
 export default function HomeScreen() {
   const natigation = useNavigation();
   const { services, setServices } = useCart();
   const [total, setTotal] = useState(0);
+  const [loading, isLoading] = useState(true);
+
   const [dataService, setDataService] = useState<IServiceResponse>(
     {} as IServiceResponse
   );
@@ -27,12 +30,13 @@ export default function HomeScreen() {
     async function getDataService() {
       const response = await api.get("/services");
       const data: IServiceResponse = response.data;
-
       setDataService(data);
-      console.log(
-        "🚀 ~ file: HomeScreen.tsx:32 ~ getDataService ~ data:",
-        data
-      );
+      isLoading(false);
+
+      // console.log(
+      //   "🚀 ~ file: HomeScreen.tsx:32 ~ getDataService ~ data:",
+      //   data
+      // );
     }
 
     getDataService();
@@ -80,24 +84,41 @@ export default function HomeScreen() {
           POR FAVOR, SELECIONE O SERVIÇO DESEJADO
         </Text>
         <Flex direction="row" px={4}>
-          <CutSelection mr={10} my={1} data={dataService.data?.comboService}>
+          <CutSelection
+            mr={10}
+            my={1}
+            data={dataService.data?.comboService}
+            loading={loading}
+          >
             <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <ComboLogo />
             </Box>
           </CutSelection>
-          <CutSelection mr={10} my={1} data={dataService.data?.beardService}>
+          <CutSelection
+            mr={10}
+            my={1}
+            data={dataService.data?.beardService}
+            loading={loading}
+          >
             <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <BeardLogo />
             </Box>
           </CutSelection>
-          <CutSelection my={1} data={dataService.data?.hairService}>
+          <CutSelection
+            my={1}
+            data={dataService.data?.hairService}
+            loading={loading}
+          >
             <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
               <HairLogo />
             </Box>
           </CutSelection>
         </Flex>
-
-        <CutSelection my={1} data={dataService.data?.extraService}>
+        <CutSelection
+          my={1}
+          data={dataService.data?.extraService}
+          loading={loading}
+        >
           <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
             <ExtraLogo />
           </Box>
@@ -110,12 +131,12 @@ export default function HomeScreen() {
         >
           Serviços Selecionados
         </Text>
+
         <FlatList
           horizontal
           data={services}
           renderItem={({ item }) => <Tag title={item.name} />}
         />
-
         <Flex
           direction="row"
           mt={1}
@@ -143,7 +164,6 @@ export default function HomeScreen() {
             }
           /> */}
         </Flex>
-
         <MyButton
           title="Avançar"
           type="SECONDARY"

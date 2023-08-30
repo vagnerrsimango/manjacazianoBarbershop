@@ -33,9 +33,14 @@ export default function ClientList({ item, callModal }) {
             </Text>
           </VStack>
           <Spacer />
-          <Text color={"red.500"} fontSize="md" fontWeight={"bold"}>
-            {item.balance}
-          </Text>
+          <VStack>
+            <Text color={"red.500"} fontSize="md" fontWeight={"bold"}>
+              {item.balance}
+            </Text>
+            <Text fontSize="md" color="black" alignSelf="flex-start">
+              25-06-23
+            </Text>
+          </VStack>
         </HStack>
       </Box>
     </TouchableOpacity>

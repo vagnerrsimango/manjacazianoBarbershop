@@ -122,7 +122,7 @@ export default function ClientScreen() {
                 color="primary.400"
                 fontWeight="bold"
               >
-                Pagamento efectuado com sucesso!!
+                Pagamento efectuado com sucesso!
               </Text>
             </Box>
           </CustomModal>

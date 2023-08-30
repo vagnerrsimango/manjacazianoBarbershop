@@ -76,6 +76,15 @@ export default function CheckoutScreen() {
   };
 
   const showSucess = async () => {
+    if (
+      Number(total) > Number(inputs.paid) &&
+      !inputs.isChecked &&
+      inputs.client_phone.length == 0 &&
+      inputs.client_phone.length == 0
+    ) {
+      alert("Por favor preencha os campos");
+      return;
+    }
     isLoading(true);
     if (total == 0 || !inputs.paid) {
       return Toast.show({
