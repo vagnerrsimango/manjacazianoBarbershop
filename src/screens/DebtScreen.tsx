@@ -22,19 +22,11 @@ import { useNavigation } from "@react-navigation/native";
 import Menu2 from "../components/Menu2";
 
 export default function DebtScreen() {
-  const tableData = [
-    { id: 1, name: "John Doe", age: 25 },
-    { id: 2, name: "Jane Smith", age: 30 },
-    { id: 3, name: "Mike Johnson", age: 35 },
-  ];
-
   const [clients, setClients] = useState([]);
   const [valueToPay, setValueToPay] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState({});
-  const [shouldOverlapWithTrigger] = React.useState(false);
-  const [position, setPosition] = React.useState("auto");
 
   const navigation = useNavigation();
 
@@ -60,25 +52,25 @@ export default function DebtScreen() {
     }
 
     getClients();
-  }, [clients]);
+  }, []);
 
   return (
     <VStack bg="primary.100" flex={1}>
       <Header title="Debts" back />
-      <VStack alignItems={"center"} mt={8} justifyContent={"center"}>
+      <VStack alignItems={"center"} mt={"10%"} justifyContent={"center"}>
         <Box
-          bg={"primary.300"}
+          bg={"red.500"}
           p={3}
-          w={"20%"}
+          w={"50%"}
           alignItems={"center"}
           justifyContent={"center"}
           rounded={6}
         >
           <Text fontWeight={"bold"} fontSize={"20"}>
-            Lista de Dividas
+            Lista de Clientes com Divida
           </Text>
         </Box>
-        <Menu2 />
+        {/* <Menu2 /> */}
         <Box
           w={"60%"}
           mt={8}
@@ -98,6 +90,7 @@ export default function DebtScreen() {
                 data={clients}
                 renderItem={(item) => (
                   <ClientList
+                    showDate={false}
                     item={item.item}
                     callModal={() => {
                       setSelectedCustomer(item.item);
@@ -114,7 +107,12 @@ export default function DebtScreen() {
               <Flex direction="column" alignItems="center" mt={8}>
                 <Text color={"primary.300"}>{selectedCustomer.name}</Text>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("ClientDebts")}
+                  onPress={() => {
+                    setShowModal(false);
+                    navigation.navigate("ClientDebts", {
+                      client: selectedCustomer,
+                    });
+                  }}
                 >
                   <Ionicons name="md-eye" size={32} color="grey" />
                 </TouchableOpacity>

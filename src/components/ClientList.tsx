@@ -11,7 +11,11 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { TouchableOpacity } from "react-native";
 
-export default function ClientList({ item, callModal }) {
+export default function ClientList({
+  item,
+  callModal = () => {},
+  showDate = true,
+}) {
   const { colors } = useTheme();
   return (
     <TouchableOpacity onPress={callModal}>
@@ -37,9 +41,12 @@ export default function ClientList({ item, callModal }) {
             <Text color={"red.500"} fontSize="md" fontWeight={"bold"}>
               {item.balance}
             </Text>
-            <Text fontSize="md" color="black" alignSelf="flex-start">
-              25-06-23
-            </Text>
+
+            {showDate ? (
+              <Text fontSize="md" color="black" alignSelf="flex-start">
+                25-06-23
+              </Text>
+            ) : null}
           </VStack>
         </HStack>
       </Box>

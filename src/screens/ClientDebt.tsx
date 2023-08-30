@@ -4,67 +4,47 @@ import { TouchableOpacity } from "react-native";
 import Header from "../components/Header";
 import api from "../utils/network/api";
 import ClientList from "../components/ClientList";
-import Input from "../components/Input";
-import MyButton from "../components/MyButton";
-import CustomModal from "../components/CustomModal";
-import { BubblesBG } from "../utils/Icons";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { useNavigation } from "@react-navigation/native";
+import SoldProduct from "../components/SoldProduct";
+import {
+  ISaleCustomerHistoryServiceResponse,
+  ISaleCustomerHistory,
+} from "../utils/Responses";
 
-export default function ClientDebt() {
-  const tableData = [
-    { id: 1, name: "John Doe", age: 25 },
-    { id: 2, name: "Jane Smith", age: 30 },
-    { id: 3, name: "Mike Johnson", age: 35 },
-  ];
-
-  const [clients, setClients] = useState([]);
-  const [valueToPay, setValueToPay] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [showModal2, setShowModal2] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState({});
-
-  const navigation = useNavigation();
-
-  const handlePaySuccess = async () => {
-    const { data } = await api.put("/clients/put", {
-      id: Number(selectedCustomer.id),
-      balance: Number(valueToPay),
-    });
-
-    if (data.success == true) setShowModal2(true);
-
-    setShowModal(false);
-  };
+export default function ClientDebt({ route }) {
+  const client = route.params.client;
+  const [soldProducts, setSoldProducts] = useState<Array<ISaleCustomerHistory>>(
+    []
+  );
 
   useEffect(() => {
     async function getClients() {
-      const response = await api.get("/clients/debt");
+      const { data } = await api.get(`/client/${client.id}`);
+
+      const response: ISaleCustomerHistoryServiceResponse = data;
+      setSoldProducts(response.data);
       console.log(
-        "🚀 ~ file: DebtScreen.tsx:32 ~ getClients ~ response:",
+        "🚀 ~ file: ClientDebt.tsx:25 ~ getClients ~ response.data:",
         response.data
       );
-
-      setClients(response.data.clients);
     }
 
     getClients();
-  }, [clients]);
+  }, []);
 
   return (
     <VStack bg="primary.100" flex={1}>
       <Header title="Debts" back />
-      <VStack alignItems={"center"} mt={8} justifyContent={"center"}>
+      <VStack alignItems={"center"} mt={"10%"} justifyContent={"center"}>
         <Box
-          bg={"primary.300"}
+          bg={"primary.400"}
           p={3}
-          w={"20%"}
+          w={"50%"}
           alignItems={"center"}
           justifyContent={"center"}
           rounded={6}
         >
           <Text fontWeight={"bold"} fontSize={"20"}>
-            Lista de Cortes
+            Histórico de cortes do {client.name}
           </Text>
         </Box>
         <Box
@@ -81,17 +61,11 @@ export default function ClientDebt() {
             pr={["0", "5"]}
             py="2"
           >
-            {clients.length > 0 ? (
+            {soldProducts.length > 0 ? (
               <FlatList
-                data={clients}
+                data={soldProducts}
                 renderItem={(item) => (
-                  <ClientList
-                    item={item.item}
-                    callModal={() => {
-                      setSelectedCustomer(item.item);
-                      setShowModal(true);
-                    }}
-                  />
+                  <SoldProduct item={item.item} key={item.item.id} />
                 )}
               />
             ) : null}
