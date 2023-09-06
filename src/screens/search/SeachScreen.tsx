@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Text,
   Box,
@@ -8,27 +8,33 @@ import {
   Button,
   Flex,
   Select,
+  HStack,
+  useTheme,
 } from "native-base";
+
 import { TouchableOpacity } from "react-native";
-import Header from "../components/Header";
-import api from "../utils/network/api";
-import ClientList from "../components/ClientList";
-import Input from "../components/Input";
-import MyButton from "../components/MyButton";
-import CustomModal from "../components/CustomModal";
-import { BubblesBG } from "../utils/Icons";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { ArrowLeft } from "phosphor-react-native";
 import { useNavigation } from "@react-navigation/native";
-import { FileSearch, MagnifyingGlass } from "phosphor-react-native";
+import Input from "../../components/Input";
+import MyButton from "../../components/MyButton";
+import ClientList from "../../components/ClientList";
+import ClientSkeleton from "../../components/ClientSkeleton";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import api from "../../utils/network/api";
+import CustomModal from "../../components/CustomModal";
+import { BubblesBG } from "../../utils/Icons";
 
-export default function DebtScreen() {
+export default function SearchScreen() {
   const [clients, setClients] = useState([]);
-  const [valueToPay, setValueToPay] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [showModal2, setShowModal2] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState({});
-
+  const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
+  const [valueToPay, setValueToPay] = useState("");
+  const [showModal2, setShowModal2] = useState(false);
+  const { colors } = useTheme();
+  const [loading, setLoading] = useState(false);
+
+  const [input, setInput] = useState("");
 
   const handlePaySuccess = async () => {
     const { data } = await api.put("/clients/put", {
@@ -41,36 +47,50 @@ export default function DebtScreen() {
     setShowModal(false);
   };
 
-  useEffect(() => {
-    async function getClients() {
-      const response = await api.get("/clients/debt");
-      console.log(
-        "🚀 ~ file: DebtScreen.tsx:32 ~ getClients ~ response:",
-        response.data
-      );
-      setClients(response.data.clients);
-    }
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get(`/client/search/${input}`);
 
-    getClients();
-  }, []);
+      setClients(data.clients);
+    } catch (error) {
+      alert("Falha ao pesquisar cliente");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <VStack bg="primary.100" flex={1}>
-      <Header title="Debts" back />
-      <VStack alignItems={"center"} mt={"10%"} justifyContent={"center"}>
-        <Box
-          bg={"red.500"}
-          p={3}
-          w={"50%"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          rounded={6}
-        >
-          <Text fontWeight={"bold"} fontSize={"20"}>
-            Lista de Clientes com Divida
-          </Text>
-        </Box>
+      <HStack
+        bg={"primary.100"}
+        p={6}
+        w={"100%"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        rounded={6}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <ArrowLeft size={40} color={colors.primary["300"]} weight="regular" />
+        </TouchableOpacity>
 
+        <Input
+          placeholder="Pesquisar cliente"
+          w={"1/2"}
+          textAlign={"center"}
+          value={input}
+          onChangeText={setInput}
+        />
+
+        <MyButton
+          title="Pesquisar"
+          rounded={6}
+          isLoading={loading}
+          onPress={handleSearch}
+        />
+      </HStack>
+
+      <VStack alignItems={"center"} mt={"10%"} justifyContent={"center"}>
         {/* <Menu2 /> */}
         <Box
           w={"60%"}
@@ -79,12 +99,6 @@ export default function DebtScreen() {
           justifyContent={"center"}
           alignItems={"center"}
         >
-          <TouchableOpacity
-            style={{ alignSelf: "flex-end", marginRight: "10%" }}
-            onPress={() => navigation.navigate("Search")}
-          >
-            <MagnifyingGlass weight="regular" size={32} />
-          </TouchableOpacity>
           <Box
             borderBottomWidth="1"
             borderColor="primary.300"
@@ -106,7 +120,9 @@ export default function DebtScreen() {
                   />
                 )}
               />
-            ) : null}
+            ) : (
+              <ClientSkeleton />
+            )}
           </Box>
 
           <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
