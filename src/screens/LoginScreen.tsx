@@ -60,7 +60,7 @@ export default function LoginScreen() {
       />
 
       <Box position={"absolute"} bottom={"1"}>
-        <TouchableOpacity onPress={handlePinRecover}>
+        {/* <TouchableOpacity onPress={handlePinRecover}>
           <Text
             fontSize="md"
             color="primary.400"
@@ -69,7 +69,7 @@ export default function LoginScreen() {
           >
             Esqueceu pin ?
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </Box>
 
       <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
@@ -81,7 +81,7 @@ export default function LoginScreen() {
             color="primary.400"
             fontWeight="bold"
           >
-            Seja bem-vindo
+            Contacte o admin
           </Text>
         </Box>
       </CustomModal>

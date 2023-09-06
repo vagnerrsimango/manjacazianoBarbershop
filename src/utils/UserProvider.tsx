@@ -14,25 +14,25 @@ export default function UserProvider({ children }: Props) {
 
   async function loginWithPin(input) {
     setLoading(true);
-    const response = await api.post("/login", { password: input });
+    try {
+      const response = await api.post("/login", { password: input });
 
-    const myResponse: IStandardResponse = response.data;
-    if (!myResponse.success) {
-      alert("Falha ao autenticar, verifique o teu PIN e tente novamente.");
-    } else {
-      const token = myResponse.data;
-      const user = await getUserByToken(token);
-      console.log(
-        "🚀 ~ file: UserProviddder.tsx:25 ~ loginWithPin ~ user:",
-        user
-      );
+      const myResponse: IStandardResponse = response.data;
+      if (!myResponse.success) {
+        alert("Falha ao autenticar, verifique o teu PIN e tente novamente.");
+      } else {
+        const token = myResponse.data;
+        const user = await getUserByToken(token);
 
-      api.defaults.headers.common["Authorization"] = "Bearer " + token;
+        api.defaults.headers.common["Authorization"] = "Bearer " + token;
 
-      setUser(user);
+        setUser(user);
+      }
+    } catch (error) {
+      alert("Falha ao autenticar, verifique a conexão e tente novamente.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (

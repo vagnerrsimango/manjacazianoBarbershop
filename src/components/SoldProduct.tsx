@@ -6,16 +6,11 @@ import {
   VStack,
   Text,
   Spacer,
-  Image,
   useTheme,
   FlatList,
 } from "native-base";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { TouchableOpacity } from "react-native";
-import {
-  ISaleCustomerHistoryServiceResponse,
-  ISaleCustomerHistory,
-} from "../utils/Responses";
+import { ISaleCustomerHistory } from "../utils/Responses";
 
 type ISoldComponentPops = {
   item: ISaleCustomerHistory;
@@ -54,14 +49,6 @@ export default function SoldProduct({ item }: ISoldComponentPops) {
         renderItem={(prod) => <Tag title={prod.item.products.name} />}
         horizontal
       />
-      {/* <HStack>
-        <Tag title="Cabelo" />
-        <Tag title="Cabelo" />
-        <Tag title="Cabelo" />
-        <Tag title="Cabelo" />
-        <Tag title="Cabelo" />
-        <Tag title="Cabelo" />
-      </HStack> */}
     </Box>
   );
 }
