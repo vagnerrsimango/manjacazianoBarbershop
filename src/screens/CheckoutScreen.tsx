@@ -26,6 +26,7 @@ import CustomInput from "../components/Input";
 import CustomSelect from "../components/Select";
 import AutoCompleteInput from "../components/AutoCompletInput";
 import AutoCompleteInputComp from "../components/AutoCompletInput";
+import { err } from "react-native-svg/lib/typescript/xml";
 
 export default function CheckoutScreen() {
   const inputsInitalState = {
@@ -105,22 +106,27 @@ export default function CheckoutScreen() {
 
     console.log("in", inputs);
 
-    const response = await api.post("/sale", {
-      client_name: inputs.client_name,
-      client_phone: inputs.client_phone,
-      isChecked: inputs.isChecked,
-      paid: inputs.paid,
-      soldList: postList,
-    });
+    try {
+      const response = await api.post("/sale", {
+        client_name: inputs.client_name,
+        client_phone: inputs.client_phone,
+        isChecked: inputs.isChecked,
+        paid: inputs.paid,
+        soldList: postList,
+      });
 
-    // console.log(response.data.success);
-    if (response.data.success == true) {
-      setShowModal(true);
-      setServices([]);
-    } else {
-      alert("Falha ao efectuar a venda!");
+      // console.log(response.data.success);
+      if (response.data.success == true) {
+        setShowModal(true);
+        setServices([]);
+      } else {
+        alert("Falha ao efectuar a venda!");
+      }
+    } catch (error) {
+      alert(alert("Falha ao efectuar a venda!" + error));
+    } finally {
+      isLoading(false);
     }
-    isLoading(false);
   };
 
   return (
