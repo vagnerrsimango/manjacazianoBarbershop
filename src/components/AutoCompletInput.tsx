@@ -32,8 +32,15 @@ export default function AutoCompleteInputComp({
 
     console.log(input);
 
-    const { data } = await api.get(`/client/search/${text}`);
-    setData(data.clients);
+    try {
+      const { data } = await api.get(`/client/search/${text}`);
+      setData(data.clients);
+    } catch (error) {
+      console.log(
+        "🚀 ~ file: AutoCompletInput.tsx:39 ~ handleInputChange ~ error:",
+        error
+      );
+    }
   };
 
   // const handleSelectedAutoCustomer = (customer) => {
@@ -70,26 +77,28 @@ export default function AutoCompleteInputComp({
         <FlatList
           data={data}
           renderItem={({ item }) => (
-            <Pressable
-              onPress={() => {
-                handleSelectedAutoCustomer(item);
-                // setData([]);
-              }}
-            >
-              <HStack
-                borderBottomColor={"gray.100"}
-                borderBottomWidth={"2"}
-                p={1}
-                justifyContent={"start"}
-                alignItems={"center"}
-                width={"100%"}
+            <>
+              <Pressable
+                onPress={() => {
+                  handleSelectedAutoCustomer(item);
+                  // setData([]);
+                }}
               >
-                <UserCircle color={colors.gray[500]} />
-                <Text color={"primary.300"} ml={"0.5"} fontSize={"md"}>
-                  {item.name} - {item.phone}
-                </Text>
-              </HStack>
-            </Pressable>
+                <HStack
+                  borderBottomColor={"gray.100"}
+                  borderBottomWidth={"2"}
+                  p={1}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  width={"100%"}
+                >
+                  <UserCircle color={colors.gray[500]} />
+                  <Text color={"primary.300"} ml={"0.5"} fontSize={"md"}>
+                    {item.name} - {item.phone}
+                  </Text>
+                </HStack>
+              </Pressable>
+            </>
           )}
         />
       ) : null}
