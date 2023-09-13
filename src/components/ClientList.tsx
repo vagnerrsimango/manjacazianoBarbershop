@@ -27,19 +27,19 @@ export default function ClientList({
         mb={4}
       >
         <HStack space={[2, 3]} justifyContent="space-between" w={"80%"} mt={2}>
-          <Icon name="user-circle" size={48} color={colors.primary[500]} />
+          <Icon name="user-circle" size={48} color={colors.primary[300]} />
           <VStack ml={"10"}>
             <Text color="black" bold fontSize="md">
               {item.name}
             </Text>
-            <Text fontSize="md" color="primary.500" alignSelf="flex-start">
-              contacto - {item.phone}
+            <Text fontSize="md" color="primary.300" alignSelf="flex-start">
+              {item.phone}
             </Text>
           </VStack>
           <Spacer />
           <VStack>
             <Text color={"red.500"} fontSize="md" fontWeight={"bold"}>
-              {item.balance}
+              {item.balance} MT
             </Text>
 
             {showDate ? (

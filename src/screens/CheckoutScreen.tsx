@@ -38,12 +38,22 @@ export default function CheckoutScreen() {
   const [showModal, setShowModal] = useState(false);
   const [loading, isLoading] = useState(false);
   const [inputs, setInputs] = useState(inputsInitalState);
+  const [input, setInput] = useState<string>();
   const { services } = useCart();
   const [total, setTotal] = useState(0);
   const { setUser } = useUser();
   const { setServices } = useCart();
 
   const Toast = useToast();
+  const handleSelectedAutoCustomer = (customer) => {
+    setInputs((prev) => ({
+      ...prev,
+      client_name: customer.name,
+      client_phone: customer.phone.toString(),
+    }));
+
+    setInput(customer.name);
+  };
 
   useEffect(() => {
     let auxTotal = 0;
@@ -77,6 +87,7 @@ export default function CheckoutScreen() {
   };
 
   const showSucess = async () => {
+    console.log("input=>", input);
     if (
       Number(total) > Number(inputs.paid) &&
       !inputs.isChecked &&
@@ -108,7 +119,7 @@ export default function CheckoutScreen() {
 
     try {
       const response = await api.post("/sale", {
-        client_name: inputs.client_name,
+        client_name: input,
         client_phone: inputs.client_phone,
         isChecked: inputs.isChecked,
         paid: inputs.paid,
@@ -123,6 +134,10 @@ export default function CheckoutScreen() {
         alert("Falha ao efectuar a venda!");
       }
     } catch (error) {
+      console.log(
+        "🚀 ~ file: CheckoutScreen.tsx:137 ~ showSucess ~ error:",
+        error
+      );
       alert(alert("Falha ao efectuar a venda!" + error));
     } finally {
       isLoading(false);
@@ -188,7 +203,14 @@ export default function CheckoutScreen() {
           >
             Dados do cliente
           </Text>
-          <CustomInput
+
+          <AutoCompleteInput
+            handleSelectedAutoCustomer={handleSelectedAutoCustomer}
+            input={input}
+            setInput={setInput}
+          />
+
+          {/* <CustomInput
             onChangeText={(value) => handleInputChange(value, "client_name")}
             value={inputs.client_name}
             w={{
@@ -205,7 +227,7 @@ export default function CheckoutScreen() {
               />
             }
             placeholder="Nome"
-          />
+          /> */}
           <CustomInput
             onChangeText={(value) => handleInputChange(value, "client_phone")}
             value={inputs.client_phone}

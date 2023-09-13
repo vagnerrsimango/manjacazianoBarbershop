@@ -27,7 +27,7 @@ const CustomSelect = () => {
           <Select.Item label="Numerário" value="ux" />
           <Select.Item label="Mpesa" value="web" />
           <Select.Item label="Emola" value="cross" />
-          <Select.Item label="Transferência" value="ui" />
+          <Select.Item label="POS" value="ui" />
         </Select>
       </Box>
     </Center>
