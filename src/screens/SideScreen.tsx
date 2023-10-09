@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, FlatList, HStack, Icon } from "native-base";
+import { Box, Text, FlatList, HStack, Icon, useTheme } from "native-base";
 import Header from "../components/Header";
 import BarberInfo from "../components/BarberInfo";
 import MyButton from "../components/MyButton";
@@ -7,9 +7,13 @@ import useUser from "../utils/hooks/UserHook";
 import { FontAwesome } from "react-native-vector-icons";
 import { Horse, Heart, Cube } from "@phosphor-icons/react";
 import api from "../utils/network/api";
+import { Calendar } from "phosphor-react-native";
+import { TouchableOpacity } from "react-native";
 
 const SideScreen = () => {
   const { user } = useUser();
+
+  const { colors } = useTheme();
 
   const [sales, setSales] = useState();
 
@@ -58,12 +62,16 @@ const SideScreen = () => {
 
       <Box justifyContent="center" alignItems="center" p={2}>
         <MyButton
-          title="Cortes Realizados"
+          title="Cortes Realizados este Mês"
           mt={"12"}
           mb={"8"}
           width={"xs"}
           bg="primary.300"
         />
+
+        <TouchableOpacity>
+          <Calendar size={48} />
+        </TouchableOpacity>
       </Box>
 
       {!loading ? (
@@ -87,7 +95,7 @@ const SideScreen = () => {
                       color="primary.300"
                       mr={2}
                     />
-                    <Text color="primary.300" bold>
+                    <Text color="primary.400" bold>
                       {item.clients.name}
                     </Text>
                   </HStack>
