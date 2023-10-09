@@ -94,7 +94,7 @@ export default function AutoCompleteInputComp({
                 >
                   <UserCircle color={colors.gray[500]} />
                   <Text color={"primary.300"} ml={"0.5"} fontSize={"md"}>
-                    {item.name} - {item.phone}
+                    {item.name} - {item.phone} ({item.balance} MT)
                   </Text>
                 </HStack>
               </Pressable>
