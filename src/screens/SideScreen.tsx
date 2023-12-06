@@ -34,35 +34,14 @@ const SideScreen = () => {
     getAllSales();
   }, []);
 
-  const data = [
-    {
-      id: 1,
-      name: "Ernesto",
-      contact: "834445122",
-      value: 50,
-      paid: "$30",
-      balance: "$20",
-      date: "25 de Maio",
-    },
-    {
-      id: 2,
-      name: "Edmilson",
-      contact: "876651299",
-      value: 75,
-      paid: "$50",
-      balance: "$25",
-      date: "27 de Abril",
-    },
-  ];
-
   return (
     <Box bg="primary.100" flex={1}>
       <Header title="Collaborator" />
-      <BarberInfo />
+      <BarberInfo bonus={sales?.bonus} stats={sales?.stats ?? []} />
 
       <Box justifyContent="center" alignItems="center" p={2}>
         <MyButton
-          title="Cortes Realizados este Mês"
+          title="Cortes Realizados"
           mt={"12"}
           mb={"8"}
           width={"xs"}
