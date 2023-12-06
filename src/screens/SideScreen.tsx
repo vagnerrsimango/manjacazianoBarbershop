@@ -5,7 +5,6 @@ import BarberInfo from "../components/BarberInfo";
 import MyButton from "../components/MyButton";
 import useUser from "../utils/hooks/UserHook";
 import { FontAwesome } from "react-native-vector-icons";
-import { Horse, Heart, Cube } from "@phosphor-icons/react";
 import api from "../utils/network/api";
 import { Calendar } from "phosphor-react-native";
 import { TouchableOpacity } from "react-native";
@@ -41,7 +40,7 @@ const SideScreen = () => {
 
       <Box justifyContent="center" alignItems="center" p={2}>
         <MyButton
-          title="Cortes Realizados"
+          title="Todos cortes realizados aos clientes"
           mt={"12"}
           mb={"8"}
           width={"xs"}

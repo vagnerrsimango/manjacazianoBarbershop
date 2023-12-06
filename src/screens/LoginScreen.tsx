@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Text, Modal, Icon, Center, Image } from "native-base";
+import { Box, Modal, Icon, Center, Image } from "native-base";
 import { theme } from "../utils/theme";
 import Input from "../components/Input";
 import MyButton from "../components/MyButton";
@@ -9,6 +9,7 @@ import CustomModal from "../components/CustomModal";
 import { Lock, User } from "phosphor-react-native";
 import { BubblesBG } from "../utils/Icons";
 import useUser from "../utils/hooks/UserHook";
+import TextUpper from "../components/TextUpper";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -32,18 +33,21 @@ export default function LoginScreen() {
       alignItems={"center"}
       justifyContent={"center"}
     >
-      <Text fontSize="xl" color="primary.300" fontWeight="bold">
+      <TextUpper fontSize="xl" color="primary.300" fontWeight="bold">
         Iniciar sessão
-      </Text>
-      <Text fontSize="sm" color="primary.300" fontWeight={"thin"}>
-        Por favor insira o seu PIN de 4 dígitos
-      </Text>
+      </TextUpper>
+
+      <TextUpper fontSize="sm" color="primary.300" fontWeight={"thin"}>
+        Insira o seu PIN de 4 dígitos
+      </TextUpper>
       <Input
         placeholder="PIN"
         value={pin} // Set the value prop to the input value state
         onChangeText={handleInputChange} // Handle input changes
         width={"xs"}
         mt={"16"}
+        maxLength={4}
+        keyboardType="numeric"
         InputLeftElement={
           <Box pl={4}>
             <Lock size={20} color={theme.colors.primary["300"]} weight="fill" />
@@ -60,28 +64,28 @@ export default function LoginScreen() {
 
       <Box position={"absolute"} bottom={"1"}>
         <TouchableOpacity onPress={handlePinRecover}>
-          <Text
+          <TextUpper
             fontSize="md"
             color="primary.400"
             fontWeight={"normal"}
-            textTransform={"uppercase"}
+            TextUpperTransform={"uppercase"}
           >
             Esqueceu pin ?
-          </Text>
+          </TextUpper>
         </TouchableOpacity>
       </Box>
 
       <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
-        <Box textAlign="center">
+        <Box TextUpperAlign="center">
           <BubblesBG />
-          <Text
-            textAlign={"center"}
+          <TextUpper
+            TextUpperAlign={"center"}
             fontSize="xl"
             color="primary.400"
             fontWeight="bold"
           >
             Seja bem-vindo
-          </Text>
+          </TextUpper>
         </Box>
       </CustomModal>
     </Box>
