@@ -195,23 +195,24 @@ export default function CheckoutScreen() {
           </Center>
         </HStack>
 
-        <Stack space={1} w="100%" alignItems="center">
-          <Text
-            fontWeight={"normal"}
-            fontSize={"md"}
-            color={"primary.300"}
-            p={2}
-          >
-            Dados do cliente
-          </Text>
+        <ScrollView style={{ flex: 1, width: "100%" }}>
+          <Stack space={1} w="100%" alignItems="center">
+            <Text
+              fontWeight={"normal"}
+              fontSize={"md"}
+              color={"primary.300"}
+              p={2}
+            >
+              Dados do cliente
+            </Text>
 
-          <AutoCompleteInput
-            handleSelectedAutoCustomer={handleSelectedAutoCustomer}
-            input={input}
-            setInput={setInput}
-          />
+            <AutoCompleteInput
+              handleSelectedAutoCustomer={handleSelectedAutoCustomer}
+              input={input}
+              setInput={setInput}
+            />
 
-          {/* <CustomInput
+            {/* <CustomInput
             onChangeText={(value) => handleInputChange(value, "client_name")}
             value={inputs.client_name}
             w={{
@@ -229,82 +230,85 @@ export default function CheckoutScreen() {
             }
             placeholder="Nome"
           /> */}
-          <CustomInput
-            onChangeText={(value) => handleInputChange(value, "client_phone")}
-            value={inputs.client_phone}
-            w={{
-              base: "75%",
-              md: "25%",
-            }}
-            fontWeight={"light"}
-            InputLeftElement={
-              <Icon
-                as={<MaterialIcons name="phone" />}
-                size={5}
-                ml="2"
-                color="muted.400"
+            <CustomInput
+              onChangeText={(value) => handleInputChange(value, "client_phone")}
+              value={inputs.client_phone}
+              w={{
+                base: "75%",
+                md: "25%",
+              }}
+              fontWeight={"light"}
+              InputLeftElement={
+                <Icon
+                  as={<MaterialIcons name="phone" />}
+                  size={5}
+                  ml="2"
+                  color="muted.400"
+                />
+              }
+              placeholder="Contacto"
+            />
+
+            <CustomSelect />
+
+            <Flex
+              direction="row"
+              mt={4}
+              p={"2"}
+              w={"30%"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Input
+                textAlign={"center"}
+                fontSize={"xl"}
+                bg="primary.300"
+                alignItems="center"
+                justifyContent="center"
+                onChangeText={(value) => handleInputChange(value, "paid")}
+                value={inputs.paid.toString()}
+                color={"primary.400"}
+                letterSpacing={2}
+                w={"90%"}
+                rounded={0}
+                InputRightElement={
+                  <Checkbox
+                    shadow={2}
+                    value={inputs.isChecked ? "checked" : "unchecked"}
+                    height={"48"}
+                    size={"lg"}
+                    accessibilityLabel="This is a dummy checkbox"
+                    background={"primary.200"}
+                    padding={"2"}
+                    marginRight={"1"}
+                    onChange={(value) => handleInputChange(value, "isChecked")}
+                  />
+                }
               />
-            }
-            placeholder="Contacto"
-          />
+            </Flex>
 
-          <CustomSelect />
-        </Stack>
-        {/* <AutoCompleteInputComp /> */}
-        <Flex
-          direction="row"
-          mt={4}
-          p={"2"}
-          w={"30%"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Input
-            textAlign={"center"}
-            fontSize={"xl"}
-            bg="primary.300"
-            alignItems="center"
-            justifyContent="center"
-            onChangeText={(value) => handleInputChange(value, "paid")}
-            value={inputs.paid.toString()}
-            color={"primary.400"}
-            letterSpacing={2}
-            w={"90%"}
-            rounded={0}
-            InputRightElement={
-              <Checkbox
-                shadow={2}
-                value={inputs.isChecked ? "checked" : "unchecked"}
-                height={"48"}
-                size={"lg"}
-                accessibilityLabel="This is a dummy checkbox"
-                background={"primary.200"}
-                padding={"2"}
-                marginRight={"1"}
-                onChange={(value) => handleInputChange(value, "isChecked")}
-              />
-            }
-          />
-        </Flex>
+            {inputs.isChecked ? null : (
+              <Text
+                textTransform={"uppercase"}
+                color={"red.500"}
+                fontWeight={"bold"}
+                mb={2}
+              >
+                tem um valor remanescente de {total - Number(inputs.paid)},00
+                mts
+              </Text>
+            )}
 
-        {inputs.isChecked ? null : (
-          <Text
-            textTransform={"uppercase"}
-            color={"red.500"}
-            fontWeight={"bold"}
-            mb={2}
-          >
-            tem um valor remanescente de {total - Number(inputs.paid)},00 mts
-          </Text>
-        )}
-
-        <MyButton
-          title="Finalizar"
-          type="SECONDARY"
-          rounded={4}
-          isLoading={loading}
-          onPress={showSucess}
-        />
+            <MyButton
+              title="Finalizar"
+              type="SECONDARY"
+              rounded={4}
+              isLoading={loading}
+              onPress={showSucess}
+            />
+          </Stack>
+          {/* <AutoCompleteInputComp /> */}
+        </ScrollView>
       </Box>
 
       <CustomModal
