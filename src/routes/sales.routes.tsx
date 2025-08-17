@@ -1,10 +1,12 @@
+import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../screens/HomeScreen";
 import CheckoutScreen from "../screens/CheckoutScreen";
 import DebtScreen from "../screens/DebtScreen";
-import ClientScreen from "../screens/ClientScreen";
 import ClientDebt from "../screens/ClientDebt";
 import SearchScreen from "../screens/search/SeachScreen";
+import CustomerManagementScreen from "../screens/CustomerManagementScreen";
+import UserManagementScreen from "../screens/UserManagementScreen";
 
 export default function SaleRoutes() {
   const Stack = createStackNavigator();
@@ -19,7 +21,8 @@ export default function SaleRoutes() {
       <Stack.Screen name="Checkout" component={CheckoutScreen} />
       <Stack.Screen name="Debts" component={DebtScreen} />
       <Stack.Screen name="ClientDebts" component={ClientDebt} />
-      <Stack.Screen name="Clients" component={ClientScreen} />
+      <Stack.Screen name="Clients" component={CustomerManagementScreen} />
+      <Stack.Screen name="Users" component={UserManagementScreen} />
       <Stack.Screen name="Search" component={SearchScreen} />
       {/* <Stack.Screen name="Admin" component={AdminHome} />
       <Stack.Screen name="AdminS" component={AdminServices} />

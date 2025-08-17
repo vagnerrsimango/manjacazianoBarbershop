@@ -2,42 +2,50 @@ import React, { useEffect, useState } from "react";
 import { Text, Box, VStack, FlatList, Modal, Button, Flex } from "native-base";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Header from "../components/Header";
-import api from "../utils/network/api";
 import ClientList from "../components/ClientList";
 import Input from "../components/Input";
 import MyButton from "../components/MyButton";
 import CustomModal from "../components/CustomModal";
 import { BubblesBG } from "../utils/Icons";
+import { useCustomerService } from "../utils/hooks/useCustomerService";
+import { Customer } from "../@types/api";
 
 export default function ClientScreen() {
-  const tableData = [
-    { id: 1, name: "John Doe", age: 25 },
-    { id: 2, name: "Jane Smith", age: 30 },
-    { id: 3, name: "Mike Johnson", age: 35 },
-  ];
-
-  const [clients, setClients] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState({});
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null
+  );
+  const [paymentAmount, setPaymentAmount] = useState("");
 
-  const handlePaySuccess = () => {
-    setShowModal2(true);
+  const { customers, loading, error, getAllCustomers, payDebt, clearError } =
+    useCustomerService();
+
+  const handlePaySuccess = async () => {
+    if (!selectedCustomer || !paymentAmount) return;
+
+    const amount = parseFloat(paymentAmount);
+    if (isNaN(amount) || amount <= 0) return;
+
+    const success = await payDebt({
+      clientId: selectedCustomer.id,
+      amount,
+      description: `Pagamento de dívida: ${paymentAmount}`,
+      paymentMethodId: 1, // Default payment method
+      userId: 1, // Current user ID
+    });
+
+    if (success) {
+      setShowModal2(true);
+      setShowModal(false);
+      setPaymentAmount("");
+      setSelectedCustomer(null);
+    }
   };
 
   useEffect(() => {
-    async function getClients() {
-      const response = await api.get("/clients/all");
-      console.log(
-        "🚀 ~ file: DebtScreen.tsx:32 ~ getClients ~ response:",
-        response.data
-      );
-
-      setClients(response.data.clients);
-    }
-
-    getClients();
-  }, [clients]);
+    getAllCustomers();
+  }, []);
 
   return (
     <VStack bg="primary.100" flex={1}>
@@ -69,27 +77,63 @@ export default function ClientScreen() {
             pr={["0", "5"]}
             py="2"
           >
-            {clients.length > 0 ? (
+            {loading ? (
+              <Text textAlign="center" color="gray.500">
+                Carregando clientes...
+              </Text>
+            ) : error ? (
+              <Box alignItems="center" p={4}>
+                <Text color="red.500" textAlign="center" mb={2}>
+                  {error}
+                </Text>
+                <MyButton
+                  title="Tentar novamente"
+                  onPress={getAllCustomers}
+                  bgColor="primary.500"
+                />
+              </Box>
+            ) : customers.length > 0 ? (
               <FlatList
-                data={clients}
+                data={customers}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={(item) => (
                   <ClientList
                     item={item.item}
                     callModal={() => {
                       setSelectedCustomer(item.item);
+                      setShowModal(true);
                     }}
                   />
                 )}
               />
-            ) : null}
+            ) : (
+              <Text textAlign="center" color="gray.500" p={4}>
+                Nenhum cliente encontrado
+              </Text>
+            )}
           </Box>
 
           <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
             <Modal.Content maxWidth="400px" bg={"white"}>
               <Flex direction="column" alignItems="center" mt={8}>
-                <Text color={"primary.300"}>{selectedCustomer.name}</Text>
+                <Text color={"primary.300"} mb={4}>
+                  {selectedCustomer?.name}
+                </Text>
+                <Text color="gray.600" mb={2}>
+                  Saldo atual:{" "}
+                  {typeof selectedCustomer?.balance === "number"
+                    ? selectedCustomer.balance.toFixed(2)
+                    : "0.00"}{" "}
+                  MT
+                </Text>
 
-                <Input placeholder="Valor a pagar" width={"xs"} />
+                <Input
+                  placeholder="Valor a pagar"
+                  width={"xs"}
+                  value={paymentAmount}
+                  onChangeText={setPaymentAmount}
+                  keyboardType="numeric"
+                />
                 <MyButton
                   title="Pagar"
                   mt={"4"}
@@ -98,6 +142,7 @@ export default function ClientScreen() {
                   mb={"10"}
                   rounded={6}
                   onPress={handlePaySuccess}
+                  disabled={!paymentAmount || parseFloat(paymentAmount) <= 0}
                 />
               </Flex>
               <Modal.CloseButton />

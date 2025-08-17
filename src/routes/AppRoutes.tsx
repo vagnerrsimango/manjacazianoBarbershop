@@ -1,3 +1,4 @@
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import AuthRoutes from "./auth.routes";
 import SaleRoutes from "./sales.routes";
