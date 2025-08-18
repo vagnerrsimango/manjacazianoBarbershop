@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Text,
   Box,
@@ -67,6 +67,9 @@ export default function UserManagementScreen() {
     clearError,
   } = useUserService();
 
+  // Local error state for password validation
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -79,9 +82,11 @@ export default function UserManagementScreen() {
     }
   };
 
-  // Filtered and sorted users
+  // Filtered and sorted users - Optimized for performance
   const filteredUsers = useMemo(() => {
-    let filtered = users;
+    if (!users.length) return [];
+
+    let filtered = [...users]; // Create a copy to avoid mutating original
 
     // Apply search filter
     if (searchQuery.trim()) {
@@ -102,18 +107,14 @@ export default function UserManagementScreen() {
       filtered = filtered.filter((user) => user.type !== 20);
     }
 
-    // Apply sorting
-    filtered.sort((a, b) => {
-      if (sortOrder === "asc") {
-        return (
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
-      } else {
-        return (
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-      }
-    });
+    // Apply sorting - only if needed
+    if (sortOrder !== "desc") {
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+      });
+    }
 
     return filtered;
   }, [users, searchQuery, filterType, sortOrder]);
@@ -192,12 +193,12 @@ export default function UserManagementScreen() {
     }
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setError("Passwords do not match");
+      setPasswordError("Passwords do not match");
       return;
     }
 
     if (passwordForm.newPassword.length < 6) {
-      setError("Password must be at least 6 characters");
+      setPasswordError("Password must be at least 6 characters");
       return;
     }
 
@@ -220,7 +221,8 @@ export default function UserManagementScreen() {
     }
   };
 
-  const handleSearch = async () => {
+  // Optimized search with useCallback
+  const handleSearch = useCallback(async () => {
     if (searchQuery.length >= 2) {
       try {
         await searchUsers({ query: searchQuery });
@@ -231,7 +233,7 @@ export default function UserManagementScreen() {
     } else {
       await getAllUsers();
     }
-  };
+  }, [searchQuery, searchUsers, getAllUsers]);
 
   const openEditModal = (user: User) => {
     setSelectedUser(user);
@@ -771,21 +773,32 @@ export default function UserManagementScreen() {
               <Text color="gray.600">
                 Usuário: <Text fontWeight="bold">{selectedUser?.name}</Text>
               </Text>
+
+              {passwordError && (
+                <Box bg="red.100" p={3} rounded="lg">
+                  <Text color="red.600" fontSize="sm">
+                    {passwordError}
+                  </Text>
+                </Box>
+              )}
+
               <Input
                 placeholder="Nova senha"
                 value={passwordForm.newPassword}
-                onChangeText={(text) =>
-                  setPasswordForm({ ...passwordForm, newPassword: text })
-                }
+                onChangeText={(text) => {
+                  setPasswordForm({ ...passwordForm, newPassword: text });
+                  if (passwordError) setPasswordError(null);
+                }}
                 type="password"
                 secureTextEntry
               />
               <Input
                 placeholder="Confirmar nova senha"
                 value={passwordForm.confirmPassword}
-                onChangeText={(text) =>
-                  setPasswordForm({ ...passwordForm, confirmPassword: text })
-                }
+                onChangeText={(text) => {
+                  setPasswordForm({ ...passwordForm, confirmPassword: text });
+                  if (passwordError) setPasswordError(null);
+                }}
                 type="password"
                 secureTextEntry
               />
@@ -820,6 +833,7 @@ export default function UserManagementScreen() {
       <AlertDialog
         isOpen={showDeleteAlert}
         onClose={() => setShowDeleteAlert(false)}
+        leastDestructiveRef={React.useRef(null)}
       >
         <AlertDialog.Content>
           <AlertDialog.Header>Confirmar Exclusão</AlertDialog.Header>

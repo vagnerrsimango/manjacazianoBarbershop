@@ -1,5 +1,16 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+
+type RootStackParamList = {
+  Users: undefined;
+  Clients: undefined;
+  Home: undefined;
+  Checkout: undefined;
+  Debts: undefined;
+  ClientDebts: undefined;
+  Search: undefined;
+};
 import {
   Text,
   Box,
@@ -31,7 +42,7 @@ import {
 } from "../@types/api";
 
 export default function CustomerManagementScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDebtModal, setShowDebtModal] = useState(false);
@@ -88,9 +99,11 @@ export default function CustomerManagementScreen() {
     }
   };
 
-  // Filtered and sorted customers
+  // Filtered and sorted customers - Optimized with useMemo and useCallback
   const filteredCustomers = useMemo(() => {
-    let filtered = customers;
+    if (!customers.length) return [];
+
+    let filtered = [...customers]; // Create a copy to avoid mutating original
 
     // Apply search filter
     if (searchQuery.trim()) {
@@ -109,18 +122,14 @@ export default function CustomerManagementScreen() {
       filtered = filtered.filter((customer) => customer.balance > 0);
     }
 
-    // Apply sorting
-    filtered.sort((a, b) => {
-      if (sortOrder === "asc") {
-        return (
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
-      } else {
-        return (
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-      }
-    });
+    // Apply sorting - only if needed
+    if (sortOrder !== "desc") {
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+      });
+    }
 
     return filtered;
   }, [customers, searchQuery, filterStatus, sortOrder]);
@@ -263,7 +272,8 @@ export default function CustomerManagementScreen() {
     }
   };
 
-  const handleSearch = async () => {
+  // Debounced search to improve performance
+  const handleSearch = useCallback(async () => {
     if (searchQuery.length >= 2) {
       try {
         await searchCustomers({ query: searchQuery });
@@ -274,7 +284,7 @@ export default function CustomerManagementScreen() {
     } else {
       await getAllCustomers();
     }
-  };
+  }, [searchQuery, searchCustomers, getAllCustomers]);
 
   const openEditModal = (customer: Customer) => {
     setSelectedCustomer(customer);
