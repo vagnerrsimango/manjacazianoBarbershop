@@ -1,55 +1,77 @@
-import React from "react";
-import { Box, Divider, Menu, Pressable } from "native-base";
-import { Hamburger, List } from "phosphor-react-native";
-import { TouchableOpacity } from "react-native";
-import useUser from "../utils/hooks/UserHook";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Modal } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function Menu2() {
-  const { user, setUser } = useUser();
-  const navigation = useNavigation();
-  const logoutHandler = () => {
-    setUser(null);
-  };
+interface Menu2Props {
+  trigger: React.ReactNode;
+  items: {
+    label: string;
+    icon?: string;
+    onPress: () => void;
+    disabled?: boolean;
+  }[];
+}
+
+const Menu2: React.FC<Menu2Props> = ({ trigger, items }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Box w="45%" alignItems="flex-end">
-      <Menu
-        w="150"
-        px={4}
-        trigger={(triggerProps) => {
-          return (
-            <TouchableOpacity
-              accessibilityLabel="More options menu"
-              {...triggerProps}
-            >
-              <List size={30} />
-            </TouchableOpacity>
-          );
-        }}
+    <View>
+      <TouchableOpacity onPress={() => setIsOpen(true)} activeOpacity={0.7}>
+        {trigger}
+      </TouchableOpacity>
+
+      <Modal
+        visible={isOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsOpen(false)}
       >
-        <Menu.OptionGroup
-          defaultValue={"Dívidas"}
-          title={"Dívidas"}
-          type="radio"
+        <TouchableOpacity
+          className="flex-1 bg-black bg-opacity-50"
+          onPress={() => setIsOpen(false)}
+          activeOpacity={1}
         >
-          <Menu.Item
-            color={"amber.800"}
-            onPress={() => navigation.navigate("Debts")}
-          >
-            A-Z
-          </Menu.Item>
-          <Menu.Item
-            color={"primary.300"}
-            onPress={() => navigation.navigate("Clients")}
-          >
-            Valor
-          </Menu.Item>
-          <Menu.Item color={"primary.300"} onPress={logoutHandler}>
-            Data
-          </Menu.Item>
-        </Menu.OptionGroup>
-      </Menu>
-    </Box>
+          <View className="flex-1 justify-center items-center">
+            <View className="bg-white rounded-lg shadow-lg min-w-[200px]">
+              {items.map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  className={`flex-row items-center p-4 ${
+                    index < items.length - 1 ? "border-b border-gray-100" : ""
+                  } ${item.disabled ? "opacity-50" : ""}`}
+                  onPress={() => {
+                    if (!item.disabled) {
+                      item.onPress();
+                      setIsOpen(false);
+                    }
+                  }}
+                  disabled={item.disabled}
+                  activeOpacity={0.7}
+                >
+                  {item.icon && (
+                    <Ionicons
+                      name={item.icon as any}
+                      size={20}
+                      color="#6B7280"
+                      className="mr-3"
+                    />
+                  )}
+                  <Text
+                    className={`flex-1 text-base ${
+                      item.disabled ? "text-gray-400" : "text-gray-900"
+                    }`}
+                  >
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </View>
   );
-}
+};
+
+export default Menu2;

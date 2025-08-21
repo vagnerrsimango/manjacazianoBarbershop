@@ -1,6 +1,28 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import {
+  View,
+  Text,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  Modal,
+  ActivityIndicator,
+  TextInput,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Button } from "../presentation/components/Button";
+
+import Input from "../components/Input";
+import { useCustomerService } from "../utils/hooks/useCustomerService";
+import { useAuth } from "../utils/hooks/useAuth";
+import {
+  Customer,
+  CustomerCreateRequest,
+  CustomerUpdateRequest,
+} from "../@types/api";
 
 type RootStackParamList = {
   Users: undefined;
@@ -11,35 +33,6 @@ type RootStackParamList = {
   ClientDebts: undefined;
   Search: undefined;
 };
-import {
-  Text,
-  Box,
-  VStack,
-  HStack,
-  FlatList,
-  Modal,
-  Button,
-  Flex,
-  Input,
-  Select,
-  IconButton,
-  AlertDialog,
-  Divider,
-  ScrollView,
-  Pressable,
-  Badge,
-  Spinner,
-} from "native-base";
-import { Ionicons } from "@expo/vector-icons";
-import Header from "../components/Header";
-import MyButton from "../components/MyButton";
-import { useCustomerService } from "../utils/hooks/useCustomerService";
-import { useAuth } from "../utils/hooks/useAuth";
-import {
-  Customer,
-  CustomerCreateRequest,
-  CustomerUpdateRequest,
-} from "../@types/api";
 
 export default function CustomerManagementScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -321,241 +314,239 @@ export default function CustomerManagementScreen() {
   };
 
   const renderCustomerItem = ({ item }: { item: Customer }) => (
-    <Box
-      bg="white"
-      p={4}
-      mb={2}
-      rounded="lg"
-      shadow={2}
-      borderLeftWidth={4}
-      borderLeftColor={item.balance < 0 ? "red.500" : "green.500"}
-    >
-      <HStack justifyContent="space-between" alignItems="center">
-        <VStack flex={1}>
-          <HStack space={2} alignItems="center" mb={1}>
-            <Text fontSize="lg" fontWeight="bold" color="primary.600">
+    <View className="bg-white p-4 mb-2 rounded-lg shadow-sm border-l-4 border-l-red-500">
+      <View className="flex-row justify-between items-start">
+        <View className="flex-1">
+          <View className="flex-row items-center mb-1">
+            <Text className="text-lg font-bold text-primary-600 mr-2">
               {item.name}
             </Text>
             {item.balance < 0 && (
-              <Badge colorScheme="red" variant="solid" size="sm">
-                Dívida
-              </Badge>
+              <View className="bg-red-500 px-2 py-1 rounded-full">
+                <Text className="text-white text-xs font-medium">Dívida</Text>
+              </View>
             )}
             {item.balance === 0 && (
-              <Badge colorScheme="gray" variant="solid" size="sm">
-                Sem Dívida
-              </Badge>
+              <View className="bg-gray-500 px-2 py-1 rounded-full">
+                <Text className="text-white text-xs font-medium">
+                  Sem Dívida
+                </Text>
+              </View>
             )}
             {item.balance > 0 && (
-              <Badge colorScheme="green" variant="solid" size="sm">
-                Crédito
-              </Badge>
+              <View className="bg-green-500 px-2 py-1 rounded-full">
+                <Text className="text-white text-xs font-medium">Crédito</Text>
+              </View>
             )}
-          </HStack>
-          <Text color="gray.600" fontSize="sm">
-            {item.phone}
-          </Text>
-          <Text color="gray.500" fontSize="xs">
+          </View>
+          <Text className="text-gray-600 text-sm mb-1">{item.phone}</Text>
+          <Text className="text-gray-500 text-xs mb-2">
             {new Date(item.birthday).toLocaleDateString("pt-MZ")}
           </Text>
-          <HStack space={2} mt={2} flexWrap="wrap">
-            <Text fontSize="sm" color="gray.500">
+          <View className="flex-row space-x-2 flex-wrap">
+            <Text className="text-sm text-gray-500">
               Cortes: {item.total_purchases}
             </Text>
-            <Text fontSize="sm" color="gray.500">
+            <Text className="text-sm text-gray-500">
               Total Pago:{" "}
               {typeof item.total_paid === "number"
                 ? item.total_paid.toFixed(2)
                 : "0.00"}{" "}
               MT
             </Text>
-          </HStack>
-        </VStack>
+          </View>
+        </View>
 
-        <VStack space={2}>
-          <IconButton
-            icon={<Ionicons name="create-outline" size={20} />}
+        <View className="space-y-2">
+          <TouchableOpacity
             onPress={() => openEditModal(item)}
-            variant="ghost"
-            colorScheme="blue"
-            size="sm"
-          />
-          <IconButton
-            icon={<Ionicons name="add-circle-outline" size={20} />}
+            className="p-2 bg-blue-100 rounded-full"
+          >
+            <Ionicons name="create-outline" size={20} color="#2563EB" />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => openDebtModal(item)}
-            variant="ghost"
-            colorScheme="red"
-            size="sm"
-          />
-          <IconButton
-            icon={<Ionicons name="card-outline" size={20} />}
+            className="p-2 bg-red-100 rounded-full"
+          >
+            <Ionicons name="add-circle-outline" size={20} color="#DC2626" />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => openPaymentModal(item)}
-            variant="ghost"
-            colorScheme="green"
-            size="sm"
-          />
-          <IconButton
-            icon={<Ionicons name="trash-outline" size={20} />}
+            className="p-2 bg-green-100 rounded-full"
+          >
+            <Ionicons name="card-outline" size={20} color="#16A34A" />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => openDeleteAlert(item)}
-            variant="ghost"
-            colorScheme="red"
-            size="sm"
-          />
-        </VStack>
-      </HStack>
-    </Box>
+            className="p-2 bg-red-100 rounded-full"
+          >
+            <Ionicons name="trash-outline" size={20} color="#DC2626" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 
   const renderDebtItem = ({ item }: { item: any }) => (
-    <Box
-      bg="white"
-      p={4}
-      mb={2}
-      rounded="lg"
-      shadow={1}
-      borderLeftWidth={4}
-      borderLeftColor={item.type === "DEBT" ? "red.500" : "green.500"}
-    >
-      <VStack space={2}>
-        <HStack justifyContent="space-between" alignItems="center">
-          <Text fontSize="md" fontWeight="bold" color="primary.600" flex={1}>
+    <View className="bg-white p-4 mb-2 rounded-lg shadow-sm border-l-4 border-l-red-500">
+      <View className="space-y-2">
+        <View className="flex-row justify-between items-center">
+          <Text className="text-base font-bold text-primary-600 flex-1">
             {item.title}
           </Text>
-          <Badge
-            colorScheme={item.type === "DEBT" ? "red" : "green"}
-            variant="solid"
-            size="sm"
+          <View
+            className={`px-2 py-1 rounded-full ${
+              item.type === "DEBT" ? "bg-red-500" : "bg-green-500"
+            }`}
           >
-            {item.type === "DEBT" ? "Dívida" : "Pagamento"}
-          </Badge>
-        </HStack>
-        <Text color="gray.600" fontSize="sm">
+            <Text className="text-white text-xs font-medium">
+              {item.type === "DEBT" ? "Dívida" : "Pagamento"}
+            </Text>
+          </View>
+        </View>
+        <Text className="text-gray-600 text-sm">
           Cliente: {item.clients?.name}
         </Text>
-        <HStack justifyContent="space-between" alignItems="center">
+        <View className="flex-row justify-between items-center">
           <Text
-            fontSize="lg"
-            fontWeight="bold"
-            color={item.type === "DEBT" ? "red.500" : "green.500"}
+            className={`text-lg font-bold ${
+              item.type === "DEBT" ? "text-red-500" : "text-green-500"
+            }`}
           >
             {item.type === "DEBT" ? "-" : "+"}
             {Math.abs(item.amount).toFixed(2)} MT
           </Text>
-          <Text color="gray.500" fontSize="xs">
+          <Text className="text-gray-500 text-xs">
             {new Date(item.created_at).toLocaleDateString("pt-MZ")}
           </Text>
-        </HStack>
-      </VStack>
-    </Box>
+        </View>
+      </View>
+    </View>
   );
 
   return (
-    <VStack bg="primary.100" flex={1}>
-      <Header title="Gestão de Clientes" back />
+    <View className="flex-1 bg-primary-100">
+      {/* Header */}
+      <View className="bg-white p-4 border-b border-gray-200">
+        <Text className="text-2xl font-bold text-gray-900 mb-4">
+          Gestão de Clientes
+        </Text>
 
-      <ScrollView flex={1} px={4}>
         {/* Search and Actions */}
-        <Box bg="white" p={4} rounded="lg" mb={4} shadow={2}>
-          <VStack space={4}>
-            <HStack space={3} alignItems="center">
-              <Input
-                flex={1}
-                placeholder="Pesquisar clientes..."
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                InputRightElement={
-                  <IconButton
-                    icon={<Ionicons name="search" size={20} />}
-                    onPress={handleSearch}
-                    variant="ghost"
-                  />
+        <View className="space-y-4">
+          <View className="flex-row space-x-3 items-center">
+            <Input
+              placeholder="Pesquisar clientes..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              style={{ flex: 1 }}
+            />
+            <Button
+              title="Novo Cliente"
+              onPress={() => setShowCreateModal(true)}
+              variant="primary"
+              size="md"
+            />
+            {isAdmin && (
+              <Button
+                title="Gestão de Usuários"
+                onPress={() => navigation.navigate("Users")}
+                variant="secondary"
+                size="md"
+              />
+            )}
+          </View>
+
+          {/* Filters */}
+          <View className="flex-row space-x-4 items-center flex-wrap">
+            <TouchableOpacity
+              onPress={() => setFilterStatus("all")}
+              className={`px-3 py-2 rounded-full ${
+                filterStatus === "all" ? "bg-primary-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={
+                  filterStatus === "all" ? "text-white" : "text-gray-700"
                 }
-              />
-              <MyButton
-                title="Novo Cliente"
-                onPress={() => setShowCreateModal(true)}
-                bgColor="primary.500"
-              />
-              {isAdmin && (
-                <MyButton
-                  title="Gestão de Usuários"
-                  onPress={() => navigation.navigate("Users")}
-                  bgColor="secondary.500"
-                />
-              )}
-            </HStack>
-
-            {/* Filters */}
-            <HStack space={4} alignItems="center" flexWrap="wrap">
-              <Select
-                selectedValue={filterStatus}
-                onValueChange={(value) => setFilterStatus(value as any)}
-                minWidth={120}
               >
-                <Select.Item label="Todos os clientes" value="all" />
-                <Select.Item label="Com dívidas" value="debt" />
-                <Select.Item label="Sem dívidas" value="paid" />
-              </Select>
+                Todos os clientes
+              </Text>
+            </TouchableOpacity>
 
-              <Select
-                selectedValue={sortOrder}
-                onValueChange={(value) => setSortOrder(value as "asc" | "desc")}
-                minWidth={120}
+            <TouchableOpacity
+              onPress={() => setFilterStatus("debt")}
+              className={`px-3 py-2 rounded-full ${
+                filterStatus === "debt" ? "bg-red-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={
+                  filterStatus === "debt" ? "text-white" : "text-gray-700"
+                }
               >
-                <Select.Item label="Mais recentes" value="desc" />
-                <Select.Item label="Mais antigas" value="asc" />
-              </Select>
-            </HStack>
+                Com dívidas
+              </Text>
+            </TouchableOpacity>
 
-            <HStack space={4} alignItems="center" flexWrap="wrap">
-              <Text fontSize="sm" color="gray.600">
-                Total de Clientes: {customers.length}
+            <TouchableOpacity
+              onPress={() => setFilterStatus("paid")}
+              className={`px-3 py-2 rounded-full ${
+                filterStatus === "paid" ? "bg-green-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={
+                  filterStatus === "paid" ? "text-white" : "text-gray-700"
+                }
+              >
+                Sem dívidas
               </Text>
-              <Text fontSize="sm" color="gray.600">
-                Filtrados: {filteredCustomers.length}
-              </Text>
-              <Text fontSize="sm" color="gray.600">
-                Total de Dívidas: {debts?.total_debts || 0}
-              </Text>
-              <Text fontSize="sm" color="gray.600">
-                Valor Total: {debts?.total_amount?.toFixed(2) || "0.00"} MT
-              </Text>
-            </HStack>
-          </VStack>
-        </Box>
+            </TouchableOpacity>
+          </View>
 
-        {/* Error Display */}
-        {error && (
-          <Box bg="red.100" p={3} rounded="lg" mb={4}>
-            <HStack space={2} alignItems="center">
-              <Ionicons name="alert-circle" size={20} color="#dc2626" />
-              <Text color="red.600" flex={1}>
-                {error}
-              </Text>
-              <IconButton
-                icon={<Ionicons name="close" size={20} />}
-                onPress={clearError}
-                variant="ghost"
-                colorScheme="red"
-                size="sm"
-              />
-            </HStack>
-          </Box>
-        )}
+          <View className="flex-row space-x-4 items-center flex-wrap">
+            <Text className="text-sm text-gray-600">
+              Total de Clientes: {customers.length}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              Filtrados: {filteredCustomers.length}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              Total de Dívidas: {debts?.total_debts || 0}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              Valor Total: {debts?.total_amount?.toFixed(2) || "0.00"} MT
+            </Text>
+          </View>
+        </View>
+      </View>
 
-        {/* Customers List */}
-        <Box bg="white" p={4} rounded="lg" mb={4} shadow={2}>
-          <Text fontSize="lg" fontWeight="bold" mb={4} color="primary.600">
+      {/* Error Display */}
+      {error && (
+        <View className="bg-red-100 p-3 mx-4 mt-4 rounded-lg">
+          <View className="flex-row space-x-2 items-center">
+            <Ionicons name="alert-circle" size={20} color="#DC2626" />
+            <Text className="text-red-600 flex-1">{error}</Text>
+            <TouchableOpacity onPress={clearError} className="p-1">
+              <Ionicons name="close" size={20} color="#DC2626" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {/* Customers List */}
+      <View className="flex-1 px-4">
+        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+          <Text className="text-lg font-bold mb-4 text-primary-600">
             Lista de Clientes ({filteredCustomers.length})
           </Text>
 
           {loading ? (
-            <Box alignItems="center" p={8}>
-              <Spinner size="lg" color="primary.500" />
-              <Text color="gray.500" mt={2}>
-                Carregando clientes...
-              </Text>
-            </Box>
+            <View className="items-center p-8">
+              <ActivityIndicator size="large" color="#0052A3" />
+              <Text className="text-gray-500 mt-2">Carregando clientes...</Text>
+            </View>
           ) : filteredCustomers.length > 0 ? (
             <FlatList
               data={filteredCustomers}
@@ -564,35 +555,24 @@ export default function CustomerManagementScreen() {
               showsVerticalScrollIndicator={false}
             />
           ) : (
-            <Box alignItems="center" p={8}>
-              <Ionicons name="people-outline" size={48} color="#9ca3af" />
-              <Text color="gray.500" mt={2} textAlign="center">
+            <View className="items-center p-8">
+              <Ionicons name="people-outline" size={48} color="#9CA3AF" />
+              <Text className="text-gray-500 mt-2 text-center">
                 {searchQuery || filterStatus !== "all"
                   ? "Nenhum cliente encontrado com os filtros aplicados"
                   : "Nenhum cliente encontrado"}
               </Text>
-            </Box>
+            </View>
           )}
-        </Box>
+        </View>
 
         {/* Debts List */}
-        <Box bg="white" p={4} rounded="lg" mb={4} shadow={2}>
-          <HStack justifyContent="space-between" alignItems="center" mb={4}>
-            <Text fontSize="lg" fontWeight="bold" color="primary.600">
+        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-lg font-bold text-primary-600">
               Histórico de Dívidas
             </Text>
-            <Select
-              selectedValue={sortOrder}
-              onValueChange={(value) => {
-                setSortOrder(value as "asc" | "desc");
-                getAllDebts({ sort: value as "asc" | "desc" });
-              }}
-              minWidth={120}
-            >
-              <Select.Item label="Mais recentes" value="desc" />
-              <Select.Item label="Mais antigas" value="asc" />
-            </Select>
-          </HStack>
+          </View>
 
           {debts?.debts && debts.debts.length > 0 ? (
             <FlatList
@@ -602,275 +582,289 @@ export default function CustomerManagementScreen() {
               showsVerticalScrollIndicator={false}
             />
           ) : (
-            <Box alignItems="center" p={8}>
-              <Ionicons name="receipt-outline" size={48} color="#9ca3af" />
-              <Text color="gray.500" mt={2}>
+            <View className="items-center p-8">
+              <Ionicons name="receipt-outline" size={48} color="#9CA3AF" />
+              <Text className="text-gray-500 mt-2">
                 Nenhuma dívida encontrada
               </Text>
-            </Box>
+            </View>
           )}
-        </Box>
-      </ScrollView>
+        </View>
+      </View>
 
       {/* Create Customer Modal */}
-      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
-        <Modal.Content maxWidth="400px">
-          <Modal.Header>Criar Novo Cliente</Modal.Header>
-          <Modal.Body>
-            <VStack space={4}>
-              <Input
-                placeholder="Nome completo"
-                value={customerForm.name}
-                onChangeText={(text) =>
-                  setCustomerForm({ ...customerForm, name: text })
-                }
-              />
-              <Input
-                placeholder="Telefone"
-                value={customerForm.phone}
-                onChangeText={(text) =>
-                  setCustomerForm({ ...customerForm, phone: text })
-                }
-                keyboardType="phone-pad"
-              />
-              <Input
-                placeholder="Data de nascimento (YYYY-MM-DD)"
-                value={customerForm.birthday}
-                onChangeText={(text) =>
-                  setCustomerForm({ ...customerForm, birthday: text })
-                }
-              />
-            </VStack>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
+      <Modal
+        visible={showCreateModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Criar Novo Cliente</Text>
+            <TouchableOpacity onPress={() => setShowCreateModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView className="flex-1 p-4">
+            <Input
+              label="Nome completo"
+              placeholder="Digite o nome completo"
+              value={customerForm.name}
+              onChangeText={(text) =>
+                setCustomerForm({ ...customerForm, name: text })
+              }
+            />
+            <Input
+              label="Telefone"
+              placeholder="Digite o telefone"
+              value={customerForm.phone}
+              onChangeText={(text) =>
+                setCustomerForm({ ...customerForm, phone: text })
+              }
+              keyboardType="phone-pad"
+            />
+            <Input
+              label="Data de nascimento"
+              placeholder="YYYY-MM-DD"
+              value={customerForm.birthday}
+              onChangeText={(text) =>
+                setCustomerForm({ ...customerForm, birthday: text })
+              }
+            />
+
+            <View className="mt-6 space-y-3">
               <Button
-                variant="ghost"
-                onPress={() => {
-                  setShowCreateModal(false);
-                  resetForms();
-                }}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
+                title="Criar Cliente"
                 onPress={handleCreateCustomer}
+                variant="primary"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Criando..." : "Criar"}
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowCreateModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
       </Modal>
 
       {/* Edit Customer Modal */}
-      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
-        <Modal.Content maxWidth="400px">
-          <Modal.Header>Editar Cliente</Modal.Header>
-          <Modal.Body>
-            <VStack space={4}>
-              <Input
-                placeholder="Nome completo"
-                value={customerForm.name}
-                onChangeText={(text) =>
-                  setCustomerForm({ ...customerForm, name: text })
-                }
-              />
-              <Input
-                placeholder="Telefone"
-                value={customerForm.phone}
-                onChangeText={(text) =>
-                  setCustomerForm({ ...customerForm, phone: text })
-                }
-                keyboardType="phone-pad"
-              />
-              <Input
-                placeholder="Data de nascimento (YYYY-MM-DD)"
-                value={customerForm.birthday}
-                onChangeText={(text) =>
-                  setCustomerForm({ ...customerForm, birthday: text })
-                }
-              />
-            </VStack>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
+      <Modal
+        visible={showEditModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Editar Cliente</Text>
+            <TouchableOpacity onPress={() => setShowEditModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView className="flex-1 p-4">
+            <Input
+              label="Nome completo"
+              placeholder="Digite o nome completo"
+              value={customerForm.name}
+              onChangeText={(text) =>
+                setCustomerForm({ ...customerForm, name: text })
+              }
+            />
+            <Input
+              label="Telefone"
+              placeholder="Digite o telefone"
+              value={customerForm.phone}
+              onChangeText={(text) =>
+                setCustomerForm({ ...customerForm, phone: text })
+              }
+              keyboardType="phone-pad"
+            />
+            <Input
+              label="Data de nascimento"
+              placeholder="YYYY-MM-DD"
+              value={customerForm.birthday}
+              onChangeText={(text) =>
+                setCustomerForm({ ...customerForm, birthday: text })
+              }
+            />
+
+            <View className="mt-6 space-y-3">
               <Button
-                variant="ghost"
-                onPress={() => {
-                  setShowEditModal(false);
-                  resetForms();
-                }}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
+                title="Atualizar Cliente"
                 onPress={handleUpdateCustomer}
+                variant="primary"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Atualizando..." : "Atualizar"}
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowEditModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
       </Modal>
 
       {/* Add Debt Modal */}
-      <Modal isOpen={showDebtModal} onClose={() => setShowDebtModal(false)}>
-        <Modal.Content maxWidth="400px">
-          <Modal.Header>Adicionar Dívida</Modal.Header>
-          <Modal.Body>
-            <VStack space={4}>
-              <Text color="gray.600">
-                Cliente: <Text fontWeight="bold">{selectedCustomer?.name}</Text>
-              </Text>
-              <Input
-                placeholder="Valor da dívida"
-                value={debtAmount}
-                onChangeText={setDebtAmount}
-                keyboardType="numeric"
-              />
-              <Input
-                placeholder="Descrição da dívida"
-                value={debtDescription}
-                onChangeText={setDebtDescription}
-              />
-            </VStack>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
+      <Modal
+        visible={showDebtModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Adicionar Dívida</Text>
+            <TouchableOpacity onPress={() => setShowDebtModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView className="flex-1 p-4">
+            <Text className="text-gray-600 mb-4">
+              Cliente:{" "}
+              <Text className="font-bold">{selectedCustomer?.name}</Text>
+            </Text>
+            <Input
+              label="Valor da dívida"
+              placeholder="Digite o valor"
+              value={debtAmount}
+              onChangeText={setDebtAmount}
+              keyboardType="numeric"
+            />
+            <Input
+              label="Descrição da dívida"
+              placeholder="Digite a descrição"
+              value={debtDescription}
+              onChangeText={setDebtDescription}
+            />
+
+            <View className="mt-6 space-y-3">
               <Button
-                variant="ghost"
-                onPress={() => {
-                  setShowDebtModal(false);
-                  resetForms();
-                }}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
+                title="Adicionar Dívida"
                 onPress={handleAddDebt}
-                colorScheme="red"
+                variant="danger"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Adicionando..." : "Adicionar Dívida"}
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowDebtModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
       </Modal>
 
       {/* Payment Modal */}
       <Modal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
+        visible={showPaymentModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
       >
-        <Modal.Content maxWidth="400px">
-          <Modal.Header>Processar Pagamento</Modal.Header>
-          <Modal.Body>
-            <VStack space={4}>
-              <Text color="gray.600">
-                Cliente: <Text fontWeight="bold">{selectedCustomer?.name}</Text>
-              </Text>
-              <Text color="gray.600">
-                Saldo atual:{" "}
-                <Text
-                  fontWeight="bold"
-                  color={
-                    (selectedCustomer?.balance ?? 0) < 0
-                      ? "red.500"
-                      : "green.500"
-                  }
-                >
-                  {typeof selectedCustomer?.balance === "number"
-                    ? selectedCustomer.balance.toFixed(2)
-                    : "0.00"}{" "}
-                  MT
-                </Text>
-              </Text>
-              <Input
-                placeholder="Valor do pagamento"
-                value={paymentAmount}
-                onChangeText={setPaymentAmount}
-                keyboardType="numeric"
-              />
-              <Input
-                placeholder="Descrição do pagamento"
-                value={paymentDescription}
-                onChangeText={setPaymentDescription}
-              />
-            </VStack>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button
-                variant="ghost"
-                onPress={() => {
-                  setShowPaymentModal(false);
-                  resetForms();
-                }}
-                disabled={isSubmitting}
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Processar Pagamento</Text>
+            <TouchableOpacity onPress={() => setShowPaymentModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView className="flex-1 p-4">
+            <Text className="text-gray-600 mb-2">
+              Cliente:{" "}
+              <Text className="font-bold">{selectedCustomer?.name}</Text>
+            </Text>
+            <Text className="text-gray-600 mb-4">
+              Saldo atual:{" "}
+              <Text
+                className={`font-bold ${
+                  (selectedCustomer?.balance ?? 0) < 0
+                    ? "text-red-500"
+                    : "text-green-500"
+                }`}
               >
-                Cancelar
-              </Button>
+                {typeof selectedCustomer?.balance === "number"
+                  ? selectedCustomer.balance.toFixed(2)
+                  : "0.00"}{" "}
+                MT
+              </Text>
+            </Text>
+            <Input
+              label="Valor do pagamento"
+              placeholder="Digite o valor"
+              value={paymentAmount}
+              onChangeText={setPaymentAmount}
+              keyboardType="numeric"
+            />
+            <Input
+              label="Descrição do pagamento"
+              placeholder="Digite a descrição"
+              value={paymentDescription}
+              onChangeText={setPaymentDescription}
+            />
+
+            <View className="mt-6 space-y-3">
               <Button
+                title="Processar Pagamento"
                 onPress={handlePayDebt}
-                colorScheme="green"
+                variant="success"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Processando..." : "Processar Pagamento"}
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowPaymentModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
       </Modal>
 
       {/* Delete Confirmation Alert */}
-      <AlertDialog
-        isOpen={showDeleteAlert}
-        onClose={() => setShowDeleteAlert(false)}
-        leastDestructiveRef={React.useRef(null)}
-      >
-        <AlertDialog.Content>
-          <AlertDialog.Header>Confirmar Exclusão</AlertDialog.Header>
-          <AlertDialog.Body>
-            Tem certeza que deseja excluir o cliente{" "}
-            <Text fontWeight="bold">{selectedCustomer?.name}</Text>?
+      {showDeleteAlert && (
+        <View className="absolute inset-0 bg-black bg-opacity-50 justify-center items-center">
+          <View className="bg-white p-6 rounded-lg mx-4 max-w-sm">
+            <Text className="text-lg font-bold mb-4">Confirmar Exclusão</Text>
+            <Text className="text-gray-600 mb-4">
+              Tem certeza que deseja excluir o cliente{" "}
+              <Text className="font-bold">{selectedCustomer?.name}</Text>?
+            </Text>
             {(selectedCustomer?.balance ?? 0) < 0 && (
-              <Text color="red.500" mt={2}>
+              <Text className="text-red-500 mb-4">
                 ⚠️ Este cliente possui dívidas pendentes!
               </Text>
             )}
-          </AlertDialog.Body>
-          <AlertDialog.Footer>
-            <Button.Group space={2}>
+
+            <View className="flex-row space-x-3">
               <Button
-                variant="ghost"
+                title="Cancelar"
                 onPress={() => setShowDeleteAlert(false)}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
+                variant="ghost"
+                style={{ flex: 1 }}
+              />
               <Button
-                colorScheme="red"
+                title="Excluir"
                 onPress={handleDeleteCustomer}
+                variant="danger"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Excluindo..." : "Excluir"}
-              </Button>
-            </Button.Group>
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog>
-    </VStack>
+                style={{ flex: 1 }}
+              />
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
   );
 }

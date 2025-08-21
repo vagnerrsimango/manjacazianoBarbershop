@@ -2,17 +2,18 @@ import React from "react";
 import { useState } from "react";
 import { Iuser, UserContext } from "./UserContext";
 import api from "./network/api";
-import { IStandardResponse } from "../utils/interface/Responses";
+import { IStandardResponse } from "./Responses";
 import { getUserByToken } from "./Helper";
 
 type Props = {
-  children: string | JSX.Element | JSX.Element[];
+  children: React.ReactNode;
 };
+
 export default function UserProvider({ children }: Props) {
-  const [user, setUser] = useState({} as Iuser);
+  const [user, setUser] = useState<Iuser | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function loginWithPin(input) {
+  async function loginWithPin(input: string) {
     setLoading(true);
     try {
       const response = await api.post("/login", { password: input });

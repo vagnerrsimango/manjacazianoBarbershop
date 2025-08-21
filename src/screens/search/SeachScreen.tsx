@@ -1,179 +1,232 @@
 import React, { useState } from "react";
 import {
+  View,
   Text,
-  Box,
-  VStack,
   FlatList,
   Modal,
-  Button,
-  Flex,
-  Select,
-  HStack,
-  useTheme,
-} from "native-base";
-
-import { TouchableOpacity } from "react-native";
-import { ArrowLeft } from "phosphor-react-native";
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Input from "../../components/Input";
-import MyButton from "../../components/MyButton";
+
 import ClientList from "../../components/ClientList";
 import ClientSkeleton from "../../components/ClientSkeleton";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import api from "../../utils/network/api";
-import CustomModal from "../../components/CustomModal";
-import { BubblesBG } from "../../utils/Icons";
+import { Button } from "../../presentation/components/Button";
 
 export default function SearchScreen() {
-  const [clients, setClients] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState({});
+  const [clients, setClients] = useState<any[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<any>({});
   const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
   const [valueToPay, setValueToPay] = useState("");
   const [showModal2, setShowModal2] = useState(false);
-  const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
-
   const [input, setInput] = useState("");
 
   const handlePaySuccess = async () => {
-    const { data } = await api.put("/clients/put", {
-      id: Number(selectedCustomer.id),
-      balance: Number(valueToPay),
-    });
+    if (!valueToPay || !selectedCustomer.id) {
+      Alert.alert("Erro", "Por favor, preencha o valor a pagar");
+      return;
+    }
 
-    if (data.success == true) setShowModal2(true);
-
-    setShowModal(false);
-  };
-
-  const handleSearch = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get(`/client/search/${input}`);
+      const response = await api.put("/clients/put", {
+        id: Number(selectedCustomer.id),
+        balance: Number(valueToPay),
+      });
 
-      setClients(data.clients);
+      if (response.data.success) {
+        setShowModal2(true);
+        setShowModal(false);
+        setValueToPay("");
+        setSelectedCustomer({});
+      } else {
+        Alert.alert("Erro", "Falha ao processar pagamento");
+      }
     } catch (error) {
-      alert("Falha ao pesquisar cliente");
+      console.error("Error processing payment:", error);
+      Alert.alert("Erro", "Falha ao processar pagamento");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSearch = async () => {
+    if (!input.trim()) {
+      Alert.alert("Erro", "Por favor, digite algo para pesquisar");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await api.get(`/client/search/${input}`);
+      setClients(response.data.clients || []);
+    } catch (error) {
+      console.error("Error searching clients:", error);
+      Alert.alert("Erro", "Falha ao pesquisar cliente");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderClientItem = ({ item }: { item: any }) => (
+    <ClientList
+      customer={item}
+      showDate={false}
+      onPress={() => {
+        setSelectedCustomer(item);
+        setShowModal(true);
+      }}
+    />
+  );
+
   return (
-    <VStack bg="primary.100" flex={1}>
-      <HStack
-        bg={"primary.100"}
-        p={6}
-        w={"100%"}
-        alignItems={"center"}
-        justifyContent={"space-between"}
-        rounded={6}
-      >
+    <View className="flex-1 bg-primary-100">
+      {/* Header with Search */}
+      <View className="bg-primary-100 p-6 w-full flex-row items-center justify-between">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft size={40} color={colors.primary["300"]} weight="regular" />
+          <Ionicons name="arrow-back" size={40} color="#4DA6FF" />
         </TouchableOpacity>
 
         <Input
           placeholder="Pesquisar cliente"
-          w={"1/2"}
-          textAlign={"center"}
           value={input}
           onChangeText={setInput}
+          style={{ width: "50%", textAlign: "center" }}
         />
 
-        <MyButton
+        <Button
           title="Pesquisar"
-          rounded={6}
-          isLoading={loading}
           onPress={handleSearch}
+          variant="primary"
+          loading={loading}
+          disabled={loading}
         />
-      </HStack>
+      </View>
 
-      <VStack alignItems={"center"} mt={"10%"} justifyContent={"center"}>
-        {/* <Menu2 /> */}
-        <Box
-          w={"60%"}
-          mt={8}
-          mb={8}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Box
-            borderBottomWidth="1"
-            borderColor="primary.300"
-            pl={["0", "4"]}
-            pr={["0", "5"]}
-            py="2"
-          >
-            {clients.length > 0 ? (
-              <FlatList
-                data={clients}
-                renderItem={(item) => (
-                  <ClientList
-                    showDate={false}
-                    item={item.item}
-                    callModal={() => {
-                      setSelectedCustomer(item.item);
-                      setShowModal(true);
-                    }}
-                  />
-                )}
-              />
-            ) : (
-              <ClientSkeleton />
-            )}
-          </Box>
-
-          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-            <Modal.Content maxWidth="400px" bg={"white"}>
-              <Flex direction="column" alignItems="center" mt={8}>
-                <Text color={"primary.300"}>{selectedCustomer.name}</Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowModal(false);
-                    navigation.navigate("ClientDebts", {
-                      client: selectedCustomer,
-                    });
-                  }}
-                >
-                  <Ionicons name="md-eye" size={32} color="grey" />
-                </TouchableOpacity>
-                <Input
-                  placeholder="Valor a pagar"
-                  width={"xs"}
-                  value={valueToPay}
-                  onChangeText={setValueToPay}
-                />
-                <MyButton
-                  title="Pagar"
-                  mt={"4"}
-                  bgColor={"primary.500"}
-                  width={"xs"}
-                  mb={"10"}
-                  rounded={6}
-                  onPress={handlePaySuccess}
-                />
-              </Flex>
-              <Modal.CloseButton />
-            </Modal.Content>
-          </Modal>
-
-          <CustomModal opened={showModal2} onClose={() => setShowModal2(false)}>
-            <Box textAlign="center">
-              <BubblesBG />
-              <Text
-                textAlign={"center"}
-                fontSize="xl"
-                color="primary.400"
-                fontWeight="bold"
-              >
-                Pagamento efectuado com sucesso!
+      {/* Search Results */}
+      <View className="items-center mt-[10%] justify-center">
+        <View className="w-[60%] mt-8 mb-8 justify-center items-center">
+          {loading ? (
+            <View className="items-center p-8">
+              <ActivityIndicator size="large" color="#0052A3" />
+              <Text className="text-gray-500 mt-2">Pesquisando...</Text>
+            </View>
+          ) : clients.length > 0 ? (
+            <FlatList
+              data={clients}
+              renderItem={renderClientItem}
+              keyExtractor={(item) => item.id.toString()}
+              showsVerticalScrollIndicator={false}
+            />
+          ) : input ? (
+            <View className="items-center p-8">
+              <Ionicons name="search-outline" size={48} color="#9CA3AF" />
+              <Text className="text-gray-500 mt-2 text-center">
+                Nenhum cliente encontrado para "{input}"
               </Text>
-            </Box>
-          </CustomModal>
-        </Box>
-      </VStack>
-    </VStack>
+            </View>
+          ) : (
+            <View className="items-center p-8">
+              <Ionicons name="search-outline" size={48} color="#9CA3AF" />
+              <Text className="text-gray-500 mt-2 text-center">
+                Digite algo para pesquisar clientes
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
+
+      {/* Payment Modal */}
+      <Modal
+        visible={showModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Processar Pagamento</Text>
+            <TouchableOpacity onPress={() => setShowModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView className="flex-1 p-4">
+            <Text className="text-gray-600 mb-4">
+              Cliente:{" "}
+              <Text className="font-bold">{selectedCustomer?.name}</Text>
+            </Text>
+
+            <Text className="text-gray-600 mb-4">
+              Saldo atual:{" "}
+              <Text className="font-bold text-red-500">
+                {typeof selectedCustomer?.balance === "number"
+                  ? selectedCustomer.balance.toFixed(2)
+                  : "0.00"}{" "}
+                MT
+              </Text>
+            </Text>
+
+            <Input
+              label="Valor a pagar"
+              placeholder="Digite o valor"
+              value={valueToPay}
+              onChangeText={setValueToPay}
+              keyboardType="numeric"
+            />
+
+            <View className="mt-6 space-y-3">
+              <Button
+                title={loading ? "Processando..." : "Processar Pagamento"}
+                onPress={handlePaySuccess}
+                variant="success"
+                loading={loading}
+                disabled={loading || !valueToPay}
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
+
+      {/* Success Modal */}
+      <Modal
+        visible={showModal2}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white justify-center items-center p-6">
+          <View className="bg-green-100 p-6 rounded-full mb-6">
+            <Ionicons name="checkmark-circle" size={64} color="#16A34A" />
+          </View>
+
+          <Text className="text-2xl font-bold text-gray-900 mb-4 text-center">
+            Pagamento Processado!
+          </Text>
+
+          <Text className="text-gray-600 text-center mb-8">
+            O pagamento foi processado com sucesso. O cliente foi notificado.
+          </Text>
+
+          <Button
+            title="Fechar"
+            onPress={() => setShowModal2(false)}
+            variant="primary"
+            size="lg"
+          />
+        </View>
+      </Modal>
+    </View>
   );
 }

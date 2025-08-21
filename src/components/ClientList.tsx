@@ -1,55 +1,55 @@
 import React from "react";
-import {
-  Box,
-  HStack,
-  VStack,
-  Text,
-  Spacer,
-  Image,
-  useTheme,
-} from "native-base";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+
+interface ClientListProps {
+  customer: {
+    name: string;
+    phone: string;
+    balance: number;
+  };
+  onPress: () => void;
+  showDate?: boolean;
+}
 
 export default function ClientList({
-  item,
-  callModal = () => {},
+  customer,
+  onPress,
   showDate = true,
-}) {
-  const { colors } = useTheme();
+}: ClientListProps) {
   return (
-    <TouchableOpacity onPress={callModal}>
-      <Box
-        borderBottomWidth={1}
-        borderColor="primary.300"
-        borderRadius={8}
-        p={3}
-        mb={4}
-      >
-        <HStack space={[2, 3]} justifyContent="space-between" w={"80%"} mt={2}>
-          <Icon name="user-circle" size={48} color={colors.primary[300]} />
-          <VStack ml={"10"}>
-            <Text color="black" bold fontSize="md">
-              {item.name}
+    <TouchableOpacity onPress={onPress}>
+      <View className="border-b border-primary-300 rounded-lg p-3 mb-4">
+        <View className="flex-row justify-between items-center w-[80%] mt-2">
+          <Ionicons name="person-circle" size={48} color="#4DA6FF" />
+
+          <View className="ml-10">
+            <Text className="text-black font-bold text-base">
+              {customer.name}
             </Text>
-            <Text fontSize="md" color="primary.300" alignSelf="flex-start">
-              {item.phone}
+            <Text className="text-base text-primary-300 self-start">
+              {customer.phone}
             </Text>
-          </VStack>
-          <Spacer />
-          <VStack>
-            <Text color={"red.500"} fontSize="md" fontWeight={"bold"}>
-              {item.balance} MT
+          </View>
+
+          <View className="items-end">
+            <Text
+              className={`text-base font-bold ${
+                customer.balance < 0 ? "text-red-500" : "text-green-500"
+              }`}
+            >
+              {typeof customer.balance === "number"
+                ? customer.balance.toFixed(2)
+                : "0.00"}{" "}
+              MT
             </Text>
 
-            {showDate ? (
-              <Text fontSize="md" color="black" alignSelf="flex-start">
-                25-06-23
-              </Text>
-            ) : null}
-          </VStack>
-        </HStack>
-      </Box>
+            {showDate && (
+              <Text className="text-base text-black self-start">25-06-23</Text>
+            )}
+          </View>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 }

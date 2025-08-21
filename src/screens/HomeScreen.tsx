@@ -1,176 +1,106 @@
-import React, { useEffect, useState } from "react";
-import { Box, Text, Modal, Icon, Flex, Button, VStack } from "native-base";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import MyButton from "../components/MyButton";
-import CutSelection from "../components/CutSelection";
-import Header from "../components/Header";
-import { BeardLogo, ComboLogo, ExtraLogo, HairLogo } from "../utils/Icons";
-import Input from "../components/Input";
+import React from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { beardServices, hairServices } from "../utils/FakeData";
-import { FlatList } from "react-native-gesture-handler";
-import Tag from "../components/Tag";
-import { useCart } from "../utils/LocalHooks";
-import api from "../utils/network/api";
-import { IServiceResponse } from "../utils/interface/Responses";
-import ServiceSkeleton from "../components/ServiceSkeleton";
+import { StackNavigationProp } from "@react-navigation/stack";
+import Header from "../components/Header";
+import NetworkTest from "../components/NetworkTest";
+
+type RootStackParamList = {
+  Clients: undefined;
+  Users: undefined;
+  Home: undefined;
+  Checkout: undefined;
+  Debts: undefined;
+  ClientDebts: undefined;
+  Search: undefined;
+};
 
 export default function HomeScreen() {
-  const natigation = useNavigation();
-  const { services, setServices } = useCart();
-  const [total, setTotal] = useState(0);
-  const [loading, isLoading] = useState(true);
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  const [dataService, setDataService] = useState<IServiceResponse>(
-    {} as IServiceResponse
-  );
+  const menuItems = [
+    {
+      title: "Gestão de Clientes",
+      description: "Gerenciar clientes e dívidas",
+      icon: "people-outline",
+      color: "bg-blue-500",
+      route: "Clients" as keyof RootStackParamList,
+    },
+    {
+      title: "Gestão de Usuários",
+      description: "Gerenciar usuários do sistema",
+      icon: "person-outline",
+      color: "bg-green-500",
+      route: "Users" as keyof RootStackParamList,
+    },
+    {
+      title: "Checkout",
+      description: "Processar pagamentos",
+      icon: "card-outline",
+      color: "bg-purple-500",
+      route: "Checkout" as keyof RootStackParamList,
+    },
+    {
+      title: "Pesquisar",
+      description: "Buscar clientes e serviços",
+      icon: "search-outline",
+      color: "bg-orange-500",
+      route: "Search" as keyof RootStackParamList,
+    },
+  ];
 
-  const uniqueIds = new Set();
-  useEffect(() => {
-    async function getDataService() {
-      const response = await api.get("/services");
-      const data: IServiceResponse = response.data;
-      setDataService(data);
-      isLoading(false);
-
-      // console.log(
-      //   "🚀 ~ file: HomeScreen.tsx:32 ~ getDataService ~ data:",
-      //   data
-      // );
-    }
-
-    getDataService();
-    let auxTotal = 0;
-
-    // for (let i = 0; i < services.length; i++) {
-    //   if (services[i].id === services[i++]) {
-    //     console.log(
-    //       "position" + services[i] + "and" + services[i++] + "duplicated"
-    //     );
-    //   }
-    // }
-
-    if (services.length > 0) {
-      auxTotal = services.reduce((prev, current) => {
-        auxTotal += current.price;
-        return auxTotal;
-      }, 0);
-
-      setTotal(auxTotal);
-    }
-  }, [services]);
-
-  // useEffect(() => {
-  //   setServices((prev) => [...prev, ...services]);
-  // }, [services]);
-
-  console.log(services.length);
-  const data = hairServices;
-  const data2 = beardServices;
   return (
-    <Box bg="primary.100" flex={1}>
-      <Header title="Main" />
-      <Flex
-        direction="row"
-        justifyContent="space-between"
-        p={4}
-        position="absolute"
-        top={0}
-        left={0}
-        right={0}
-      ></Flex>
-      <Box flex={1} alignItems="center" justifyContent="center">
-        <Text fontSize="lg" color="primary.300" fontWeight="thin">
-          POR FAVOR, SELECIONE O SERVIÇO DESEJADO
-        </Text>
-        <Flex direction="row" px={4}>
-          <CutSelection
-            mr={10}
-            my={1}
-            data={dataService.data?.comboService}
-            loading={loading}
-          >
-            <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
-              <ComboLogo />
-            </Box>
-          </CutSelection>
-          <CutSelection
-            mr={10}
-            my={1}
-            data={dataService.data?.beardService}
-            loading={loading}
-          >
-            <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
-              <BeardLogo />
-            </Box>
-          </CutSelection>
-          <CutSelection
-            my={1}
-            data={dataService.data?.hairService}
-            loading={loading}
-          >
-            <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
-              <HairLogo />
-            </Box>
-          </CutSelection>
-        </Flex>
-        <CutSelection
-          my={1}
-          data={dataService.data?.extraService}
-          loading={loading}
-        >
-          <Box backgroundColor={"gray.100"} p={"4"} rounded={"4"}>
-            <ExtraLogo />
-          </Box>
-        </CutSelection>
-        <Text
-          fontSize="lg"
-          color="primary.300"
-          fontWeight="thin"
-          marginTop={"10"}
-        >
-          Serviços Selecionados
-        </Text>
+    <View className="flex-1 bg-gray-50">
+      <Header title="Manja Caziano Barbershop" />
 
-        <FlatList
-          horizontal
-          data={services}
-          renderItem={({ item }) => <Tag title={item.name} />}
-        />
-        <Flex
-          direction="row"
-          mt={1}
-          p={"2"}
-          w={"30%"}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {/* <Input
-            textAlign={"center"}
-            fontSize={"xl"}
-            bg="primary.300"
-            alignItems="center"
-            justifyContent="center"
-            placeholder="0,0"
-            value={total.toString()}
-            editable={false}
-            letterSpacing={2}
-            w={"90%"}
-            rounded={0}
-            InputRightElement={
-              <Button rounded={4} h={"100%"} bg="gray.400">
-                Mts
-              </Button>
-            }
-          /> */}
-        </Flex>
-        <MyButton
-          title="Avançar"
-          type="SECONDARY"
-          rounded={2}
-          onPress={() => natigation.navigate("Checkout")}
-        />
-      </Box>
-    </Box>
+      <ScrollView className="flex-1 p-4">
+        <View className="mb-8">
+          <Text className="text-3xl font-bold text-gray-900 mb-2">
+            Bem-vindo!
+          </Text>
+          <Text className="text-lg text-gray-600">
+            Escolha uma opção para começar
+          </Text>
+        </View>
+
+        <View className="space-y-4">
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => navigation.navigate(item.route)}
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 active:bg-gray-50"
+            >
+              <View className="flex-row items-center space-x-4">
+                <View className={`${item.color} p-3 rounded-lg`}>
+                  <Ionicons name={item.icon as any} size={24} color="white" />
+                </View>
+
+                <View className="flex-1">
+                  <Text className="text-lg font-semibold text-gray-900 mb-1">
+                    {item.title}
+                  </Text>
+                  <Text className="text-gray-600">{item.description}</Text>
+                </View>
+
+                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View className="mt-8 p-6 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl">
+          <Text className="text-white text-lg font-semibold mb-2">
+            Sistema de Gestão
+          </Text>
+          <Text className="text-primary-100">
+            Gerencie seus clientes, usuários e transações de forma eficiente
+          </Text>
+        </View>
+
+        {/* Network Test Component for Debugging */}
+        <NetworkTest />
+      </ScrollView>
+    </View>
   );
 }

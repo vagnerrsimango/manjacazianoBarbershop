@@ -1,51 +1,59 @@
-import { Button as NButton, Text, IButtonProps } from 'native-base';
-interface ButtonProps extends IButtonProps {
+import React from "react";
+import { TouchableOpacity, Text, ViewStyle, TextStyle } from "react-native";
+
+interface MyButtonProps {
   title: string;
-  type?: 'PRIMARY' | 'SECONDARY';
-  weight?: string;
-  height?: number;
-  fontSize?: string | number;
-  textPadding?: string | number;
+  onPress: () => void;
   bg?: string;
+  width?: number | string;
+  height?: number;
+  disabled?: boolean;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
-export default function MyButton({
+const MyButton: React.FC<MyButtonProps> = ({
   title,
-  bg,
-  weight = 'normal',
-  type = 'PRIMARY',
-  height = 12,
-  fontSize = 'xs',
-  textPadding,
-  ...rest
-}: ButtonProps) {
+  onPress,
+  bg = "#0052A3",
+  width = "auto",
+  height = 48,
+  disabled = false,
+  style,
+  textStyle,
+}) => {
   return (
-    <NButton
-      mt={2}
-      w={100}
-      h={height}
-      borderWidth={0}
-      borderRadius={0}
-      textTransform="uppercase"
-      bg={bg || type == 'SECONDARY' ? 'primary.400' : 'primary.300'} // Use the passed bg prop or fallback to a default value
-      {...rest}
-      _pressed={{
-        bg: type == 'SECONDARY' ? 'primary.300' : 'primary.400',
-      }}
-      _loading={{
-        _spinner: { color: 'black' },
-      }}
+    <TouchableOpacity
+      style={[
+        {
+          backgroundColor: bg,
+          width,
+          height,
+          borderRadius: 8,
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: disabled ? 0.5 : 1,
+        },
+        style,
+      ]}
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={0.7}
     >
       <Text
-        p={textPadding}
-        fontSize={fontSize}
-        color={type == 'SECONDARY' ? 'white' : 'white'}
-        fontFamily="heading"
-        textTransform={'uppercase'}
-        fontWeight={weight}
+        style={[
+          {
+            color: "#FFFFFF",
+            fontSize: 16,
+            fontWeight: "600",
+          },
+          textStyle,
+        ]}
       >
         {title}
       </Text>
-    </NButton>
+    </TouchableOpacity>
   );
-}
+};
+
+export default MyButton;

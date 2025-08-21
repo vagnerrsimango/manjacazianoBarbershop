@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Text, Box, VStack, FlatList, Modal, Button, Flex } from "native-base";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  View,
+  Text,
+  FlatList,
+  Modal,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import Header from "../components/Header";
 import ClientList from "../components/ClientList";
 import Input from "../components/Input";
-import MyButton from "../components/MyButton";
+import { Button } from "../presentation/components/Button";
+
 import CustomModal from "../components/CustomModal";
-import { BubblesBG } from "../utils/Icons";
 import { useCustomerService } from "../utils/hooks/useCustomerService";
 import { Customer } from "../@types/api";
 
@@ -48,131 +56,147 @@ export default function ClientScreen() {
   }, []);
 
   return (
-    <VStack bg="primary.100" flex={1}>
-      <Header title="Debts" back />
-      <VStack alignItems={"center"} mt={8} justifyContent={"center"}>
-        <Box
-          bg={"primary.300"}
-          p={3}
-          w={"20%"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          rounded={6}
-        >
-          <Text fontWeight={"bold"} fontSize={"20"}>
+    <View className="flex-1 bg-primary-100">
+      <Header title="Dívidas" back />
+
+      <View className="items-center mt-8 justify-center">
+        <View className="bg-primary-300 p-3 w-[20%] items-center justify-center rounded-lg">
+          <Text className="font-bold text-xl text-white">
             Lista de Clientes
           </Text>
-        </Box>
-        <Box
-          w={"60%"}
-          mt={8}
-          mb={8}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          <Box
-            borderBottomWidth="1"
-            borderColor="primary.300"
-            pl={["0", "4"]}
-            pr={["0", "5"]}
-            py="2"
-          >
+        </View>
+
+        <View className="w-[60%] mt-8 mb-8 justify-center items-center">
+          <View className="border-b border-primary-300 px-4 py-2">
             {loading ? (
-              <Text textAlign="center" color="gray.500">
+              <Text className="text-center text-gray-500">
                 Carregando clientes...
               </Text>
             ) : error ? (
-              <Box alignItems="center" p={4}>
-                <Text color="red.500" textAlign="center" mb={2}>
-                  {error}
-                </Text>
-                <MyButton
+              <View className="items-center p-4">
+                <Text className="text-red-500 text-center mb-2">{error}</Text>
+                <Button
                   title="Tentar novamente"
                   onPress={getAllCustomers}
-                  bgColor="primary.500"
+                  variant="primary"
                 />
-              </Box>
+              </View>
             ) : customers.length > 0 ? (
               <FlatList
                 data={customers}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={(item) => (
+                renderItem={({ item }) => (
                   <ClientList
-                    item={item.item}
-                    callModal={() => {
-                      setSelectedCustomer(item.item);
+                    customer={item}
+                    onPress={() => {
+                      setSelectedCustomer(item);
                       setShowModal(true);
                     }}
                   />
                 )}
+                showsVerticalScrollIndicator={false}
               />
             ) : (
-              <Text textAlign="center" color="gray.500" p={4}>
-                Nenhum cliente encontrado
-              </Text>
+              <View className="items-center p-8">
+                <Ionicons name="people-outline" size={48} color="#9CA3AF" />
+                <Text className="text-gray-500 mt-2 text-center">
+                  Nenhum cliente encontrado
+                </Text>
+              </View>
             )}
-          </Box>
+          </View>
+        </View>
+      </View>
 
-          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-            <Modal.Content maxWidth="400px" bg={"white"}>
-              <Flex direction="column" alignItems="center" mt={8}>
-                <Text color={"primary.300"} mb={4}>
-                  {selectedCustomer?.name}
-                </Text>
-                <Text color="gray.600" mb={2}>
-                  Saldo atual:{" "}
-                  {typeof selectedCustomer?.balance === "number"
-                    ? selectedCustomer.balance.toFixed(2)
-                    : "0.00"}{" "}
-                  MT
-                </Text>
+      {/* Payment Modal */}
+      <Modal
+        visible={showModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Processar Pagamento</Text>
+            <TouchableOpacity onPress={() => setShowModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
 
-                <Input
-                  placeholder="Valor a pagar"
-                  width={"xs"}
-                  value={paymentAmount}
-                  onChangeText={setPaymentAmount}
-                  keyboardType="numeric"
-                />
-                <MyButton
-                  title="Pagar"
-                  mt={"4"}
-                  bgColor={"primary.500"}
-                  width={"xs"}
-                  mb={"10"}
-                  rounded={6}
-                  onPress={handlePaySuccess}
-                  disabled={!paymentAmount || parseFloat(paymentAmount) <= 0}
-                />
-              </Flex>
-              <Modal.CloseButton />
-              <Modal.Footer
-                justifyContent="center"
-                bg={"white"}
-                alignItems="center"
-              >
-                <Button.Group space={2}>
-                  <MyButton title="Ver cortes" width={"xs"} />
-                </Button.Group>
-              </Modal.Footer>
-            </Modal.Content>
-          </Modal>
+          <ScrollView className="flex-1 p-4">
+            <Text className="text-gray-600 mb-4">
+              Cliente:{" "}
+              <Text className="font-bold">{selectedCustomer?.name}</Text>
+            </Text>
 
-          <CustomModal opened={showModal2} onClose={() => setShowModal2(false)}>
-            <Box textAlign="center">
-              <BubblesBG />
+            <Text className="text-gray-600 mb-4">
+              Saldo atual:{" "}
               <Text
-                textAlign={"center"}
-                fontSize="xl"
-                color="primary.400"
-                fontWeight="bold"
+                className={`font-bold ${
+                  (selectedCustomer?.balance ?? 0) < 0
+                    ? "text-red-500"
+                    : "text-green-500"
+                }`}
               >
-                Pagamento efectuado com sucesso!
+                {typeof selectedCustomer?.balance === "number"
+                  ? selectedCustomer.balance.toFixed(2)
+                  : "0.00"}{" "}
+                MT
               </Text>
-            </Box>
-          </CustomModal>
-        </Box>
-      </VStack>
-    </VStack>
+            </Text>
+
+            <Input
+              label="Valor do pagamento"
+              placeholder="Digite o valor"
+              value={paymentAmount}
+              onChangeText={setPaymentAmount}
+              keyboardType="numeric"
+            />
+
+            <View className="mt-6 space-y-3">
+              <Button
+                title="Processar Pagamento"
+                onPress={handlePaySuccess}
+                variant="success"
+                disabled={!paymentAmount}
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
+
+      {/* Success Modal */}
+      <Modal
+        visible={showModal2}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white justify-center items-center p-6">
+          <View className="bg-green-100 p-6 rounded-full mb-6">
+            <Ionicons name="checkmark-circle" size={64} color="#16A34A" />
+          </View>
+
+          <Text className="text-2xl font-bold text-gray-900 mb-4 text-center">
+            Pagamento Processado!
+          </Text>
+
+          <Text className="text-gray-600 text-center mb-8">
+            O pagamento foi processado com sucesso. O cliente foi notificado.
+          </Text>
+
+          <Button
+            title="Fechar"
+            onPress={() => setShowModal2(false)}
+            variant="primary"
+            size="lg"
+          />
+        </View>
+      </Modal>
+    </View>
   );
 }

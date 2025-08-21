@@ -1,63 +1,30 @@
 import React from "react";
-import { Box, Center, HStack, Text, Image, Stack, useTheme } from "native-base";
-import { MainLogo } from "../utils/Icons";
-import { ArrowLeft, User } from "phosphor-react-native";
-import { TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import useUser from "../utils/hooks/UserHook";
-import Menu from "./Menu";
-// import { useUser } from "../hooks/useUser";
+
 interface HeaderProps {
   title: string;
-  leftRad?: number;
-  rightRad?: number;
   back?: boolean;
 }
-export default function Header({
-  title,
-  leftRad,
-  rightRad,
-  back = false,
-}: HeaderProps) {
-  // const { user } = useUser();
-  const { colors } = useTheme();
 
+export default function Header({ title, back }: HeaderProps) {
   const navigation = useNavigation();
-  const { user } = useUser();
 
   return (
-    <HStack
-      bgColor={"primary.100"}
-      h={"20"}
-      px={"32"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      borderBottomLeftRadius={leftRad}
-      borderBottomRightRadius={rightRad}
-    >
-      {back ? (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ArrowLeft size={40} color={colors.primary["300"]} weight="regular" />
-        </TouchableOpacity>
-      ) : null}
-
-      <HStack mt={"16"}>
-        <MainLogo />
-      </HStack>
-      <HStack mt={4} justifyItems={"center"} alignItems={"center"}>
-        {/* <Text
-          fontWeight={"semibold"}
-          fontSize={"xs"}
-          color={"primary.300"}
-          px={1}
+    <View className="bg-white px-4 py-3 border-b border-gray-200 flex-row items-center">
+      {back && (
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="mr-3 p-1"
         >
-          {user?.name}
-        </Text> */}
-
-        {/* <User size={20} color={colors.primary["300"]} weight="fill" /> */}
-
-        <Menu />
-      </HStack>
-    </HStack>
+          <Ionicons name="arrow-back" size={24} color="#374151" />
+        </TouchableOpacity>
+      )}
+      
+      <Text className="text-xl font-bold text-gray-900 flex-1">
+        {title}
+      </Text>
+    </View>
   );
 }

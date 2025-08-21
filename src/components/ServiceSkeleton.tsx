@@ -1,13 +1,15 @@
 import React from "react";
-import { Center, VStack, Skeleton } from "native-base";
+import { View } from "react-native";
 
 const ServiceSkeleton = () => {
   return (
-    <Center>
-      <VStack w="40" maxW="400" rounded="md">
-        <Skeleton.Text px="1/6" />
-      </VStack>
-    </Center>
+    <View className="flex-1 items-center justify-center">
+      <View className="w-full max-w-[400px] space-y-4">
+        <View className="h-[200px] rounded-lg bg-gray-200 animate-pulse" />
+        <View className="h-[100px] rounded-lg bg-gray-200 animate-pulse" />
+        <View className="h-[80px] rounded-lg bg-gray-200 animate-pulse" />
+      </View>
+    </View>
   );
 };
 

@@ -6,7 +6,7 @@ export default function AuthRoutes() {
 
   return (
     <Stack.Navigator
-      initialRouteName="LoginProcess"
+      initialRouteName="Login"
       screenOptions={{
         headerShown: false,
       }}

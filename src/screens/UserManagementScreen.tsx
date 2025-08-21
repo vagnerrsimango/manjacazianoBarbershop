@@ -1,27 +1,19 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
+  View,
   Text,
-  Box,
-  VStack,
-  HStack,
-  FlatList,
-  Modal,
-  Button,
-  Flex,
-  Input,
-  Select,
-  IconButton,
-  AlertDialog,
-  Divider,
   ScrollView,
-  Pressable,
-  Badge,
-  Spinner,
-  TextArea,
-} from "native-base";
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  Modal,
+  ActivityIndicator,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Header from "../components/Header";
-import MyButton from "../components/MyButton";
+import { Button } from "../presentation/components/Button";
+
+import Input from "../components/Input";
 import { useUserService } from "../utils/hooks/useUserService";
 import { User, UserCreateRequest, UserUpdateRequest } from "../@types/api";
 
@@ -104,23 +96,22 @@ export default function UserManagementScreen() {
     if (filterType === "admin") {
       filtered = filtered.filter((user) => user.type === 20);
     } else if (filterType === "user") {
-      filtered = filtered.filter((user) => user.type !== 20);
+      filtered = filtered.filter((user) => user.type === 12);
     }
 
-    // Apply sorting - only if needed
-    if (sortOrder !== "desc") {
-      filtered.sort((a, b) => {
-        const dateA = new Date(a.created_at).getTime();
-        const dateB = new Date(b.created_at).getTime();
-        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-      });
-    }
+    // Apply sorting
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
 
     return filtered;
   }, [users, searchQuery, filterType, sortOrder]);
 
   const handleCreateUser = async () => {
-    if (!userForm.name || !userForm.type || !userForm.password) {
+    if (!userForm.name || !userForm.email || !userForm.password) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios");
       return;
     }
 
@@ -129,7 +120,18 @@ export default function UserManagementScreen() {
       const success = await createUser(userForm);
       if (success) {
         setShowCreateModal(false);
-        resetForms();
+        setUserForm({
+          name: "",
+          surname: "",
+          genre: "",
+          phone: "",
+          birthday: "",
+          type: 12,
+          email: "",
+          password: "",
+          licenseStart: "",
+          licenseEnd: "",
+        });
         await loadData();
       }
     } catch (error) {
@@ -140,7 +142,8 @@ export default function UserManagementScreen() {
   };
 
   const handleUpdateUser = async () => {
-    if (!selectedUser || !userForm.name) {
+    if (!selectedUser || !userForm.name || !userForm.email) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios");
       return;
     }
 
@@ -155,7 +158,18 @@ export default function UserManagementScreen() {
       if (success) {
         setShowEditModal(false);
         setSelectedUser(null);
-        resetForms();
+        setUserForm({
+          name: "",
+          surname: "",
+          genre: "",
+          phone: "",
+          birthday: "",
+          type: 12,
+          email: "",
+          password: "",
+          licenseStart: "",
+          licenseEnd: "",
+        });
         await loadData();
       }
     } catch (error) {
@@ -189,23 +203,26 @@ export default function UserManagementScreen() {
       !passwordForm.newPassword ||
       !passwordForm.confirmPassword
     ) {
+      setPasswordError("Por favor, preencha todos os campos");
       return;
     }
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPasswordError("Passwords do not match");
+      setPasswordError("As senhas não coincidem");
       return;
     }
 
     if (passwordForm.newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
+      setPasswordError("A senha deve ter pelo menos 6 caracteres");
       return;
     }
 
+    setPasswordError(null);
     setIsSubmitting(true);
+
     try {
       const success = await changeUserPassword({
-        id: selectedUser.id,
+        userId: selectedUser.id,
         newPassword: passwordForm.newPassword,
       });
 
@@ -213,6 +230,7 @@ export default function UserManagementScreen() {
         setShowPasswordModal(false);
         setPasswordForm({ newPassword: "", confirmPassword: "" });
         setSelectedUser(null);
+        Alert.alert("Sucesso", "Senha alterada com sucesso!");
       }
     } catch (error) {
       console.error("Error changing password:", error);
@@ -221,14 +239,13 @@ export default function UserManagementScreen() {
     }
   };
 
-  // Optimized search with useCallback
   const handleSearch = useCallback(async () => {
     if (searchQuery.length >= 2) {
       try {
         await searchUsers({ query: searchQuery });
       } catch (error) {
         console.error("Search error:", error);
-        // Fallback to local filtering
+        await getAllUsers();
       }
     } else {
       await getAllUsers();
@@ -277,596 +294,548 @@ export default function UserManagementScreen() {
     });
     setPasswordForm({ newPassword: "", confirmPassword: "" });
     setSelectedUser(null);
+    setPasswordError(null);
   };
 
   const getUserTypeLabel = (type: number) => {
     switch (type) {
       case 20:
-        return { label: "Admin", color: "red" as const };
-      case 15:
-        return { label: "Manager", color: "blue" as const };
+        return { label: "Administrador", color: "bg-red-500" };
       case 12:
-        return { label: "User", color: "green" as const };
+        return { label: "Usuário", color: "bg-blue-500" };
       default:
-        return { label: `Type ${type}`, color: "gray" as const };
+        return { label: "Desconhecido", color: "bg-gray-500" };
     }
   };
 
-  const renderUserItem = ({ item }: { item: User }) => {
-    const typeInfo = getUserTypeLabel(item.type);
-
-    return (
-      <Box
-        bg="white"
-        p={4}
-        mb={2}
-        rounded="lg"
-        shadow={2}
-        borderLeftWidth={4}
-        borderLeftColor={typeInfo.color + ".500"}
-      >
-        <HStack justifyContent="space-between" alignItems="center">
-          <VStack flex={1}>
-            <HStack space={2} alignItems="center" mb={1}>
-              <Text fontSize="lg" fontWeight="bold" color="primary.600">
-                {item.name} {item.surname}
-              </Text>
-              <Badge colorScheme={typeInfo.color} variant="solid" size="sm">
-                {typeInfo.label}
-              </Badge>
-            </HStack>
-
-            {item.email && (
-              <Text color="gray.600" fontSize="sm">
-                {item.email}
-              </Text>
-            )}
-
-            {item.phone && (
-              <Text color="gray.600" fontSize="sm">
-                {item.phone}
-              </Text>
-            )}
-
-            {item.birthday && (
-              <Text color="gray.500" fontSize="xs">
-                {new Date(item.birthday).toLocaleDateString("pt-MZ")}
-              </Text>
-            )}
-
-            <HStack space={2} mt={2} flexWrap="wrap">
-              <Text fontSize="sm" color="gray.500">
-                ID: {item.id}
-              </Text>
-              <Text fontSize="sm" color="gray.500">
-                Tipo: {item.type}
-              </Text>
-              {item.licenseStart && (
-                <Text fontSize="sm" color="gray.500">
-                  Licença:{" "}
-                  {new Date(item.licenseStart).toLocaleDateString("pt-MZ")}
+  const renderUserItem = useCallback(
+    ({ item }: { item: User }) => {
+      const typeInfo = getUserTypeLabel(item.type);
+      return (
+        <View className="bg-white p-4 mb-3 rounded-lg shadow-sm border-l-4 border-l-blue-500">
+          <View className="flex-row justify-between items-start">
+            <View className="flex-1">
+              <View className="flex-row items-center mb-2">
+                <Text className="text-lg font-bold text-gray-900 mr-3">
+                  {item.name} {item.surname}
                 </Text>
-              )}
-            </HStack>
-          </VStack>
+                <View className={`${typeInfo.color} px-2 py-1 rounded-full`}>
+                  <Text className="text-white text-xs font-medium">
+                    {typeInfo.label}
+                  </Text>
+                </View>
+              </View>
 
-          <VStack space={2}>
-            <IconButton
-              icon={<Ionicons name="create-outline" size={20} />}
-              onPress={() => openEditModal(item)}
-              variant="ghost"
-              colorScheme="blue"
-              size="sm"
-            />
-            <IconButton
-              icon={<Ionicons name="key-outline" size={20} />}
-              onPress={() => openPasswordModal(item)}
-              variant="ghost"
-              colorScheme="yellow"
-              size="sm"
-            />
-            <IconButton
-              icon={<Ionicons name="trash-outline" size={20} />}
-              onPress={() => openDeleteAlert(item)}
-              variant="ghost"
-              colorScheme="red"
-              size="sm"
-            />
-          </VStack>
-        </HStack>
-      </Box>
+              <View className="space-y-1 mb-3">
+                {item.email && (
+                  <Text className="text-gray-600 text-sm">📧 {item.email}</Text>
+                )}
+                {item.phone && (
+                  <Text className="text-gray-600 text-sm">📱 {item.phone}</Text>
+                )}
+                {item.birthday && (
+                  <Text className="text-gray-600 text-sm">
+                    🎂 {new Date(item.birthday).toLocaleDateString("pt-MZ")}
+                  </Text>
+                )}
+                {item.genre && (
+                  <Text className="text-gray-600 text-sm">👤 {item.genre}</Text>
+                )}
+              </View>
+
+              <View className="flex-row space-x-2 flex-wrap">
+                <Text className="text-xs text-gray-500">
+                  Criado:{" "}
+                  {new Date(item.created_at).toLocaleDateString("pt-MZ")}
+                </Text>
+                {item.licenseStart && (
+                  <Text className="text-xs text-gray-500">
+                    Licença:{" "}
+                    {new Date(item.licenseStart).toLocaleDateString("pt-MZ")}
+                  </Text>
+                )}
+              </View>
+            </View>
+
+            <View className="space-y-2">
+              <TouchableOpacity
+                onPress={() => openEditModal(item)}
+                className="p-2 bg-blue-100 rounded-full"
+              >
+                <Ionicons name="create-outline" size={20} color="#2563EB" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => openPasswordModal(item)}
+                className="p-2 bg-yellow-100 rounded-full"
+              >
+                <Ionicons name="key-outline" size={20} color="#CA8A04" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => openDeleteAlert(item)}
+                className="p-2 bg-red-100 rounded-full"
+              >
+                <Ionicons name="trash-outline" size={20} color="#DC2626" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      );
+    },
+    [openEditModal, openPasswordModal, openDeleteAlert, getUserTypeLabel]
+  );
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-gray-50 justify-center items-center">
+        <ActivityIndicator size="large" color="#0052A3" />
+        <Text className="text-gray-500 mt-4">Carregando usuários...</Text>
+      </View>
     );
-  };
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 bg-gray-50 justify-center items-center p-6">
+        <Ionicons name="alert-circle" size={48} color="#DC2626" />
+        <Text className="text-red-600 text-lg font-semibold mt-4 mb-2">
+          Erro ao carregar usuários
+        </Text>
+        <Text className="text-gray-600 text-center mb-4">{error}</Text>
+        <Button title="Tentar novamente" onPress={loadData} variant="primary" />
+      </View>
+    );
+  }
 
   return (
-    <VStack bg="primary.100" flex={1}>
+    <View className="flex-1 bg-gray-50">
       <Header title="Gestão de Usuários" back />
 
-      <ScrollView flex={1} px={4}>
-        {/* Search and Actions */}
-        <Box bg="white" p={4} rounded="lg" mb={4} shadow={2}>
-          <VStack space={4}>
-            <HStack space={3} alignItems="center">
-              <Input
-                flex={1}
-                placeholder="Pesquisar usuários..."
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                InputRightElement={
-                  <IconButton
-                    icon={<Ionicons name="search" size={20} />}
-                    onPress={handleSearch}
-                    variant="ghost"
-                  />
-                }
-              />
-              <MyButton
-                title="Novo Usuário"
-                onPress={() => setShowCreateModal(true)}
-                bgColor="primary.500"
-              />
-            </HStack>
-
-            {/* Filters */}
-            <HStack space={4} alignItems="center" flexWrap="wrap">
-              <Select
-                selectedValue={filterType}
-                onValueChange={(value) => setFilterType(value as any)}
-                minWidth={120}
-              >
-                <Select.Item label="Todos os usuários" value="all" />
-                <Select.Item label="Administradores" value="admin" />
-                <Select.Item label="Usuários" value="user" />
-              </Select>
-
-              <Select
-                selectedValue={sortOrder}
-                onValueChange={(value) => setSortOrder(value as "asc" | "desc")}
-                minWidth={120}
-              >
-                <Select.Item label="Mais recentes" value="desc" />
-                <Select.Item label="Mais antigos" value="asc" />
-              </Select>
-            </HStack>
-
-            <HStack space={4} alignItems="center" flexWrap="wrap">
-              <Text fontSize="sm" color="gray.600">
-                Total de Usuários: {users.length}
-              </Text>
-              <Text fontSize="sm" color="gray.600">
-                Filtrados: {filteredUsers.length}
-              </Text>
-              <Text fontSize="sm" color="gray.600">
-                Administradores: {users.filter((u) => u.type === 20).length}
-              </Text>
-            </HStack>
-          </VStack>
-        </Box>
-
-        {/* Error Display */}
-        {error && (
-          <Box bg="red.100" p={3} rounded="lg" mb={4}>
-            <HStack space={2} alignItems="center">
-              <Ionicons name="alert-circle" size={20} color="#dc2626" />
-              <Text color="red.600" flex={1}>
-                {error}
-              </Text>
-              <IconButton
-                icon={<Ionicons name="close" size={20} />}
-                onPress={clearError}
-                variant="ghost"
-                colorScheme="red"
-                size="sm"
-              />
-            </HStack>
-          </Box>
-        )}
-
-        {/* Users List */}
-        <Box bg="white" p={4} rounded="lg" mb={4} shadow={2}>
-          <Text fontSize="lg" fontWeight="bold" mb={4} color="primary.600">
-            Lista de Usuários ({filteredUsers.length})
-          </Text>
-
-          {loading ? (
-            <Box alignItems="center" p={8}>
-              <Spinner size="lg" color="primary.500" />
-              <Text color="gray.500" mt={2}>
-                Carregando usuários...
-              </Text>
-            </Box>
-          ) : filteredUsers.length > 0 ? (
-            <FlatList
-              data={filteredUsers}
-              renderItem={renderUserItem}
-              keyExtractor={(item) => item.id.toString()}
-              showsVerticalScrollIndicator={false}
+      {/* Search and Actions */}
+      <View className="bg-white p-4 border-b border-gray-200">
+        <View className="space-y-4">
+          <View className="flex-row space-x-3 items-center">
+            <Input
+              placeholder="Pesquisar usuários..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              style={{ flex: 1 }}
             />
-          ) : (
-            <Box alignItems="center" p={8}>
-              <Ionicons name="people-outline" size={48} color="#9ca3af" />
-              <Text color="gray.500" mt={2} textAlign="center">
-                {searchQuery || filterType !== "all"
-                  ? "Nenhum usuário encontrado com os filtros aplicados"
-                  : "Nenhum usuário encontrado"}
+            <Button
+              title="Novo Usuário"
+              onPress={() => setShowCreateModal(true)}
+              variant="primary"
+              size="md"
+            />
+          </View>
+
+          {/* Filters */}
+          <View className="flex-row space-x-4 items-center flex-wrap">
+            <TouchableOpacity
+              onPress={() => setFilterType("all")}
+              className={`px-3 py-2 rounded-full ${
+                filterType === "all" ? "bg-primary-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={
+                  filterType === "all" ? "text-white" : "text-gray-700"
+                }
+              >
+                Todos
               </Text>
-            </Box>
-          )}
-        </Box>
-      </ScrollView>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setFilterType("admin")}
+              className={`px-3 py-2 rounded-full ${
+                filterType === "admin" ? "bg-red-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={
+                  filterType === "admin" ? "text-white" : "text-gray-700"
+                }
+              >
+                Administradores
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setFilterType("user")}
+              className={`px-3 py-2 rounded-full ${
+                filterType === "user" ? "bg-blue-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={
+                  filterType === "user" ? "text-white" : "text-gray-700"
+                }
+              >
+                Usuários
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="flex-row space-x-4 items-center flex-wrap">
+            <Text className="text-sm text-gray-600">
+              Total de Usuários: {users.length}
+            </Text>
+            <Text className="text-sm text-gray-600">
+              Filtrados: {filteredUsers.length}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Users List */}
+      <View className="flex-1 px-4 pt-4">
+        {filteredUsers.length > 0 ? (
+          <FlatList
+            data={filteredUsers}
+            renderItem={renderUserItem}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+          />
+        ) : (
+          <View className="items-center p-8">
+            <Ionicons name="people-outline" size={48} color="#9CA3AF" />
+            <Text className="text-gray-500 mt-2 text-center">
+              {searchQuery || filterType !== "all"
+                ? "Nenhum usuário encontrado com os filtros aplicados"
+                : "Nenhum usuário encontrado"}
+            </Text>
+          </View>
+        )}
+      </View>
 
       {/* Create User Modal */}
-      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)}>
-        <Modal.Content maxWidth="500px" maxHeight="90%">
-          <Modal.Header>Criar Novo Usuário</Modal.Header>
-          <Modal.Body>
-            <ScrollView>
-              <VStack space={4}>
-                <HStack space={2}>
-                  <Input
-                    flex={1}
-                    placeholder="Nome"
-                    value={userForm.name}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, name: text })
-                    }
-                  />
-                  <Input
-                    flex={1}
-                    placeholder="Sobrenome"
-                    value={userForm.surname}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, surname: text })
-                    }
-                  />
-                </HStack>
+      <Modal
+        visible={showCreateModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Criar Novo Usuário</Text>
+            <TouchableOpacity onPress={() => setShowCreateModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
 
-                <HStack space={2}>
-                  <Select
-                    selectedValue={userForm.genre}
-                    onValueChange={(value) =>
-                      setUserForm({ ...userForm, genre: value })
-                    }
-                    placeholder="Gênero"
-                    flex={1}
-                  >
-                    <Select.Item label="Masculino" value="M" />
-                    <Select.Item label="Feminino" value="F" />
-                    <Select.Item label="Outro" value="O" />
-                  </Select>
+          <ScrollView className="flex-1 p-4">
+            <View className="space-y-4">
+              <Input
+                label="Nome *"
+                placeholder="Digite o nome"
+                value={userForm.name}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, name: text })
+                }
+              />
 
-                  <Select
-                    selectedValue={userForm.type.toString()}
-                    onValueChange={(value) =>
-                      setUserForm({ ...userForm, type: parseInt(value) })
-                    }
-                    placeholder="Tipo"
-                    flex={1}
-                  >
-                    <Select.Item label="Usuário" value="12" />
-                    <Select.Item label="Gerente" value="15" />
-                    <Select.Item label="Administrador" value="20" />
-                  </Select>
-                </HStack>
+              <Input
+                label="Sobrenome"
+                placeholder="Digite o sobrenome"
+                value={userForm.surname}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, surname: text })
+                }
+              />
 
-                <HStack space={2}>
-                  <Input
-                    flex={1}
-                    placeholder="Telefone"
-                    value={userForm.phone}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, phone: text })
-                    }
-                    keyboardType="phone-pad"
-                  />
-                  <Input
-                    flex={1}
-                    placeholder="Data de nascimento (YYYY-MM-DD)"
-                    value={userForm.birthday}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, birthday: text })
-                    }
-                  />
-                </HStack>
+              <Input
+                label="Email *"
+                placeholder="Digite o email"
+                value={userForm.email}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, email: text })
+                }
+                keyboardType="email-address"
+              />
 
-                <Input
-                  placeholder="Email"
-                  value={userForm.email}
-                  onChangeText={(text) =>
-                    setUserForm({ ...userForm, email: text })
-                  }
-                  keyboardType="email-address"
-                />
+              <Input
+                label="Senha *"
+                placeholder="Digite a senha"
+                value={userForm.password}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, password: text })
+                }
+                secureTextEntry
+              />
 
-                <Input
-                  placeholder="Senha (mín. 6 caracteres)"
-                  value={userForm.password}
-                  onChangeText={(text) =>
-                    setUserForm({ ...userForm, password: text })
-                  }
-                  type="password"
-                  secureTextEntry
-                />
+              <Input
+                label="Telefone"
+                placeholder="Digite o telefone"
+                value={userForm.phone}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, phone: text })
+                }
+                keyboardType="phone-pad"
+              />
 
-                <HStack space={2}>
-                  <Input
-                    flex={1}
-                    placeholder="Início da licença (YYYY-MM-DD)"
-                    value={userForm.licenseStart}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, licenseStart: text })
-                    }
-                  />
-                  <Input
-                    flex={1}
-                    placeholder="Fim da licença (YYYY-MM-DD)"
-                    value={userForm.licenseEnd}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, licenseEnd: text })
-                    }
-                  />
-                </HStack>
-              </VStack>
-            </ScrollView>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
+              <Input
+                label="Data de nascimento"
+                placeholder="YYYY-MM-DD"
+                value={userForm.birthday}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, birthday: text })
+                }
+              />
+
+              <Input
+                label="Gênero"
+                placeholder="Digite o gênero"
+                value={userForm.genre}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, genre: text })
+                }
+              />
+
+              <Input
+                label="Data de início da licença"
+                placeholder="YYYY-MM-DD"
+                value={userForm.licenseStart}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, licenseStart: text })
+                }
+              />
+
+              <Input
+                label="Data de fim da licença"
+                placeholder="YYYY-MM-DD"
+                value={userForm.licenseEnd}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, licenseEnd: text })
+                }
+              />
+            </View>
+
+            <View className="mt-6 space-y-3">
               <Button
-                variant="ghost"
-                onPress={() => {
-                  setShowCreateModal(false);
-                  resetForms();
-                }}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
+                title="Criar Usuário"
                 onPress={handleCreateUser}
+                variant="primary"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Criando..." : "Criar"}
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowCreateModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
       </Modal>
 
       {/* Edit User Modal */}
-      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)}>
-        <Modal.Content maxWidth="500px" maxHeight="90%">
-          <Modal.Header>Editar Usuário</Modal.Header>
-          <Modal.Body>
-            <ScrollView>
-              <VStack space={4}>
-                <HStack space={2}>
-                  <Input
-                    flex={1}
-                    placeholder="Nome"
-                    value={userForm.name}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, name: text })
-                    }
-                  />
-                  <Input
-                    flex={1}
-                    placeholder="Sobrenome"
-                    value={userForm.surname}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, surname: text })
-                    }
-                  />
-                </HStack>
+      <Modal
+        visible={showEditModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Editar Usuário</Text>
+            <TouchableOpacity onPress={() => setShowEditModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
 
-                <HStack space={2}>
-                  <Select
-                    selectedValue={userForm.genre}
-                    onValueChange={(value) =>
-                      setUserForm({ ...userForm, genre: value })
-                    }
-                    placeholder="Gênero"
-                    flex={1}
-                  >
-                    <Select.Item label="Masculino" value="M" />
-                    <Select.Item label="Feminino" value="F" />
-                    <Select.Item label="Outro" value="O" />
-                  </Select>
+          <ScrollView className="flex-1 p-4">
+            <View className="space-y-4">
+              <Input
+                label="Nome *"
+                placeholder="Digite o nome"
+                value={userForm.name}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, name: text })
+                }
+              />
 
-                  <Select
-                    selectedValue={userForm.type.toString()}
-                    onValueChange={(value) =>
-                      setUserForm({ ...userForm, type: parseInt(value) })
-                    }
-                    placeholder="Tipo"
-                    flex={1}
-                  >
-                    <Select.Item label="Usuário" value="12" />
-                    <Select.Item label="Gerente" value="15" />
-                    <Select.Item label="Administrador" value="20" />
-                  </Select>
-                </HStack>
+              <Input
+                label="Sobrenome"
+                placeholder="Digite o sobrenome"
+                value={userForm.surname}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, surname: text })
+                }
+              />
 
-                <HStack space={2}>
-                  <Input
-                    flex={1}
-                    placeholder="Telefone"
-                    value={userForm.phone}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, phone: text })
-                    }
-                    keyboardType="phone-pad"
-                  />
-                  <Input
-                    flex={1}
-                    placeholder="Data de nascimento (YYYY-MM-DD)"
-                    value={userForm.birthday}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, birthday: text })
-                    }
-                  />
-                </HStack>
+              <Input
+                label="Email *"
+                placeholder="Digite o email"
+                value={userForm.email}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, email: text })
+                }
+                keyboardType="email-address"
+              />
 
-                <Input
-                  placeholder="Email"
-                  value={userForm.email}
-                  onChangeText={(text) =>
-                    setUserForm({ ...userForm, email: text })
-                  }
-                  keyboardType="email-address"
-                />
+              <Input
+                label="Telefone"
+                placeholder="Digite o telefone"
+                value={userForm.phone}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, phone: text })
+                }
+                keyboardType="phone-pad"
+              />
 
-                <HStack space={2}>
-                  <Input
-                    flex={1}
-                    placeholder="Início da licença (YYYY-MM-DD)"
-                    value={userForm.licenseStart}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, licenseStart: text })
-                    }
-                  />
-                  <Input
-                    flex={1}
-                    placeholder="Fim da licença (YYYY-MM-DD)"
-                    value={userForm.licenseEnd}
-                    onChangeText={(text) =>
-                      setUserForm({ ...userForm, licenseEnd: text })
-                    }
-                  />
-                </HStack>
-              </VStack>
-            </ScrollView>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
+              <Input
+                label="Data de nascimento"
+                placeholder="YYYY-MM-DD"
+                value={userForm.birthday}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, birthday: text })
+                }
+              />
+
+              <Input
+                label="Gênero"
+                placeholder="Digite o gênero"
+                value={userForm.genre}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, genre: text })
+                }
+              />
+
+              <Input
+                label="Data de início da licença"
+                placeholder="YYYY-MM-DD"
+                value={userForm.licenseStart}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, licenseStart: text })
+                }
+              />
+
+              <Input
+                label="Data de fim da licença"
+                placeholder="YYYY-MM-DD"
+                value={userForm.licenseEnd}
+                onChangeText={(text) =>
+                  setUserForm({ ...userForm, licenseEnd: text })
+                }
+              />
+            </View>
+
+            <View className="mt-6 space-y-3">
               <Button
-                variant="ghost"
-                onPress={() => {
-                  setShowEditModal(false);
-                  resetForms();
-                }}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
+                title="Atualizar Usuário"
                 onPress={handleUpdateUser}
+                variant="primary"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Atualizando..." : "Atualizar"}
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowEditModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
       </Modal>
 
       {/* Change Password Modal */}
       <Modal
-        isOpen={showPasswordModal}
-        onClose={() => setShowPasswordModal(false)}
+        visible={showPasswordModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
       >
-        <Modal.Content maxWidth="400px">
-          <Modal.Header>Alterar Senha</Modal.Header>
-          <Modal.Body>
-            <VStack space={4}>
-              <Text color="gray.600">
-                Usuário: <Text fontWeight="bold">{selectedUser?.name}</Text>
-              </Text>
+        <View className="flex-1 bg-white">
+          <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
+            <Text className="text-xl font-bold">Alterar Senha</Text>
+            <TouchableOpacity onPress={() => setShowPasswordModal(false)}>
+              <Ionicons name="close" size={24} color="#374151" />
+            </TouchableOpacity>
+          </View>
 
-              {passwordError && (
-                <Box bg="red.100" p={3} rounded="lg">
-                  <Text color="red.600" fontSize="sm">
-                    {passwordError}
-                  </Text>
-                </Box>
-              )}
+          <ScrollView className="flex-1 p-4">
+            <Text className="text-gray-600 mb-4">
+              Usuário: <Text className="font-bold">{selectedUser?.name}</Text>
+            </Text>
 
+            <View className="space-y-4">
               <Input
-                placeholder="Nova senha"
+                label="Nova Senha *"
+                placeholder="Digite a nova senha"
                 value={passwordForm.newPassword}
-                onChangeText={(text) => {
-                  setPasswordForm({ ...passwordForm, newPassword: text });
-                  if (passwordError) setPasswordError(null);
-                }}
-                type="password"
+                onChangeText={(text) =>
+                  setPasswordForm({ ...passwordForm, newPassword: text })
+                }
                 secureTextEntry
               />
+
               <Input
-                placeholder="Confirmar nova senha"
+                label="Confirmar Nova Senha *"
+                placeholder="Confirme a nova senha"
                 value={passwordForm.confirmPassword}
-                onChangeText={(text) => {
-                  setPasswordForm({ ...passwordForm, confirmPassword: text });
-                  if (passwordError) setPasswordError(null);
-                }}
-                type="password"
+                onChangeText={(text) =>
+                  setPasswordForm({ ...passwordForm, confirmPassword: text })
+                }
                 secureTextEntry
               />
-            </VStack>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
+            </View>
+
+            {passwordError && (
+              <View className="bg-red-100 p-3 rounded-lg mt-4">
+                <Text className="text-red-600 text-sm">{passwordError}</Text>
+              </View>
+            )}
+
+            <View className="mt-6 space-y-3">
               <Button
-                variant="ghost"
-                onPress={() => {
-                  setShowPasswordModal(false);
-                  setPasswordForm({ newPassword: "", confirmPassword: "" });
-                }}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
+                title="Alterar Senha"
                 onPress={handleChangePassword}
-                colorScheme="yellow"
+                variant="primary"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Alterando..." : "Alterar Senha"}
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
+              />
+
+              <Button
+                title="Cancelar"
+                onPress={() => setShowPasswordModal(false)}
+                variant="ghost"
+              />
+            </View>
+          </ScrollView>
+        </View>
       </Modal>
 
       {/* Delete Confirmation Alert */}
-      <AlertDialog
-        isOpen={showDeleteAlert}
-        onClose={() => setShowDeleteAlert(false)}
-        leastDestructiveRef={React.useRef(null)}
-      >
-        <AlertDialog.Content>
-          <AlertDialog.Header>Confirmar Exclusão</AlertDialog.Header>
-          <AlertDialog.Body>
-            Tem certeza que deseja excluir o usuário{" "}
-            <Text fontWeight="bold">{selectedUser?.name}</Text>?
-            {selectedUser?.type === 20 && (
-              <Text color="red.500" mt={2}>
-                ⚠️ Este é um usuário administrador!
-              </Text>
-            )}
-          </AlertDialog.Body>
-          <AlertDialog.Footer>
-            <Button.Group space={2}>
+      {showDeleteAlert && (
+        <View className="absolute inset-0 bg-black bg-opacity-50 justify-center items-center">
+          <View className="bg-white p-6 rounded-lg mx-4 max-w-sm">
+            <Text className="text-lg font-bold mb-4">Confirmar Exclusão</Text>
+            <Text className="text-gray-600 mb-4">
+              Tem certeza que deseja excluir o usuário{" "}
+              <Text className="font-bold">{selectedUser?.name}</Text>?
+            </Text>
+            <Text className="text-red-500 mb-4 text-sm">
+              ⚠️ Esta ação não pode ser desfeita!
+            </Text>
+
+            <View className="flex-row space-x-3">
               <Button
-                variant="ghost"
+                title="Cancelar"
                 onPress={() => setShowDeleteAlert(false)}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
+                variant="ghost"
+                style={{ flex: 1 }}
+              />
               <Button
-                colorScheme="red"
+                title="Excluir"
                 onPress={handleDeleteUser}
+                variant="danger"
+                loading={isSubmitting}
                 disabled={isSubmitting}
-                isLoading={isSubmitting}
-              >
-                {isSubmitting ? "Excluindo..." : "Excluir"}
-              </Button>
-            </Button.Group>
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog>
-    </VStack>
+                style={{ flex: 1 }}
+              />
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
   );
 }

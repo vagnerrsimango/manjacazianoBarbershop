@@ -1,33 +1,24 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
+  View,
   Text,
-  Flex,
-  HStack,
-  Center,
-  Checkbox,
-  Stack,
-  Icon,
-  useToast,
-  Select,
   ScrollView,
-} from "native-base";
-import MyButton from "../components/MyButton";
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  Modal,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+
 import Header from "../components/Header";
-import { BubblesBG } from "../utils/Icons";
-import CustomModal from "../components/CustomModal";
 import Input from "../components/Input";
 import { useCart } from "../utils/LocalHooks";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList } from "react-native";
 import Tag from "../components/Tag";
 import useUser from "../utils/hooks/UserHook";
 import api from "../utils/network/api";
-import { MaterialIcons } from "@expo/vector-icons";
-import CustomInput from "../components/Input";
-import CustomSelect from "../components/Select";
 import AutoCompleteInput from "../components/AutoCompletInput";
-import AutoCompleteInputComp from "../components/AutoCompletInput";
-import { err } from "react-native-svg/lib/typescript/xml";
+import { Button } from "../presentation/components/Button";
 
 export default function CheckoutScreen() {
   const inputsInitalState = {
@@ -45,8 +36,7 @@ export default function CheckoutScreen() {
   const { setUser } = useUser();
   const { setServices } = useCart();
 
-  const Toast = useToast();
-  const handleSelectedAutoCustomer = (customer) => {
+  const handleSelectedAutoCustomer = (customer: any) => {
     setInputs((prev) => ({
       ...prev,
       client_name: customer.name,
@@ -72,15 +62,12 @@ export default function CheckoutScreen() {
     );
   }, []);
 
-  const handleInputChange = (value, input) => {
+  const handleInputChange = (value: string, input: string) => {
     switch (input) {
       case "paid":
         if (Number(value) > total) {
-          return Toast.show({
-            title: "Valor acima do preço do corte",
-            placement: "bottom",
-            backgroundColor: "red.500",
-          });
+          Alert.alert("Erro", "Valor acima do preço do corte");
+          return;
         }
     }
 
@@ -95,241 +82,216 @@ export default function CheckoutScreen() {
       inputs.client_phone.length == 0 &&
       inputs.client_phone.length == 0
     ) {
-      alert("Por favor preencha os campos");
+      Alert.alert("Erro", "Por favor preencha os campos");
       return;
     }
-    isLoading(true);
-    if (total == 0 || !inputs.paid) {
-      return Toast.show({
-        title: "Selecione os serviços e inclua o valor pago pelo cliente",
-        backgroundColor: "red.500",
-      });
+
+    if (Number(inputs.paid) < Number(total) && !inputs.isChecked) {
+      Alert.alert(
+        "Erro",
+        "Cliente deve pagar o valor total ou marcar como dívida"
+      );
+      return;
     }
-    let postList: any = [];
 
-    services.forEach((service) => {
-      postList.push({
-        product_id: Number(service.id),
-        price: Number(service.price),
-      });
-    });
-
-    console.log("my array", postList);
-
-    console.log("in", inputs);
-
+    isLoading(true);
     try {
-      const response = await api.post("/sale", {
-        client_name: input,
+      const response = await api.post("/sales", {
+        client_name: inputs.client_name,
         client_phone: inputs.client_phone,
-        isChecked: inputs.isChecked,
-        paid: inputs.paid,
-        soldList: postList,
+        total: total,
+        paid: Number(inputs.paid),
+        is_debt: inputs.isChecked,
+        services: services.map((service) => service.id),
       });
 
-      // console.log(response.data.success);
-      if (response.data.success == true) {
+      if (response.data.success) {
         setShowModal(true);
         setServices([]);
-      } else {
-        alert("Falha ao efectuar a venda!");
+        setInputs(inputsInitalState);
+        setInput("");
       }
     } catch (error) {
-      console.log(
-        "🚀 ~ file: CheckoutScreen.tsx:137 ~ showSucess ~ error:",
-        error
-      );
-      alert(alert("Falha ao efectuar a venda!" + error));
+      console.error("Error creating sale:", error);
+      Alert.alert("Erro", "Falha ao processar venda");
     } finally {
       isLoading(false);
     }
   };
 
+  const renderServiceItem = ({ item }: { item: any }) => (
+    <View className="bg-white p-4 mb-3 rounded-lg shadow-sm border border-gray-200">
+      <View className="flex-row justify-between items-center">
+        <View className="flex-1">
+          <Text className="text-lg font-semibold text-gray-900 mb-1">
+            {item.name}
+          </Text>
+          <Text className="text-gray-600 text-sm">{item.description}</Text>
+        </View>
+        <View className="items-end">
+          <Text className="text-xl font-bold text-primary-600">
+            {item.price.toFixed(2)} MT
+          </Text>
+        </View>
+      </View>
+    </View>
+  );
+
   return (
-    <Box bg="primary.100" flex={1}>
-      <Header title="Main" back />
-      <Flex
-        direction="row"
-        justifyContent="space-between"
-        p={4}
-        position="absolute"
-        top={0}
-        left={0}
-        right={0}
-      ></Flex>
-      <Box flex={1} alignItems="center" justifyContent="center">
-        <Text fontSize="lg" color="primary.300" fontWeight="bold">
-          POR FAVOR, CONFIRME OS SERVIÇOS SELECIONADOS
-        </Text>
-        <HStack>
-          <Center
-            flexDirection={"row"}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
+    <View className="flex-1 bg-gray-50">
+      <Header title="Checkout" back />
+
+      <ScrollView className="flex-1 p-4">
+        {/* Customer Selection */}
+        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+          <Text className="text-lg font-bold text-gray-900 mb-4">
+            Seleção de Cliente
+          </Text>
+
+          <AutoCompleteInput
+            placeholder="Pesquisar cliente..."
+            onSelect={handleSelectedAutoCustomer}
+            value={input}
+            onChangeText={setInput}
+          />
+
+          {inputs.client_name && (
+            <View className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <Text className="text-blue-800 font-medium">
+                Cliente selecionado: {inputs.client_name}
+              </Text>
+              <Text className="text-blue-600 text-sm">
+                Telefone: {inputs.client_phone}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Services List */}
+        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+          <Text className="text-lg font-bold text-gray-900 mb-4">
+            Serviços Selecionados ({services.length})
+          </Text>
+
+          {services.length > 0 ? (
             <FlatList
               data={services}
-              horizontal
-              renderItem={({ item }) => <Tag title={item.name} />}
+              renderItem={renderServiceItem}
+              keyExtractor={(item) => item.id.toString()}
+              scrollEnabled={false}
             />
-
-            <Box
-              background={"red.500"}
-              mt={2}
-              w={"30%"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              rounded={2}
-            >
-              <Text
-                fontSize="md"
-                color="white"
-                fontWeight="600"
-                textTransform={"uppercase"}
-                padding={1}
-              >
-                {total}
-                Mts
+          ) : (
+            <View className="items-center p-6">
+              <Ionicons name="cut-outline" size={48} color="#9CA3AF" />
+              <Text className="text-gray-500 mt-2 text-center">
+                Nenhum serviço selecionado
               </Text>
-            </Box>
-          </Center>
-        </HStack>
+            </View>
+          )}
+        </View>
 
-        <ScrollView style={{ flex: 1, width: "100%" }}>
-          <Stack space={1} w="100%" alignItems="center">
-            <Text
-              fontWeight={"normal"}
-              fontSize={"md"}
-              color={"primary.300"}
-              p={2}
-            >
-              Dados do cliente
-            </Text>
-
-            <AutoCompleteInput
-              handleSelectedAutoCustomer={handleSelectedAutoCustomer}
-              input={input}
-              setInput={setInput}
-            />
-
-            {/* <CustomInput
-            onChangeText={(value) => handleInputChange(value, "client_name")}
-            value={inputs.client_name}
-            w={{
-              base: "75%",
-              md: "25%",
-            }}
-            fontWeight={"light"}
-            InputLeftElement={
-              <Icon
-                as={<MaterialIcons name="person" />}
-                size={5}
-                ml="2"
-                color="muted.400"
-              />
-            }
-            placeholder="Nome"
-          /> */}
-            <CustomInput
-              onChangeText={(value) => handleInputChange(value, "client_phone")}
-              value={inputs.client_phone}
-              w={{
-                base: "75%",
-                md: "25%",
-              }}
-              fontWeight={"light"}
-              InputLeftElement={
-                <Icon
-                  as={<MaterialIcons name="phone" />}
-                  size={5}
-                  ml="2"
-                  color="muted.400"
-                />
-              }
-              placeholder="Contacto"
-            />
-
-            <CustomSelect />
-
-            <Flex
-              direction="row"
-              mt={4}
-              p={"2"}
-              w={"30%"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Input
-                textAlign={"center"}
-                fontSize={"xl"}
-                bg="primary.300"
-                alignItems="center"
-                justifyContent="center"
-                onChangeText={(value) => handleInputChange(value, "paid")}
-                value={inputs.paid.toString()}
-                color={"primary.400"}
-                letterSpacing={2}
-                w={"90%"}
-                rounded={0}
-                InputRightElement={
-                  <Checkbox
-                    shadow={2}
-                    value={inputs.isChecked ? "checked" : "unchecked"}
-                    height={"48"}
-                    size={"lg"}
-                    accessibilityLabel="This is a dummy checkbox"
-                    background={"primary.200"}
-                    padding={"2"}
-                    marginRight={"1"}
-                    onChange={(value) => handleInputChange(value, "isChecked")}
-                  />
-                }
-              />
-            </Flex>
-
-            {inputs.isChecked ? null : (
-              <Text
-                textTransform={"uppercase"}
-                color={"red.500"}
-                fontWeight={"bold"}
-                mb={2}
-              >
-                tem um valor remanescente de {total - Number(inputs.paid)},00
-                mts
-              </Text>
-            )}
-
-            <MyButton
-              title="Finalizar"
-              type="SECONDARY"
-              rounded={4}
-              isLoading={loading}
-              onPress={showSucess}
-            />
-          </Stack>
-          {/* <AutoCompleteInputComp /> */}
-        </ScrollView>
-      </Box>
-
-      <CustomModal
-        opened={showModal}
-        onClose={() => {
-          setShowModal(false);
-          setUser(null);
-        }}
-      >
-        <Box textAlign="center">
-          <BubblesBG />
-          <Text
-            textAlign={"center"}
-            fontSize="xl"
-            color="primary.400"
-            fontWeight="bold"
-          >
-            Venda feita com sucesso
+        {/* Payment Section */}
+        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+          <Text className="text-lg font-bold text-gray-900 mb-4">
+            Informações de Pagamento
           </Text>
-        </Box>
-      </CustomModal>
-    </Box>
+
+          <View className="space-y-4">
+            <View className="flex-row justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <Text className="text-lg font-semibold text-gray-700">
+                Total dos Serviços:
+              </Text>
+              <Text className="text-2xl font-bold text-primary-600">
+                {total.toFixed(2)} MT
+              </Text>
+            </View>
+
+            <Input
+              label="Valor Pago"
+              placeholder="Digite o valor pago"
+              value={inputs.paid}
+              onChangeText={(text) => handleInputChange(text, "paid")}
+              keyboardType="numeric"
+            />
+
+            <View className="flex-row items-center space-x-3">
+              <TouchableOpacity
+                onPress={() =>
+                  setInputs((prev) => ({ ...prev, isChecked: !prev.isChecked }))
+                }
+                className={`w-6 h-6 rounded border-2 items-center justify-center ${
+                  inputs.isChecked
+                    ? "bg-primary-500 border-primary-500"
+                    : "border-gray-300"
+                }`}
+              >
+                {inputs.isChecked && (
+                  <Ionicons name="checkmark" size={16} color="white" />
+                )}
+              </TouchableOpacity>
+              <Text className="text-gray-700">
+                Marcar como dívida (cliente pagará depois)
+              </Text>
+            </View>
+
+            {Number(inputs.paid) < total && !inputs.isChecked && (
+              <View className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                <Text className="text-yellow-800 text-sm">
+                  ⚠️ Valor pendente: {(total - Number(inputs.paid)).toFixed(2)}{" "}
+                  MT
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* Action Buttons */}
+        <View className="space-y-3 mb-6">
+          <Button
+            title={isLoading ? "Processando..." : "Finalizar Venda"}
+            onPress={showSucess}
+            variant="primary"
+            loading={isLoading}
+            disabled={isLoading || services.length === 0}
+            size="lg"
+          />
+
+          <Button
+            title="Limpar Carrinho"
+            onPress={() => setServices([])}
+            variant="ghost"
+            disabled={services.length === 0}
+          />
+        </View>
+      </ScrollView>
+
+      {/* Success Modal */}
+      <Modal
+        visible={showModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+      >
+        <View className="flex-1 bg-white justify-center items-center p-6">
+          <View className="bg-green-100 p-6 rounded-full mb-6">
+            <Ionicons name="checkmark-circle" size={64} color="#16A34A" />
+          </View>
+
+          <Text className="text-2xl font-bold text-gray-900 mb-4 text-center">
+            Venda Processada!
+          </Text>
+
+          <Text className="text-gray-600 text-center mb-8">
+            A venda foi processada com sucesso. O cliente foi notificado.
+          </Text>
+
+          <Button
+            title="Fechar"
+            onPress={() => setShowModal(false)}
+            variant="primary"
+            size="lg"
+          />
+        </View>
+      </Modal>
+    </View>
   );
 }

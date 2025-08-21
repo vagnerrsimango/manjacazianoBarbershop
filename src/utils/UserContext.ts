@@ -9,11 +9,11 @@ export interface Iuser {
 }
 
 export interface IUserContext {
-  user: Iuser;
-  setUser: any;
-  loginWithPin: (input?: string) => void;
+  user: Iuser | null;
+  setUser: React.Dispatch<React.SetStateAction<Iuser | null>>;
+  loginWithPin: (input: string) => void;
   loading: boolean;
-  setLoading: any;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const UserContext = createContext<IUserContext>({} as IUserContext);
