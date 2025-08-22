@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Modal, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Input from "../components/Input";
 import MyButton from "../components/MyButton";
@@ -24,23 +24,33 @@ export default function LoginScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white w-full h-screen items-center justify-center">
-      <Text className="text-xl text-gray-900 font-bold mb-2">
+    <View className="flex-1 bg-gray-100 w-full h-screen items-center justify-center">
+      {/* App Logo */}
+      <View className="mb-6 items-center">
+        <Image
+          source={require("../assets/logo.png")}
+          className="w-24 h-24 rounded-full"
+          resizeMode="contain"
+        />
+        <Text className="text-xl text-primary-600 font-bold mt-3">Prímula</Text>
+      </View>
+
+      <Text className="text-3xl text-gray-500 font-black mb-2">
         Iniciar sessão
       </Text>
       <Text className="text-sm text-gray-600 font-light mb-8">
         Por favor insira o seu PIN de 4 dígitos
       </Text>
 
-      <View className="w-4/5 max-w-xs mb-8">
+      <View className="w-4/5 max-w-xs mb-8 px-2">
         <Input
           placeholder="PIN"
           value={pin} // Set the value prop to the input value state
           onChangeText={handleInputChange} // Handle input changes
           secureTextEntry
           leftIcon={
-            <View className="pl-4">
-              <Lock size={20} color="#0052A3" weight="fill" />
+            <View className="">
+              <Lock size={20} color="#EAB308" weight="fill" />
             </View>
           }
         />
@@ -56,7 +66,7 @@ export default function LoginScreen() {
 
       <View className="absolute bottom-8">
         {/* <TouchableOpacity onPress={handlePinRecover}>
-          <Text className="text-base text-primary-400 font-normal uppercase">
+          <Text className="text-base text-primary-600 font-normal uppercase">
             Esqueceu pin ?
           </Text>
         </TouchableOpacity> */}
@@ -65,7 +75,7 @@ export default function LoginScreen() {
       <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
         <View className="items-center">
           <BubblesBG />
-          <Text className="text-center text-xl text-primary-400 font-bold">
+          <Text className="text-center text-xl text-primary-600 font-bold">
             Contacte o admin
           </Text>
         </View>

@@ -57,7 +57,7 @@ const Input: React.FC<InputProps> = ({
           </View>
         )}
         <TextInput
-          className={`bg-blue-50 border border-transparent rounded text-gray-900 px-4 ${
+          className={`bg-gray-100 border border-primary-400 rounded text-gray-900 px-4 ${
             leftIcon ? "pl-12" : "pl-4"
           }`}
           style={[
@@ -66,12 +66,12 @@ const Input: React.FC<InputProps> = ({
               height,
               fontSize,
               minHeight: multiline ? 80 : undefined,
-              borderColor: error ? "#EF4444" : "transparent",
+              borderColor: error ? "#EF4444" : "#FACC15",
             },
             inputStyle,
           ]}
           placeholder={placeholder}
-          placeholderTextColor="#4DA6FF"
+          placeholderTextColor="#EAB308"
           value={value}
           onChangeText={onChangeText}
           secureTextEntry={secureTextEntry}

@@ -28,11 +28,45 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
 }) => {
+  // Ensure all props have valid values with robust checking
+  const safeTitle = typeof title === "string" ? title : "Button";
+  const safeVariant =
+    variant && typeof variant === "string" ? variant : "primary";
+  const safeSize = size && typeof size === "string" ? size : "md";
+  const safeDisabled = typeof disabled === "boolean" ? disabled : false;
+  const safeLoading = typeof loading === "boolean" ? loading : false;
+  const safeOnPress = typeof onPress === "function" ? onPress : () => {};
+
+  // Log any unexpected values for debugging
+  if (
+    title !== safeTitle ||
+    variant !== safeVariant ||
+    size !== safeSize ||
+    disabled !== safeDisabled ||
+    loading !== safeLoading ||
+    onPress !== safeOnPress
+  ) {
+    console.warn("Button received invalid props:", {
+      title,
+      variant,
+      size,
+      disabled,
+      loading,
+      onPress: typeof onPress,
+      safeTitle,
+      safeVariant,
+      safeSize,
+      safeDisabled,
+      safeLoading,
+      safeOnPress: typeof safeOnPress,
+    });
+  }
+
   const baseClasses = "rounded-lg flex-row items-center justify-center";
 
   const variantClasses = {
     primary: "bg-primary-500",
-    secondary: "bg-secondary-500",
+    secondary: "bg-gray-600",
     danger: "bg-red-500",
     success: "bg-green-500",
     ghost: "bg-transparent border border-gray-300",
@@ -58,28 +92,28 @@ export const Button: React.FC<ButtonProps> = ({
     ghost: "text-gray-700",
   };
 
-  const disabledClasses = disabled || loading ? "opacity-50" : "";
+  const disabledClasses = safeDisabled || safeLoading ? "opacity-50" : "";
 
   return (
     <TouchableOpacity
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses}`}
-      onPress={onPress}
-      disabled={disabled || loading}
+      className={`${baseClasses} ${variantClasses[safeVariant]} ${sizeClasses[safeSize]} ${disabledClasses}`}
+      onPress={safeOnPress}
+      disabled={safeDisabled || safeLoading}
       style={style}
       activeOpacity={0.7}
     >
-      {loading && (
+      {safeLoading && (
         <ActivityIndicator
           size="small"
-          color={variant === "ghost" ? "#374151" : "#ffffff"}
+          color={safeVariant === "ghost" ? "#374151" : "#FFFFFF"}
           className="mr-2"
         />
       )}
       <Text
-        className={`font-semibold ${textSizeClasses[size]} ${textColorClasses[variant]}`}
+        className={`font-semibold ${textSizeClasses[safeSize]} ${textColorClasses[safeVariant]}`}
         style={textStyle}
       >
-        {title}
+        {safeTitle}
       </Text>
     </TouchableOpacity>
   );

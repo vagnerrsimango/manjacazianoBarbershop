@@ -22,7 +22,7 @@ interface MyButtonProps {
 const MyButton: React.FC<MyButtonProps> = ({
   title,
   onPress,
-  bg = "#0052A3",
+  bg = "#EAB308",
   width = "auto",
   height = 48,
   disabled = false,
@@ -32,7 +32,7 @@ const MyButton: React.FC<MyButtonProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      className="bg-blue-600 rounded-lg items-center justify-center active:opacity-70"
+      className="bg-primary-500 rounded-lg items-center justify-center active:opacity-70"
       style={[
         {
           width,
