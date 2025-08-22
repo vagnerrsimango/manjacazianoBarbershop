@@ -1,5 +1,11 @@
 import React from "react";
-import { TouchableOpacity, Text, ViewStyle, TextStyle } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  ViewStyle,
+  TextStyle,
+  ActivityIndicator,
+} from "react-native";
 
 interface MyButtonProps {
   title: string;
@@ -8,6 +14,7 @@ interface MyButtonProps {
   width?: number | string;
   height?: number;
   disabled?: boolean;
+  loading?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -19,39 +26,32 @@ const MyButton: React.FC<MyButtonProps> = ({
   width = "auto",
   height = 48,
   disabled = false,
+  loading = false,
   style,
   textStyle,
 }) => {
   return (
     <TouchableOpacity
+      className="bg-blue-600 rounded-lg items-center justify-center active:opacity-70"
       style={[
         {
-          backgroundColor: bg,
           width,
           height,
-          borderRadius: 8,
-          alignItems: "center",
-          justifyContent: "center",
-          opacity: disabled ? 0.5 : 1,
+          opacity: disabled || loading ? 0.5 : 1,
         },
         style,
       ]}
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || loading}
       activeOpacity={0.7}
     >
-      <Text
-        style={[
-          {
-            color: "#FFFFFF",
-            fontSize: 16,
-            fontWeight: "600",
-          },
-          textStyle,
-        ]}
-      >
-        {title}
-      </Text>
+      {loading ? (
+        <ActivityIndicator color="#FFFFFF" size="small" />
+      ) : (
+        <Text className="text-white text-base font-semibold" style={textStyle}>
+          {title}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };

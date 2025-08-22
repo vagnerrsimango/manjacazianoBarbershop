@@ -1,101 +1,75 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, TouchableOpacity, Modal } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Input from "../components/Input";
-import { Button } from "../presentation/components/Button";
+import MyButton from "../components/MyButton";
+import CustomModal from "../components/CustomModal";
+import { Lock, User } from "phosphor-react-native";
+import { BubblesBG } from "../utils/Icons";
 import useUser from "../utils/hooks/UserHook";
-import api from "../utils/network/api";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  const { setUser } = useUser();
+  const [showModal, setShowModal] = useState(false);
+  const [pin, setPin] = useState(""); // State to store the input value
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos");
-      return;
-    }
+  const { loginWithPin, loading } = useUser();
 
-    setLoading(true);
-    try {
-      const response = await api.post("/auth/login", {
-        email,
-        password,
-      });
+  const handleInputChange = (value: string) => {
+    setPin(value); // Update the input value state
+  };
 
-      if (response.data.success) {
-        const userData = response.data.data;
-        setUser(userData);
-        navigation.navigate("Home" as never);
-      } else {
-        Alert.alert("Erro", response.data.message || "Falha no login");
-      }
-    } catch (error: any) {
-      console.error("Login error:", error);
-      Alert.alert(
-        "Erro",
-        error.response?.data?.message || "Erro ao fazer login"
-      );
-    } finally {
-      setLoading(false);
-    }
+  const handlePinRecover = () => {
+    setShowModal(true);
   };
 
   return (
-    <View className="flex-1 bg-gradient-to-br from-primary-500 to-primary-700 justify-center items-center p-6">
-      <View className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm">
-        {/* Logo/Header */}
-        <View className="items-center mb-8">
-          <View className="bg-primary-100 p-4 rounded-full mb-4">
-            <Ionicons name="cut-outline" size={48} color="#0052A3" />
-          </View>
-          <Text className="text-2xl font-bold text-gray-900 mb-2">
-            Manja Caziano
-          </Text>
-          <Text className="text-gray-600 text-center">
-            Faça login para acessar o sistema
-          </Text>
-        </View>
+    <View className="flex-1 bg-white w-full h-screen items-center justify-center">
+      <Text className="text-xl text-gray-900 font-bold mb-2">
+        Iniciar sessão
+      </Text>
+      <Text className="text-sm text-gray-600 font-light mb-8">
+        Por favor insira o seu PIN de 4 dígitos
+      </Text>
 
-        {/* Login Form */}
-        <View className="space-y-4">
-          <Input
-            label="Email"
-            placeholder="Digite seu email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-
-          <Input
-            label="Senha"
-            placeholder="Digite sua senha"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-
-          <Button
-            title={loading ? "Entrando..." : "Entrar"}
-            onPress={handleLogin}
-            variant="primary"
-            loading={loading}
-            disabled={loading}
-            style={{ marginTop: 16 }}
-          />
-        </View>
-
-        {/* Footer */}
-        <View className="mt-8 pt-6 border-t border-gray-200">
-          <Text className="text-gray-500 text-center text-sm">
-            Sistema de Gestão para Barbearias
-          </Text>
-        </View>
+      <View className="w-4/5 max-w-xs mb-8">
+        <Input
+          placeholder="PIN"
+          value={pin} // Set the value prop to the input value state
+          onChangeText={handleInputChange} // Handle input changes
+          secureTextEntry
+          leftIcon={
+            <View className="pl-4">
+              <Lock size={20} color="#0052A3" weight="fill" />
+            </View>
+          }
+        />
       </View>
+
+      <View className="w-4/5 max-w-xs">
+        <MyButton
+          title="Entrar"
+          onPress={() => loginWithPin(pin)}
+          loading={loading}
+        />
+      </View>
+
+      <View className="absolute bottom-8">
+        {/* <TouchableOpacity onPress={handlePinRecover}>
+          <Text className="text-base text-primary-400 font-normal uppercase">
+            Esqueceu pin ?
+          </Text>
+        </TouchableOpacity> */}
+      </View>
+
+      <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
+        <View className="items-center">
+          <BubblesBG />
+          <Text className="text-center text-xl text-primary-400 font-bold">
+            Contacte o admin
+          </Text>
+        </View>
+      </CustomModal>
     </View>
   );
 }

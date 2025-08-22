@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UserProvider from "./src/utils/UserProvider";
 import CartContextProvider from "./src/utils/CartContexProvider";
 import AppRoutes from "./src/routes/AppRoutes";
-// import "./src/styles/global.css";
+import "./global.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
