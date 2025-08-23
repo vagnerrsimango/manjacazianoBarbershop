@@ -4,13 +4,14 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  FlatList,
   Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useCart } from "../utils/LocalHooks";
-import Header from "../components/Header";
+import GlobalNavigation from "../components/GlobalNavigation";
 import MyButton from "../components/MyButton";
 import Tag from "../components/Tag";
 import { BeardLogo, ComboLogo, ExtraLogo, HairLogo } from "../utils/Icons";
@@ -19,7 +20,11 @@ import { IServiceResponse } from "../utils/Responses";
 import ServiceSkeleton from "../components/ServiceSkeleton";
 
 type RootStackParamList = {
+  Home: undefined;
   Checkout: undefined;
+  Clients: undefined;
+  Users: undefined;
+  ServiceSelection: undefined;
 };
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
@@ -194,15 +199,10 @@ export default function ServiceSelectionScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <Header title="Manjacasiano Haircuts" />
+      {/* Global Navigation Bar */}
+      <GlobalNavigation title="Seleção de Serviços" />
 
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{
-          paddingBottom: selectedServices.length > 0 ? 120 : 20,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView className="flex-1 p-4">
         {/* Main Instruction */}
         <View className="px-6 py-4">
           <Text className="text-center text-lg text-gray-700 font-medium mb-2">

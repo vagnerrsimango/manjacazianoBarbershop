@@ -8,9 +8,10 @@ import {
   Alert,
   Modal,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Header from "../components/Header";
+import GlobalNavigation from "../components/GlobalNavigation";
 import { Button } from "../presentation/components/Button";
 
 import Input from "../components/Input";
@@ -38,9 +39,12 @@ export default function UserManagementScreen() {
     type: 12,
     email: "",
     password: "",
-    licenseStart: "",
-    licenseEnd: "",
   });
+
+  // Date inputs state
+  const [dayInput, setDayInput] = useState("");
+  const [monthInput, setMonthInput] = useState("");
+  const [yearInput, setYearInput] = useState("");
   const [passwordForm, setPasswordForm] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -85,7 +89,7 @@ export default function UserManagementScreen() {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (user) =>
-          user.name.toLowerCase().includes(query) ||
+          (user.name && user.name.toLowerCase().includes(query)) ||
           (user.surname && user.surname.toLowerCase().includes(query)) ||
           (user.email && user.email.toLowerCase().includes(query)) ||
           (user.phone && user.phone.includes(query))
@@ -101,8 +105,8 @@ export default function UserManagementScreen() {
 
     // Apply sorting
     filtered.sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
+      const dateA = new Date(a.created_at || 0).getTime();
+      const dateB = new Date(b.created_at || 0).getTime();
       return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
     });
 
@@ -110,14 +114,28 @@ export default function UserManagementScreen() {
   }, [users, searchQuery, filterType, sortOrder]);
 
   const handleCreateUser = async () => {
-    if (!userForm.name || !userForm.email || !userForm.password) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios");
+    if (!userForm.name) {
+      Alert.alert("Erro", "Por favor, insira o nome do usuário");
       return;
     }
 
+    // Concatenate date inputs if provided
+    let userDataWithDate = { ...userForm };
+    if (dayInput && monthInput && yearInput) {
+      const formattedDate = `${yearInput}-${monthInput.padStart(2, "0")}-${dayInput.padStart(2, "0")}`;
+      userDataWithDate.birthday = formattedDate;
+    }
+
+    // Create payload without email and password, add default password if required
+    const userPayload = {
+      ...userDataWithDate,
+      password: "123456", // Default password
+      email: `${userForm.name.toLowerCase().replace(/\s+/g, "")}@barbershop.com`, // Generate default email
+    };
+
     setIsSubmitting(true);
     try {
-      const success = await createUser(userForm);
+      const success = await createUser(userPayload);
       if (success) {
         setShowCreateModal(false);
         setUserForm({
@@ -129,9 +147,10 @@ export default function UserManagementScreen() {
           type: 12,
           email: "",
           password: "",
-          licenseStart: "",
-          licenseEnd: "",
         });
+        setDayInput("");
+        setMonthInput("");
+        setYearInput("");
         await loadData();
       }
     } catch (error) {
@@ -142,18 +161,31 @@ export default function UserManagementScreen() {
   };
 
   const handleUpdateUser = async () => {
-    if (!selectedUser || !userForm.name || !userForm.email) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos obrigatórios");
+    if (!selectedUser || !userForm.name) {
+      Alert.alert("Erro", "Por favor, insira o nome do usuário");
       return;
     }
 
+    // Concatenate date inputs if provided
+    let updateDataWithDate = { ...userForm };
+    if (dayInput && monthInput && yearInput) {
+      const formattedDate = `${yearInput}-${monthInput.padStart(2, "0")}-${dayInput.padStart(2, "0")}`;
+      updateDataWithDate.birthday = formattedDate;
+    }
+
+    // Create update payload without email and password
+    const updateData: UserUpdateRequest = {
+      id: selectedUser.id,
+      name: updateDataWithDate.name,
+      surname: updateDataWithDate.surname,
+      genre: updateDataWithDate.genre,
+      phone: updateDataWithDate.phone,
+      birthday: updateDataWithDate.birthday,
+      type: updateDataWithDate.type,
+    };
+
     setIsSubmitting(true);
     try {
-      const updateData: UserUpdateRequest = {
-        id: selectedUser.id,
-        ...userForm,
-      };
-
       const success = await updateUser(updateData);
       if (success) {
         setShowEditModal(false);
@@ -167,9 +199,10 @@ export default function UserManagementScreen() {
           type: 12,
           email: "",
           password: "",
-          licenseStart: "",
-          licenseEnd: "",
         });
+        setDayInput("");
+        setMonthInput("");
+        setYearInput("");
         await loadData();
       }
     } catch (error) {
@@ -222,7 +255,7 @@ export default function UserManagementScreen() {
 
     try {
       const success = await changeUserPassword({
-        userId: selectedUser.id,
+        id: selectedUser.id,
         newPassword: passwordForm.newPassword,
       });
 
@@ -263,9 +296,20 @@ export default function UserManagementScreen() {
       type: user.type,
       email: user.email || "",
       password: "",
-      licenseStart: user.licenseStart || "",
-      licenseEnd: user.licenseEnd || "",
     });
+
+    // Parse existing birthday into separate inputs
+    if (user.birthday) {
+      const date = new Date(user.birthday);
+      setDayInput(date.getDate().toString());
+      setMonthInput((date.getMonth() + 1).toString());
+      setYearInput(date.getFullYear().toString());
+    } else {
+      setDayInput("");
+      setMonthInput("");
+      setYearInput("");
+    }
+
     setShowEditModal(true);
   };
 
@@ -289,9 +333,10 @@ export default function UserManagementScreen() {
       type: 12,
       email: "",
       password: "",
-      licenseStart: "",
-      licenseEnd: "",
     });
+    setDayInput("");
+    setMonthInput("");
+    setYearInput("");
     setPasswordForm({ newPassword: "", confirmPassword: "" });
     setSelectedUser(null);
     setPasswordError(null);
@@ -348,12 +393,6 @@ export default function UserManagementScreen() {
                   Criado:{" "}
                   {new Date(item.created_at).toLocaleDateString("pt-MZ")}
                 </Text>
-                {item.licenseStart && (
-                  <Text className="text-xs text-gray-500">
-                    Licença:{" "}
-                    {new Date(item.licenseStart).toLocaleDateString("pt-MZ")}
-                  </Text>
-                )}
               </View>
             </View>
 
@@ -408,7 +447,7 @@ export default function UserManagementScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <Header title="Gestão de Usuários" back />
+      <GlobalNavigation title="Gestão de Usuários" />
 
       {/* Search and Actions */}
       <View className="bg-white p-4 border-b border-gray-200">
@@ -517,7 +556,14 @@ export default function UserManagementScreen() {
         <View className="flex-1 bg-white">
           <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
             <Text className="text-xl font-bold">Criar Novo Usuário</Text>
-            <TouchableOpacity onPress={() => setShowCreateModal(false)}>
+            <TouchableOpacity
+              onPress={() => {
+                setShowCreateModal(false);
+                setDayInput("");
+                setMonthInput("");
+                setYearInput("");
+              }}
+            >
               <Ionicons name="close" size={24} color="#374151" />
             </TouchableOpacity>
           </View>
@@ -543,26 +589,6 @@ export default function UserManagementScreen() {
               />
 
               <Input
-                label="Email *"
-                placeholder="Digite o email"
-                value={userForm.email}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, email: text })
-                }
-                keyboardType="email-address"
-              />
-
-              <Input
-                label="Senha *"
-                placeholder="Digite a senha"
-                value={userForm.password}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, password: text })
-                }
-                secureTextEntry
-              />
-
-              <Input
                 label="Telefone"
                 placeholder="Digite o telefone"
                 value={userForm.phone}
@@ -572,14 +598,41 @@ export default function UserManagementScreen() {
                 keyboardType="phone-pad"
               />
 
-              <Input
-                label="Data de nascimento"
-                placeholder="YYYY-MM-DD"
-                value={userForm.birthday}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, birthday: text })
-                }
-              />
+              {/* Birthday Date Inputs */}
+              <View className="space-y-2">
+                <Text className="text-sm font-medium text-gray-700">
+                  Data de nascimento
+                </Text>
+                <View className="flex-row items-center justify-between p-3 border border-gray-300 rounded-lg bg-white">
+                  <TextInput
+                    placeholder="DD"
+                    keyboardType="numeric"
+                    value={dayInput}
+                    onChangeText={setDayInput}
+                    style={{ width: 50, textAlign: "center" }}
+                  />
+                  <Text className="mx-2 text-lg font-semibold text-gray-900">
+                    /
+                  </Text>
+                  <TextInput
+                    placeholder="MM"
+                    keyboardType="numeric"
+                    value={monthInput}
+                    onChangeText={setMonthInput}
+                    style={{ width: 50, textAlign: "center" }}
+                  />
+                  <Text className="mx-2 text-lg font-semibold text-gray-900">
+                    /
+                  </Text>
+                  <TextInput
+                    placeholder="AAAA"
+                    keyboardType="numeric"
+                    value={yearInput}
+                    onChangeText={setYearInput}
+                    style={{ width: 100, textAlign: "center" }}
+                  />
+                </View>
+              </View>
 
               <Input
                 label="Gênero"
@@ -587,24 +640,6 @@ export default function UserManagementScreen() {
                 value={userForm.genre}
                 onChangeText={(text) =>
                   setUserForm({ ...userForm, genre: text })
-                }
-              />
-
-              <Input
-                label="Data de início da licença"
-                placeholder="YYYY-MM-DD"
-                value={userForm.licenseStart}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, licenseStart: text })
-                }
-              />
-
-              <Input
-                label="Data de fim da licença"
-                placeholder="YYYY-MM-DD"
-                value={userForm.licenseEnd}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, licenseEnd: text })
                 }
               />
             </View>
@@ -620,7 +655,12 @@ export default function UserManagementScreen() {
 
               <Button
                 title="Cancelar"
-                onPress={() => setShowCreateModal(false)}
+                onPress={() => {
+                  setShowCreateModal(false);
+                  setDayInput("");
+                  setMonthInput("");
+                  setYearInput("");
+                }}
                 variant="ghost"
               />
             </View>
@@ -637,7 +677,14 @@ export default function UserManagementScreen() {
         <View className="flex-1 bg-white">
           <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
             <Text className="text-xl font-bold">Editar Usuário</Text>
-            <TouchableOpacity onPress={() => setShowEditModal(false)}>
+            <TouchableOpacity
+              onPress={() => {
+                setShowEditModal(false);
+                setDayInput("");
+                setMonthInput("");
+                setYearInput("");
+              }}
+            >
               <Ionicons name="close" size={24} color="#374151" />
             </TouchableOpacity>
           </View>
@@ -663,16 +710,6 @@ export default function UserManagementScreen() {
               />
 
               <Input
-                label="Email *"
-                placeholder="Digite o email"
-                value={userForm.email}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, email: text })
-                }
-                keyboardType="email-address"
-              />
-
-              <Input
                 label="Telefone"
                 placeholder="Digite o telefone"
                 value={userForm.phone}
@@ -682,14 +719,41 @@ export default function UserManagementScreen() {
                 keyboardType="phone-pad"
               />
 
-              <Input
-                label="Data de nascimento"
-                placeholder="YYYY-MM-DD"
-                value={userForm.birthday}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, birthday: text })
-                }
-              />
+              {/* Birthday Date Inputs */}
+              <View className="space-y-2">
+                <Text className="text-sm font-medium text-gray-700">
+                  Data de nascimento
+                </Text>
+                <View className="flex-row items-center justify-between p-3 border border-gray-300 rounded-lg bg-white">
+                  <TextInput
+                    placeholder="DD"
+                    keyboardType="numeric"
+                    value={dayInput}
+                    onChangeText={setDayInput}
+                    style={{ width: 50, textAlign: "center" }}
+                  />
+                  <Text className="mx-2 text-lg font-semibold text-gray-900">
+                    /
+                  </Text>
+                  <TextInput
+                    placeholder="MM"
+                    keyboardType="numeric"
+                    value={monthInput}
+                    onChangeText={setMonthInput}
+                    style={{ width: 50, textAlign: "center" }}
+                  />
+                  <Text className="mx-2 text-lg font-semibold text-gray-900">
+                    /
+                  </Text>
+                  <TextInput
+                    placeholder="AAAA"
+                    keyboardType="numeric"
+                    value={yearInput}
+                    onChangeText={setYearInput}
+                    style={{ width: 100, textAlign: "center" }}
+                  />
+                </View>
+              </View>
 
               <Input
                 label="Gênero"
@@ -697,24 +761,6 @@ export default function UserManagementScreen() {
                 value={userForm.genre}
                 onChangeText={(text) =>
                   setUserForm({ ...userForm, genre: text })
-                }
-              />
-
-              <Input
-                label="Data de início da licença"
-                placeholder="YYYY-MM-DD"
-                value={userForm.licenseStart}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, licenseStart: text })
-                }
-              />
-
-              <Input
-                label="Data de fim da licença"
-                placeholder="YYYY-MM-DD"
-                value={userForm.licenseEnd}
-                onChangeText={(text) =>
-                  setUserForm({ ...userForm, licenseEnd: text })
                 }
               />
             </View>
@@ -730,7 +776,12 @@ export default function UserManagementScreen() {
 
               <Button
                 title="Cancelar"
-                onPress={() => setShowEditModal(false)}
+                onPress={() => {
+                  setShowEditModal(false);
+                  setDayInput("");
+                  setMonthInput("");
+                  setYearInput("");
+                }}
                 variant="ghost"
               />
             </View>

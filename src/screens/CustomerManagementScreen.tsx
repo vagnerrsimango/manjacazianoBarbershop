@@ -16,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Button } from "../presentation/components/Button";
 
 import Input from "../components/Input";
+import GlobalNavigation from "../components/GlobalNavigation";
 import { useCustomerService } from "../utils/hooks/useCustomerService";
 import { useAuth } from "../utils/hooks/useAuth";
 import {
@@ -25,10 +26,11 @@ import {
 } from "../@types/api";
 
 type RootStackParamList = {
-  Users: undefined;
-  Clients: undefined;
   Home: undefined;
   Checkout: undefined;
+  Clients: undefined;
+  Users: undefined;
+  ServiceSelection: undefined;
   Debts: undefined;
   ClientDebts: undefined;
   Search: undefined;
@@ -62,6 +64,11 @@ export default function CustomerManagementScreen() {
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentDescription, setPaymentDescription] = useState("");
 
+  // Date inputs state
+  const [dayInput, setDayInput] = useState("");
+  const [monthInput, setMonthInput] = useState("");
+  const [yearInput, setYearInput] = useState("");
+
   const { isAdmin } = useAuth();
 
   const {
@@ -92,6 +99,16 @@ export default function CustomerManagementScreen() {
     }
   };
 
+  const formatDateForDisplay = (dateString: string) => {
+    if (!dateString) return "Selecionar data";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("pt-BR");
+    } catch {
+      return "Data inválida";
+    }
+  };
+
   // Filtered and sorted customers - Optimized with useMemo and useCallback
   const filteredCustomers = useMemo(() => {
     if (!customers.length) return [];
@@ -103,8 +120,8 @@ export default function CustomerManagementScreen() {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (customer) =>
-          customer.name.toLowerCase().includes(query) ||
-          customer.phone.includes(query)
+          (customer.name && customer.name.toLowerCase().includes(query)) ||
+          (customer.phone && String(customer.phone).includes(query))
       );
     }
 
@@ -118,8 +135,8 @@ export default function CustomerManagementScreen() {
     // Apply sorting - only if needed
     if (sortOrder !== "desc") {
       filtered.sort((a, b) => {
-        const dateA = new Date(a.created_at).getTime();
-        const dateB = new Date(b.created_at).getTime();
+        const dateA = new Date(a.created_at || 0).getTime();
+        const dateB = new Date(b.created_at || 0).getTime();
         return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
       });
     }
@@ -128,53 +145,97 @@ export default function CustomerManagementScreen() {
   }, [customers, searchQuery, filterStatus, sortOrder]);
 
   const handleCreateCustomer = async () => {
-    if (!customerForm.name || !customerForm.phone || !customerForm.birthday) {
+    // Check required fields and provide feedback
+    if (!customerForm.name.trim()) {
+      Alert.alert("Erro", "Por favor, insira o nome do cliente");
+      return;
+    }
+    if (!customerForm.phone.trim()) {
+      Alert.alert("Erro", "Por favor, insira o telefone do cliente");
+      return;
+    }
+    if (!dayInput || !monthInput || !yearInput) {
+      Alert.alert(
+        "Erro",
+        "Por favor, preencha todos os campos da data de nascimento"
+      );
       return;
     }
 
+    // Concatenate date inputs
+    const formattedDate = `${yearInput}-${monthInput.padStart(2, "0")}-${dayInput.padStart(2, "0")}`;
+    const customerDataWithDate = { ...customerForm, birthday: formattedDate };
+
     setIsSubmitting(true);
     try {
-      const success = await createCustomer(customerForm);
+      const success = await createCustomer(customerDataWithDate);
       if (success) {
-        setShowCreateModal(false);
-        setCustomerForm({ name: "", phone: "", birthday: "" });
+        Alert.alert("Sucesso", "Cliente criado com sucesso!");
+        closeCreateModal();
         // Refresh data
         await loadData();
+      } else {
+        Alert.alert("Erro", "Falha ao criar cliente. Tente novamente.");
       }
     } catch (error) {
       console.error("Error creating customer:", error);
+      Alert.alert(
+        "Erro",
+        "Ocorreu um erro ao criar o cliente. Tente novamente."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleUpdateCustomer = async () => {
-    if (
-      !selectedCustomer ||
-      !customerForm.name ||
-      !customerForm.phone ||
-      !customerForm.birthday
-    ) {
+    // Check required fields and provide feedback
+    if (!selectedCustomer) {
+      Alert.alert("Erro", "Cliente não selecionado");
+      return;
+    }
+    if (!customerForm.name.trim()) {
+      Alert.alert("Erro", "Por favor, insira o nome do cliente");
+      return;
+    }
+    if (!customerForm.phone.trim()) {
+      Alert.alert("Erro", "Por favor, insira o telefone do cliente");
+      return;
+    }
+    if (!dayInput || !monthInput || !yearInput) {
+      Alert.alert(
+        "Erro",
+        "Por favor, preencha todos os campos da data de nascimento"
+      );
       return;
     }
 
+    // Concatenate date inputs
+    const formattedDate = `${yearInput}-${monthInput.padStart(2, "0")}-${dayInput.padStart(2, "0")}`;
+    const updateData: CustomerUpdateRequest = {
+      id: selectedCustomer.id,
+      name: customerForm.name,
+      phone: customerForm.phone,
+      birthday: formattedDate,
+    };
+
     setIsSubmitting(true);
     try {
-      const updateData: CustomerUpdateRequest = {
-        id: selectedCustomer.id,
-        ...customerForm,
-      };
-
       const success = await updateCustomer(updateData);
       if (success) {
-        setShowEditModal(false);
-        setSelectedCustomer(null);
-        setCustomerForm({ name: "", phone: "", birthday: "" });
+        Alert.alert("Sucesso", "Cliente atualizado com sucesso!");
+        closeEditModal();
         // Refresh data
         await loadData();
+      } else {
+        Alert.alert("Erro", "Falha ao atualizar cliente. Tente novamente.");
       }
     } catch (error) {
       console.error("Error updating customer:", error);
+      Alert.alert(
+        "Erro",
+        "Ocorreu um erro ao atualizar o cliente. Tente novamente."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -282,11 +343,49 @@ export default function CustomerManagementScreen() {
   const openEditModal = (customer: Customer) => {
     setSelectedCustomer(customer);
     setCustomerForm({
-      name: customer.name,
-      phone: customer.phone,
-      birthday: customer.birthday,
+      name: customer.name || "",
+      phone: customer.phone || "",
+      birthday: customer.birthday || "",
     });
+
+    // Parse existing birthday into separate inputs
+    if (customer.birthday) {
+      const date = new Date(customer.birthday);
+      setDayInput(date.getDate().toString());
+      setMonthInput((date.getMonth() + 1).toString());
+      setYearInput(date.getFullYear().toString());
+    } else {
+      setDayInput("");
+      setMonthInput("");
+      setYearInput("");
+    }
+
     setShowEditModal(true);
+  };
+
+  const openCreateModal = () => {
+    setCustomerForm({ name: "", phone: "", birthday: "" });
+    setDayInput("");
+    setMonthInput("");
+    setYearInput("");
+    setShowCreateModal(true);
+  };
+
+  const closeCreateModal = () => {
+    setShowCreateModal(false);
+    setCustomerForm({ name: "", phone: "", birthday: "" });
+    setDayInput("");
+    setMonthInput("");
+    setYearInput("");
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setSelectedCustomer(null);
+    setCustomerForm({ name: "", phone: "", birthday: "" });
+    setDayInput("");
+    setMonthInput("");
+    setYearInput("");
   };
 
   const openDebtModal = (customer: Customer) => {
@@ -425,172 +524,212 @@ export default function CustomerManagementScreen() {
   );
 
   return (
-    <View className="flex-1 bg-primary-100">
-      {/* Header */}
-      <View className="bg-white p-4 border-b border-gray-200">
-        <Text className="text-2xl font-bold text-gray-900 mb-4">
-          Gestão de Clientes
-        </Text>
+    <View className="flex-1 bg-gray-50">
+      {/* Global Navigation Bar */}
+      <GlobalNavigation title="Gestão de Clientes" />
 
-        {/* Search and Actions */}
-        <View className="space-y-4">
-          <View className="flex-row space-x-3 items-center">
-            <Input
-              placeholder="Pesquisar clientes..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              style={{ flex: 1 }}
-            />
-            <Button
-              title="Novo Cliente"
-              onPress={() => setShowCreateModal(true)}
-              variant="primary"
-              size="md"
-            />
-            {isAdmin && (
+      {/* Main Content */}
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Search and Actions Section */}
+        <View className="bg-white border-b border-gray-200 p-4">
+          <View className="space-y-4">
+            {/* Search Bar and Buttons */}
+            <View className="flex-row space-x-3 items-center">
+              <Input
+                placeholder="Pesquisar clientes..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={{ flex: 1 }}
+              />
               <Button
-                title="Gestão de Usuários"
-                onPress={() => navigation.navigate("Users")}
-                variant="secondary"
+                title="Novo Cliente"
+                onPress={openCreateModal}
+                variant="primary"
                 size="md"
               />
-            )}
-          </View>
-
-          {/* Filters */}
-          <View className="flex-row space-x-4 items-center flex-wrap">
-            <TouchableOpacity
-              onPress={() => setFilterStatus("all")}
-              className={`px-3 py-2 rounded-full ${
-                filterStatus === "all" ? "bg-primary-500" : "bg-gray-200"
-              }`}
-            >
-              <Text
-                className={
-                  filterStatus === "all" ? "text-white" : "text-gray-700"
-                }
-              >
-                Todos os clientes
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setFilterStatus("debt")}
-              className={`px-3 py-2 rounded-full ${
-                filterStatus === "debt" ? "bg-red-500" : "bg-gray-200"
-              }`}
-            >
-              <Text
-                className={
-                  filterStatus === "debt" ? "text-white" : "text-gray-700"
-                }
-              >
-                Com dívidas
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setFilterStatus("paid")}
-              className={`px-3 py-2 rounded-full ${
-                filterStatus === "paid" ? "bg-green-500" : "bg-gray-200"
-              }`}
-            >
-              <Text
-                className={
-                  filterStatus === "paid" ? "text-white" : "text-gray-700"
-                }
-              >
-                Sem dívidas
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View className="flex-row space-x-4 items-center flex-wrap">
-            <Text className="text-sm text-gray-600">
-              Total de Clientes: {customers.length}
-            </Text>
-            <Text className="text-sm text-gray-600">
-              Filtrados: {filteredCustomers.length}
-            </Text>
-            <Text className="text-sm text-gray-600">
-              Total de Dívidas: {debts?.total_debts || 0}
-            </Text>
-            <Text className="text-sm text-gray-600">
-              Valor Total: {debts?.total_amount?.toFixed(2) || "0.00"} MT
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Error Display */}
-      {error && (
-        <View className="bg-red-100 p-3 mx-4 mt-4 rounded-lg">
-          <View className="flex-row space-x-2 items-center">
-            <Ionicons name="alert-circle" size={20} color="#DC2626" />
-            <Text className="text-red-600 flex-1">{error}</Text>
-            <TouchableOpacity onPress={clearError} className="p-1">
-              <Ionicons name="close" size={20} color="#DC2626" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {/* Customers List */}
-      <View className="flex-1 px-4">
-        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
-          <Text className="text-lg font-bold mb-4 text-primary-600">
-            Lista de Clientes ({filteredCustomers.length})
-          </Text>
-
-          {loading ? (
-            <View className="items-center p-8">
-              <ActivityIndicator size="large" color="#0052A3" />
-              <Text className="text-gray-500 mt-2">Carregando clientes...</Text>
+              {isAdmin && (
+                <Button
+                  title="Gestão de Usuários"
+                  onPress={() => navigation.navigate("Users")}
+                  variant="secondary"
+                  size="md"
+                />
+              )}
             </View>
-          ) : filteredCustomers.length > 0 ? (
-            <FlatList
-              data={filteredCustomers}
-              renderItem={renderCustomerItem}
-              keyExtractor={(item) => item.id.toString()}
-              showsVerticalScrollIndicator={false}
-            />
-          ) : (
-            <View className="items-center p-8">
-              <Ionicons name="people-outline" size={48} color="#9CA3AF" />
-              <Text className="text-gray-500 mt-2 text-center">
-                {searchQuery || filterStatus !== "all"
-                  ? "Nenhum cliente encontrado com os filtros aplicados"
-                  : "Nenhum cliente encontrado"}
-              </Text>
+
+            {/* Filters */}
+            <View className="flex-row space-x-3 items-center flex-wrap">
+              <TouchableOpacity
+                onPress={() => setFilterStatus("all")}
+                className={`px-4 py-2 rounded-lg border ${
+                  filterStatus === "all"
+                    ? "bg-primary-500 border-primary-500"
+                    : "bg-white border-gray-300"
+                }`}
+              >
+                <Text
+                  className={`text-sm font-medium ${
+                    filterStatus === "all" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  Todos
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setFilterStatus("debt")}
+                className={`px-4 py-2 rounded-lg border ${
+                  filterStatus === "debt"
+                    ? "bg-red-500 border-red-500"
+                    : "bg-white border-gray-300"
+                }`}
+              >
+                <Text
+                  className={`text-sm font-medium ${
+                    filterStatus === "debt" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  Com dívidas
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setFilterStatus("paid")}
+                className={`px-4 py-2 rounded-lg border ${
+                  filterStatus === "paid"
+                    ? "bg-green-500 border-green-500"
+                    : "bg-white border-gray-300"
+                }`}
+              >
+                <Text
+                  className={`text-sm font-medium ${
+                    filterStatus === "paid" ? "text-white" : "text-gray-700"
+                  }`}
+                >
+                  Sem dívidas
+                </Text>
+              </TouchableOpacity>
             </View>
-          )}
+
+            {/* Stats Cards */}
+            <View className="grid grid-cols-2 gap-3">
+              <View className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <Text className="text-xs text-gray-500 font-medium">
+                  Total de Clientes
+                </Text>
+                <Text className="text-lg font-bold text-gray-900">
+                  {customers.length}
+                </Text>
+              </View>
+              <View className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <Text className="text-xs text-gray-500 font-medium">
+                  Filtrados
+                </Text>
+                <Text className="text-lg font-bold text-gray-900">
+                  {filteredCustomers.length}
+                </Text>
+              </View>
+              <View className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <Text className="text-xs text-gray-500 font-medium">
+                  Total de Dívidas
+                </Text>
+                <Text className="text-lg font-bold text-gray-900">
+                  {debts?.total_debts || 0}
+                </Text>
+              </View>
+              <View className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <Text className="text-xs text-gray-500 font-medium">
+                  Valor Total
+                </Text>
+                <Text className="text-lg font-bold text-gray-900">
+                  {debts?.total_amount?.toFixed(2) || "0.00"} MT
+                </Text>
+              </View>
+            </View>
+          </View>
         </View>
 
-        {/* Debts List */}
-        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-lg font-bold text-primary-600">
-              Histórico de Dívidas
-            </Text>
+        {/* Error Display */}
+        {error && (
+          <View className="mx-4 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <View className="flex-row space-x-2 items-center">
+              <Ionicons name="alert-circle" size={20} color="#DC2626" />
+              <Text className="text-red-700 flex-1 text-sm">{error}</Text>
+              <TouchableOpacity onPress={clearError} className="p-1">
+                <Ionicons name="close" size={16} color="#DC2626" />
+              </TouchableOpacity>
+            </View>
           </View>
+        )}
 
-          {debts?.debts && debts.debts.length > 0 ? (
-            <FlatList
-              data={debts.debts}
-              renderItem={renderDebtItem}
-              keyExtractor={(item) => item.id.toString()}
-              showsVerticalScrollIndicator={false}
-            />
-          ) : (
-            <View className="items-center p-8">
-              <Ionicons name="receipt-outline" size={48} color="#9CA3AF" />
-              <Text className="text-gray-500 mt-2">
-                Nenhuma dívida encontrada
+        {/* Content Sections */}
+        <View className="p-4 space-y-4">
+          {/* Customers List Section */}
+          <View className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <View className="bg-gradient-to-r from-primary-500 to-primary-600 px-4 py-3">
+              <Text className="text-white font-semibold text-lg">
+                Lista de Clientes ({filteredCustomers.length})
               </Text>
             </View>
-          )}
+
+            <View className="p-4">
+              {loading ? (
+                <View className="items-center py-8">
+                  <ActivityIndicator size="large" color="#0052A3" />
+                  <Text className="text-gray-500 mt-3 font-medium">
+                    Carregando clientes...
+                  </Text>
+                </View>
+              ) : filteredCustomers.length > 0 ? (
+                <FlatList
+                  data={filteredCustomers}
+                  renderItem={renderCustomerItem}
+                  keyExtractor={(item) => item.id.toString()}
+                  showsVerticalScrollIndicator={false}
+                  scrollEnabled={false}
+                />
+              ) : (
+                <View className="items-center py-8">
+                  <Ionicons name="people-outline" size={48} color="#9CA3AF" />
+                  <Text className="text-gray-500 mt-3 text-center font-medium">
+                    {searchQuery || filterStatus !== "all"
+                      ? "Nenhum cliente encontrado com os filtros aplicados"
+                      : "Nenhum cliente encontrado"}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          {/* Debts List Section */}
+          <View className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <View className="bg-gradient-to-r from-red-500 to-red-600 px-4 py-3">
+              <Text className="text-white font-semibold text-lg">
+                Histórico de Dívidas
+              </Text>
+            </View>
+
+            <View className="p-4">
+              {debts?.debts && debts.debts.length > 0 ? (
+                <FlatList
+                  data={debts.debts}
+                  renderItem={renderDebtItem}
+                  keyExtractor={(item) => item.id.toString()}
+                  showsVerticalScrollIndicator={false}
+                  scrollEnabled={false}
+                />
+              ) : (
+                <View className="items-center py-8">
+                  <Ionicons name="receipt-outline" size={48} color="#9CA3AF" />
+                  <Text className="text-gray-500 mt-3 font-medium">
+                    Nenhuma dívida encontrada
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
         </View>
-      </View>
+      </ScrollView>
 
       {/* Create Customer Modal */}
       <Modal
@@ -601,7 +740,7 @@ export default function CustomerManagementScreen() {
         <View className="flex-1 bg-white">
           <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
             <Text className="text-xl font-bold">Criar Novo Cliente</Text>
-            <TouchableOpacity onPress={() => setShowCreateModal(false)}>
+            <TouchableOpacity onPress={closeCreateModal}>
               <Ionicons name="close" size={24} color="#374151" />
             </TouchableOpacity>
           </View>
@@ -624,14 +763,42 @@ export default function CustomerManagementScreen() {
               }
               keyboardType="phone-pad"
             />
-            <Input
-              label="Data de nascimento"
-              placeholder="YYYY-MM-DD"
-              value={customerForm.birthday}
-              onChangeText={(text) =>
-                setCustomerForm({ ...customerForm, birthday: text })
-              }
-            />
+
+            {/* Birthday Date Picker */}
+            <View className="space-y-2">
+              <Text className="text-sm font-medium text-gray-700">
+                Data de nascimento
+              </Text>
+              <View className="flex-row items-center justify-between p-3 border border-gray-300 rounded-lg bg-white">
+                <TextInput
+                  placeholder="DD"
+                  keyboardType="numeric"
+                  value={dayInput}
+                  onChangeText={setDayInput}
+                  style={{ width: 50, textAlign: "center" }}
+                />
+                <Text className="mx-2 text-lg font-semibold text-gray-900">
+                  /
+                </Text>
+                <TextInput
+                  placeholder="MM"
+                  keyboardType="numeric"
+                  value={monthInput}
+                  onChangeText={setMonthInput}
+                  style={{ width: 50, textAlign: "center" }}
+                />
+                <Text className="mx-2 text-lg font-semibold text-gray-900">
+                  /
+                </Text>
+                <TextInput
+                  placeholder="AAAA"
+                  keyboardType="numeric"
+                  value={yearInput}
+                  onChangeText={setYearInput}
+                  style={{ width: 100, textAlign: "center" }}
+                />
+              </View>
+            </View>
 
             <View className="mt-6 space-y-3">
               <Button
@@ -644,7 +811,7 @@ export default function CustomerManagementScreen() {
 
               <Button
                 title="Cancelar"
-                onPress={() => setShowCreateModal(false)}
+                onPress={closeCreateModal}
                 variant="ghost"
               />
             </View>
@@ -661,7 +828,7 @@ export default function CustomerManagementScreen() {
         <View className="flex-1 bg-white">
           <View className="flex-row justify-between items-center p-4 border-b border-gray-200">
             <Text className="text-xl font-bold">Editar Cliente</Text>
-            <TouchableOpacity onPress={() => setShowEditModal(false)}>
+            <TouchableOpacity onPress={closeEditModal}>
               <Ionicons name="close" size={24} color="#374151" />
             </TouchableOpacity>
           </View>
@@ -684,14 +851,42 @@ export default function CustomerManagementScreen() {
               }
               keyboardType="phone-pad"
             />
-            <Input
-              label="Data de nascimento"
-              placeholder="YYYY-MM-DD"
-              value={customerForm.birthday}
-              onChangeText={(text) =>
-                setCustomerForm({ ...customerForm, birthday: text })
-              }
-            />
+
+            {/* Birthday Date Picker */}
+            <View className="space-y-2">
+              <Text className="text-sm font-medium text-gray-700">
+                Data de nascimento
+              </Text>
+              <View className="flex-row items-center justify-between p-3 border border-gray-300 rounded-lg bg-white">
+                <TextInput
+                  placeholder="DD"
+                  keyboardType="numeric"
+                  value={dayInput}
+                  onChangeText={setDayInput}
+                  style={{ width: 50, textAlign: "center" }}
+                />
+                <Text className="mx-2 text-lg font-semibold text-gray-900">
+                  /
+                </Text>
+                <TextInput
+                  placeholder="MM"
+                  keyboardType="numeric"
+                  value={monthInput}
+                  onChangeText={setMonthInput}
+                  style={{ width: 50, textAlign: "center" }}
+                />
+                <Text className="mx-2 text-lg font-semibold text-gray-900">
+                  /
+                </Text>
+                <TextInput
+                  placeholder="AAAA"
+                  keyboardType="numeric"
+                  value={yearInput}
+                  onChangeText={setYearInput}
+                  style={{ width: 100, textAlign: "center" }}
+                />
+              </View>
+            </View>
 
             <View className="mt-6 space-y-3">
               <Button
@@ -704,7 +899,7 @@ export default function CustomerManagementScreen() {
 
               <Button
                 title="Cancelar"
-                onPress={() => setShowEditModal(false)}
+                onPress={closeEditModal}
                 variant="ghost"
               />
             </View>
@@ -865,6 +1060,9 @@ export default function CustomerManagementScreen() {
           </View>
         </View>
       )}
+
+      {/* Date Picker */}
+      {/* This modal is no longer needed as date inputs are used directly */}
     </View>
   );
 }

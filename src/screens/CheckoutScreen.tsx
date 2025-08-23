@@ -2,25 +2,60 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
-  Alert,
-  ActivityIndicator,
+  ScrollView,
+  FlatList,
   Modal,
+  Animated,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
-import Header from "../components/Header";
-import Input from "../components/Input";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { useCart } from "../utils/LocalHooks";
-import { FlatList } from "react-native";
+import GlobalNavigation from "../components/GlobalNavigation";
+import MyButton from "../components/MyButton";
 import Tag from "../components/Tag";
-import useUser from "../utils/hooks/UserHook";
+import { BeardLogo, ComboLogo, ExtraLogo, HairLogo } from "../utils/Icons";
 import api from "../utils/network/api";
-import AutoCompleteInput from "../components/AutoCompletInput";
+import { IServiceResponse } from "../utils/Responses";
+import ServiceSkeleton from "../components/ServiceSkeleton";
 import { Button } from "../presentation/components/Button";
+import Input from "../components/Input";
+import useUser from "../utils/hooks/UserHook";
+import AutoCompleteInput from "../components/AutoCompletInput";
+
+type RootStackParamList = {
+  Home: undefined;
+  Checkout: undefined;
+  Clients: undefined;
+  Users: undefined;
+  ServiceSelection: undefined;
+};
+
+type NavigationProp = StackNavigationProp<RootStackParamList>;
+
+interface IService {
+  id: number;
+  name: string;
+  price: number;
+  product_categories: Array<{
+    name: string;
+  }>;
+}
 
 export default function CheckoutScreen() {
+  const navigation = useNavigation<NavigationProp>();
+  const { services, setServices } = useCart();
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [dataService, setDataService] = useState<IServiceResponse>(
+    {} as IServiceResponse
+  );
+  const [selectedServices, setSelectedServices] = useState<IService[]>([]);
+  const [slideAnim] = useState(new Animated.Value(-100));
+  const { setUser } = useUser();
+
   const inputsInitalState = {
     client_name: "",
     client_phone: "",
@@ -28,13 +63,35 @@ export default function CheckoutScreen() {
     paid: "",
   };
   const [showModal, setShowModal] = useState(false);
-  const [loading, isLoading] = useState(false);
   const [inputs, setInputs] = useState(inputsInitalState);
   const [input, setInput] = useState<string>();
-  const { services } = useCart();
-  const [total, setTotal] = useState(0);
-  const { setUser } = useUser();
-  const { setServices } = useCart();
+
+  useEffect(() => {
+    let auxTotal = 0;
+    if (services.length > 0) {
+      auxTotal = services.reduce((sum, service) => {
+        return sum + Number(service.price || 0);
+      }, 0);
+      setTotal(auxTotal);
+      setInputs((prev) => ({ ...prev, paid: auxTotal.toString() }));
+    }
+    console.log(
+      "🚀 ~ file: CheckoutScreen.tsx:29 ~ useEffect ~ auxTotal:",
+      auxTotal
+    );
+  }, [services]);
+
+  const handleInputChange = (value: string, input: string) => {
+    switch (input) {
+      case "paid":
+        if (Number(value) > total) {
+          Alert.alert("Erro", "Valor acima do preço do corte");
+          return;
+        }
+    }
+
+    setInputs((prev) => ({ ...prev, [input]: value }));
+  };
 
   const handleSelectedAutoCustomer = (customer: any) => {
     console.log("=== CUSTOMER SELECTION DEBUG ===");
@@ -68,33 +125,6 @@ export default function CheckoutScreen() {
       client_name: customer.name,
       client_phone: customer.phone.toString(),
     });
-  };
-
-  useEffect(() => {
-    let auxTotal = 0;
-    if (services.length > 0) {
-      auxTotal = services.reduce((sum, service) => {
-        return sum + Number(service.price || 0);
-      }, 0);
-      setTotal(auxTotal);
-      setInputs((prev) => ({ ...prev, paid: auxTotal.toString() }));
-    }
-    console.log(
-      "🚀 ~ file: CheckoutScreen.tsx:29 ~ useEffect ~ auxTotal:",
-      auxTotal
-    );
-  }, [services]);
-
-  const handleInputChange = (value: string, input: string) => {
-    switch (input) {
-      case "paid":
-        if (Number(value) > total) {
-          Alert.alert("Erro", "Valor acima do preço do corte");
-          return;
-        }
-    }
-
-    setInputs((prev) => ({ ...prev, [input]: value }));
   };
 
   const showSucess = async () => {
@@ -142,7 +172,7 @@ export default function CheckoutScreen() {
     console.log("=== SALE PAYLOAD ===");
     console.log("salePayload=>", salePayload);
 
-    isLoading(true);
+    setLoading(true);
     try {
       const response = await api.post("/sale", salePayload);
 
@@ -161,7 +191,7 @@ export default function CheckoutScreen() {
       console.error("Error creating sale:", error);
       Alert.alert("Erro", "Falha ao efectuar a venda!");
     } finally {
-      isLoading(false);
+      setLoading(false);
     }
   };
 
@@ -187,7 +217,8 @@ export default function CheckoutScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <Header title="Checkout" back />
+      {/* Global Navigation Bar */}
+      <GlobalNavigation title="Checkout" showBack={true} />
 
       <ScrollView className="flex-1 p-4">
         {/* Customer Selection */}
@@ -195,14 +226,6 @@ export default function CheckoutScreen() {
           <Text className="text-lg font-bold text-gray-900 mb-4">
             Seleção de Cliente (Opcional)
           </Text>
-
-          {/* Debug Info */}
-          <View className="mb-2 p-2 bg-yellow-50 rounded border border-yellow-200">
-            <Text className="text-xs text-yellow-800">
-              Debug - input: "{input}" | client_name: "{inputs.client_name}" |
-              client_phone: "{inputs.client_phone}"
-            </Text>
-          </View>
 
           <AutoCompleteInput
             placeholder="Pesquisar cliente..."
