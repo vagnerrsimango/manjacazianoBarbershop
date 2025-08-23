@@ -37,21 +37,44 @@ export default function CheckoutScreen() {
   const { setServices } = useCart();
 
   const handleSelectedAutoCustomer = (customer: any) => {
+    console.log("=== CUSTOMER SELECTION DEBUG ===");
+    console.log("Customer selected:", customer);
+    console.log("Customer name:", customer.name);
+    console.log("Customer phone:", customer.phone);
+
+    // Check if this is an empty customer (clearing selection)
+    if (!customer.name || customer.name === "") {
+      console.log("Clearing customer selection");
+      setInput("");
+      setInputs((prev) => ({
+        ...prev,
+        client_name: "",
+        client_phone: "",
+      }));
+      return;
+    }
+
+    // Update both input and inputs states
+    setInput(customer.name);
     setInputs((prev) => ({
       ...prev,
       client_name: customer.name,
       client_phone: customer.phone.toString(),
     }));
 
-    setInput(customer.name);
+    // Log the updated states to verify
+    console.log("Updated input state:", customer.name);
+    console.log("Updated inputs state:", {
+      client_name: customer.name,
+      client_phone: customer.phone.toString(),
+    });
   };
 
   useEffect(() => {
     let auxTotal = 0;
     if (services.length > 0) {
-      auxTotal = services.reduce((prev, current) => {
-        auxTotal += Number(current.price);
-        return auxTotal;
+      auxTotal = services.reduce((sum, service) => {
+        return sum + Number(service.price || 0);
       }, 0);
       setTotal(auxTotal);
       setInputs((prev) => ({ ...prev, paid: auxTotal.toString() }));
@@ -60,7 +83,7 @@ export default function CheckoutScreen() {
       "🚀 ~ file: CheckoutScreen.tsx:29 ~ useEffect ~ auxTotal:",
       auxTotal
     );
-  }, []);
+  }, [services]);
 
   const handleInputChange = (value: string, input: string) => {
     switch (input) {
@@ -75,17 +98,13 @@ export default function CheckoutScreen() {
   };
 
   const showSucess = async () => {
+    console.log("=== SALE VALIDATION ===");
     console.log("input=>", input);
-    if (
-      Number(total) > Number(inputs.paid) &&
-      !inputs.isChecked &&
-      inputs.client_phone.length == 0 &&
-      inputs.client_phone.length == 0
-    ) {
-      Alert.alert("Erro", "Por favor preencha os campos");
-      return;
-    }
+    console.log("inputs=>", inputs);
+    console.log("total=>", total);
+    console.log("services=>", services);
 
+    // Check if amount paid is valid
     if (Number(inputs.paid) < Number(total) && !inputs.isChecked) {
       Alert.alert(
         "Erro",
@@ -94,26 +113,53 @@ export default function CheckoutScreen() {
       return;
     }
 
+    if (total == 0 || !inputs.paid) {
+      Alert.alert(
+        "Erro",
+        "Selecione os serviços e inclua o valor pago pelo cliente"
+      );
+      return;
+    }
+
+    // Prepare soldList like the old implementation
+    let postList: any = [];
+    services.forEach((service) => {
+      postList.push({
+        product_id: Number(service.id),
+        price: Number(service.price),
+      });
+    });
+
+    // Prepare sale payload based on old working implementation
+    const salePayload = {
+      client_name: input, // Use input state like old implementation
+      client_phone: inputs.client_phone,
+      isChecked: inputs.isChecked,
+      paid: inputs.paid,
+      soldList: postList,
+    };
+
+    console.log("=== SALE PAYLOAD ===");
+    console.log("salePayload=>", salePayload);
+
     isLoading(true);
     try {
-      const response = await api.post("/sales", {
-        client_name: inputs.client_name,
-        client_phone: inputs.client_phone,
-        total: total,
-        paid: Number(inputs.paid),
-        is_debt: inputs.isChecked,
-        services: services.map((service) => service.id),
-      });
+      const response = await api.post("/sale", salePayload);
+
+      console.log("=== API RESPONSE ===");
+      console.log("response=>", response.data);
 
       if (response.data.success) {
         setShowModal(true);
         setServices([]);
         setInputs(inputsInitalState);
         setInput("");
+      } else {
+        Alert.alert("Erro", "Falha ao efectuar a venda!");
       }
     } catch (error) {
       console.error("Error creating sale:", error);
-      Alert.alert("Erro", "Falha ao processar venda");
+      Alert.alert("Erro", "Falha ao efectuar a venda!");
     } finally {
       isLoading(false);
     }
@@ -126,11 +172,13 @@ export default function CheckoutScreen() {
           <Text className="text-lg font-semibold text-gray-900 mb-1">
             {item.name}
           </Text>
-          <Text className="text-gray-600 text-sm">{item.description}</Text>
+          <Text className="text-gray-600 text-sm">
+            {item.description || "Serviço"}
+          </Text>
         </View>
         <View className="items-end">
           <Text className="text-xl font-bold text-primary-600">
-            {item.price.toFixed(2)} MT
+            {item.price ? Number(item.price).toFixed(2) : "0.00"} MT
           </Text>
         </View>
       </View>
@@ -145,23 +193,64 @@ export default function CheckoutScreen() {
         {/* Customer Selection */}
         <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
           <Text className="text-lg font-bold text-gray-900 mb-4">
-            Seleção de Cliente
+            Seleção de Cliente (Opcional)
           </Text>
+
+          {/* Debug Info */}
+          <View className="mb-2 p-2 bg-yellow-50 rounded border border-yellow-200">
+            <Text className="text-xs text-yellow-800">
+              Debug - input: "{input}" | client_name: "{inputs.client_name}" |
+              client_phone: "{inputs.client_phone}"
+            </Text>
+          </View>
 
           <AutoCompleteInput
             placeholder="Pesquisar cliente..."
-            onSelect={handleSelectedAutoCustomer}
-            value={input}
-            onChangeText={setInput}
+            handleSelectedAutoCustomer={handleSelectedAutoCustomer}
+            input={input}
+            setInput={setInput}
           />
 
-          {inputs.client_name && (
-            <View className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <Text className="text-blue-800 font-medium">
-                Cliente selecionado: {inputs.client_name}
+          {inputs.client_name ? (
+            <View className="mt-3 p-4 bg-green-50 rounded-lg border border-green-200">
+              <View className="flex-row items-center mb-2">
+                <Ionicons name="checkmark-circle" size={20} color="#16A34A" />
+                <Text className="text-green-800 font-semibold ml-2 text-base">
+                  Cliente Selecionado
+                </Text>
+              </View>
+              <Text className="text-green-800 font-medium text-lg">
+                {inputs.client_name}
               </Text>
-              <Text className="text-blue-600 text-sm">
-                Telefone: {inputs.client_phone}
+              <Text className="text-green-600 text-sm mt-1">
+                📱 Telefone: {inputs.client_phone}
+              </Text>
+
+              {/* Customer Actions */}
+              <View className="flex-row mt-3 space-x-2">
+                <TouchableOpacity
+                  onPress={() => {
+                    setInputs(inputsInitalState);
+                    setInput("");
+                  }}
+                  className="bg-red-100 px-3 py-2 rounded-lg border border-red-200"
+                >
+                  <Text className="text-red-700 text-sm font-medium">
+                    Remover Cliente
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <View className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <View className="flex-row items-center mb-2">
+                <Ionicons name="information-circle" size={20} color="#6B7280" />
+                <Text className="text-gray-600 font-medium ml-2 text-base">
+                  Venda sem Cliente
+                </Text>
+              </View>
+              <Text className="text-gray-600 text-sm">
+                Esta venda será processada sem associar a um cliente específico.
               </Text>
             </View>
           )}
@@ -177,20 +266,19 @@ export default function CheckoutScreen() {
             <FlatList
               data={services}
               renderItem={renderServiceItem}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item: any) =>
+                item.id?.toString() || Math.random().toString()
+              }
               scrollEnabled={false}
             />
           ) : (
-            <View className="items-center p-6">
-              <Ionicons name="cut-outline" size={48} color="#9CA3AF" />
-              <Text className="text-gray-500 mt-2 text-center">
-                Nenhum serviço selecionado
-              </Text>
-            </View>
+            <Text className="text-gray-500 text-center py-4">
+              Nenhum serviço selecionado
+            </Text>
           )}
         </View>
 
-        {/* Payment Section */}
+        {/* Payment Information */}
         <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
           <Text className="text-lg font-bold text-gray-900 mb-4">
             Informações de Pagamento
@@ -248,19 +336,12 @@ export default function CheckoutScreen() {
         {/* Action Buttons */}
         <View className="space-y-3 mb-6">
           <Button
-            title={isLoading ? "Processando..." : "Finalizar Venda"}
+            title={loading ? "Processando..." : "Finalizar Venda"}
             onPress={showSucess}
             variant="primary"
-            loading={isLoading}
-            disabled={isLoading || services.length === 0}
+            loading={loading}
+            disabled={loading || services.length === 0}
             size="lg"
-          />
-
-          <Button
-            title="Limpar Carrinho"
-            onPress={() => setServices([])}
-            variant="ghost"
-            disabled={services.length === 0}
           />
         </View>
       </ScrollView>
@@ -286,7 +367,11 @@ export default function CheckoutScreen() {
 
           <Button
             title="Fechar"
-            onPress={() => setShowModal(false)}
+            onPress={() => {
+              setShowModal(false);
+              // Logout user and return to login screen
+              setUser(null);
+            }}
             variant="primary"
             size="lg"
           />

@@ -2,18 +2,26 @@ export interface IStandardResponse {
   data: {};
   success: boolean;
 }
-export interface IServiceResponse {
-  data: Array<Iservice>;
-  success: boolean;
-}
 
-interface Iservice {
+interface IService {
   id: number;
   name: string;
   price: number;
   product_categories: Array<{
     name: string;
   }>;
+}
+
+interface IServiceCategories {
+  comboService?: IService[];
+  beardService?: IService[];
+  hairService?: IService[];
+  extraService?: IService[];
+}
+
+export interface IServiceResponse {
+  data: IServiceCategories;
+  success: boolean;
 }
 
 export interface ISaleCustomerHistory {

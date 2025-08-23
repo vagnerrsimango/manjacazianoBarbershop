@@ -9,7 +9,13 @@ interface ICartProvider {
 export default function CartContextProvider({ children }: ICartProvider) {
   const [services, setServices] = useState<IServiceSelectorProps[]>([]);
 
-  const removeService = (service: IServiceSelectorProps) => {};
+  const addService = (service: IServiceSelectorProps) => {
+    setServices((prev) => [...prev, service]);
+  };
+
+  const removeService = (service: IServiceSelectorProps) => {
+    setServices((prev) => prev.filter((s) => s.id !== service.id));
+  };
 
   return (
     <CartContext.Provider
@@ -17,6 +23,7 @@ export default function CartContextProvider({ children }: ICartProvider) {
         services,
         setServices,
         removeService,
+        addService,
       }}
     >
       {children}

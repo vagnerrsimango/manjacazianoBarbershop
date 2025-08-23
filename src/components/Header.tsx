@@ -6,9 +6,10 @@ import { useNavigation } from "@react-navigation/native";
 interface HeaderProps {
   title: string;
   back?: boolean;
+  showMenu?: boolean;
 }
 
-export default function Header({ title, back }: HeaderProps) {
+export default function Header({ title, back, showMenu }: HeaderProps) {
   const navigation = useNavigation();
 
   return (
@@ -21,10 +22,20 @@ export default function Header({ title, back }: HeaderProps) {
           <Ionicons name="arrow-back" size={24} color="#374151" />
         </TouchableOpacity>
       )}
-      
-      <Text className="text-xl font-bold text-gray-900 flex-1">
-        {title}
-      </Text>
+
+      <Text className="text-xl font-bold text-gray-900 flex-1">{title}</Text>
+
+      {showMenu && (
+        <TouchableOpacity
+          onPress={() => {
+            // TODO: Implement menu navigation
+            console.log("Menu pressed");
+          }}
+          className="p-1"
+        >
+          <Ionicons name="menu" size={24} color="#374151" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

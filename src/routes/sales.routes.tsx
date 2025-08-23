@@ -1,5 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import ServiceSelectionScreen from "../screens/ServiceSelectionScreen";
 import HomeScreen from "../screens/HomeScreen";
 import CheckoutScreen from "../screens/CheckoutScreen";
 import DebtScreen from "../screens/DebtScreen";
@@ -13,10 +14,15 @@ export default function SaleRoutes() {
 
   return (
     <Stack.Navigator
+      initialRouteName="ServiceSelection"
       screenOptions={{
         headerShown: false,
       }}
     >
+      <Stack.Screen
+        name="ServiceSelection"
+        component={ServiceSelectionScreen}
+      />
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Checkout" component={CheckoutScreen} />
       <Stack.Screen name="Debts" component={DebtScreen} />

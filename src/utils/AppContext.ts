@@ -4,7 +4,8 @@ import { IServiceSelectorProps } from "../components/ServiceSelector";
 export interface ICartContextData {
   services: Array<IServiceSelectorProps>;
   setServices: React.Dispatch<React.SetStateAction<IServiceSelectorProps[]>>;
-  removeService?: (service: IServiceSelectorProps) => void;
+  addService: (service: IServiceSelectorProps) => void;
+  removeService: (service: IServiceSelectorProps) => void;
 }
 
 export const CartContext = createContext<ICartContextData>(
