@@ -1,71 +1,106 @@
 import React from "react";
-import { Box, Text, Modal, Icon, Flex, Button, VStack } from "native-base";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import MyButton from "../components/MyButton";
-import CutSelection from "../components/CutSelection";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import Header from "../components/Header";
+import NetworkTest from "../components/NetworkTest";
+
+type RootStackParamList = {
+  Clients: undefined;
+  Users: undefined;
+  Home: undefined;
+  Checkout: undefined;
+  Debts: undefined;
+  ClientDebts: undefined;
+  Search: undefined;
+};
 
 export default function HomeScreen() {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  const menuItems = [
+    {
+      title: "Gestão de Clientes",
+      description: "Gerenciar clientes e dívidas",
+      icon: "people-outline",
+      color: "bg-blue-500",
+      route: "Clients" as keyof RootStackParamList,
+    },
+    {
+      title: "Gestão de Usuários",
+      description: "Gerenciar usuários do sistema",
+      icon: "person-outline",
+      color: "bg-green-500",
+      route: "Users" as keyof RootStackParamList,
+    },
+    {
+      title: "Checkout",
+      description: "Processar pagamentos",
+      icon: "card-outline",
+      color: "bg-purple-500",
+      route: "Checkout" as keyof RootStackParamList,
+    },
+    {
+      title: "Pesquisar",
+      description: "Buscar clientes e serviços",
+      icon: "search-outline",
+      color: "bg-orange-500",
+      route: "Search" as keyof RootStackParamList,
+    },
+  ];
+
   return (
-    <Box bg="primary.100" flex={1}>
-      <Flex
-        direction="row"
-        justifyContent="space-between"
-        p={4}
-        position="absolute"
-        top={0}
-        left={0}
-        right={0}
-      >
-        <Box>
-          <Text fontSize="lg" color="primary.300" fontWeight="thin">
-            Manjacaziano
+    <View className="flex-1 bg-gray-50">
+      <Header title="Manja Caziano Barbershop" />
+
+      <ScrollView className="flex-1 p-4">
+        <View className="mb-8">
+          <Text className="text-3xl font-bold text-gray-900 mb-2">
+            Bem-vindo!
           </Text>
-        </Box>
-        <Box>
-          <Text fontSize="lg" color="primary.300" fontWeight="thin">
-            Jorge
+          <Text className="text-lg text-gray-600">
+            Escolha uma opção para começar
           </Text>
-        </Box>
-      </Flex>
-      <Box flex={1} alignItems="center" justifyContent="center">
-        <Text fontSize="lg" color="primary.300" fontWeight="thin">
-          POR FAVOR, SELECIONE O SERVIÇO DESEJADO
-        </Text>
-        <Flex direction="row">
-          <CutSelection mr={10} my={1} />
-          <CutSelection my={1} />
-        </Flex>
-        <Text
-          fontSize="lg"
-          color="primary.300"
-          fontWeight="thin"
-          marginTop={"10"}
-        >
-          Serviços Selecionados
-        </Text>
-        <Flex direction="row">
-          <MyButton title="Cortar" bg="primary.400" mr={2} />
-          <MyButton title="Lavar" bg="primary.400" mr={2} />
-          <MyButton title="Alinhar" mr={2} />
-        </Flex>
-        <Flex direction="row" mt={4}>
-          <Box bg="primary.200" w={200} h={12} borderRadius={4} pr={2}>
-            <Text fontSize="sm" color="black" fontWeight="thin"></Text>
-          </Box>
-          <Box
-            bg="primary.300"
-            w={8}
-            h={12}
-            borderRadius={2}
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Text fontSize="sm" color="#fff" fontWeight="thin">
-              MZN
-            </Text>
-          </Box>
-        </Flex>
-      </Box>
-    </Box>
+        </View>
+
+        <View className="space-y-4">
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => navigation.navigate(item.route)}
+              className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 active:bg-gray-50"
+            >
+              <View className="flex-row items-center space-x-4">
+                <View className={`${item.color} p-3 rounded-lg`}>
+                  <Ionicons name={item.icon as any} size={24} color="white" />
+                </View>
+
+                <View className="flex-1">
+                  <Text className="text-lg font-semibold text-gray-900 mb-1">
+                    {item.title}
+                  </Text>
+                  <Text className="text-gray-600">{item.description}</Text>
+                </View>
+
+                <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View className="mt-8 p-6 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl">
+          <Text className="text-white text-lg font-semibold mb-2">
+            Sistema de Gestão
+          </Text>
+          <Text className="text-primary-100">
+            Gerencie seus clientes, usuários e transações de forma eficiente
+          </Text>
+        </View>
+
+        {/* Network Test Component for Debugging */}
+        <NetworkTest />
+      </ScrollView>
+    </View>
   );
 }

@@ -1,49 +1,41 @@
 import React from "react";
-import { Box, Center, HStack, Text, Image, Stack } from "native-base";
-import { useUser } from "../hooks/useUser";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+
 interface HeaderProps {
   title: string;
-  leftRad?: number;
-  rightRad?: number;
+  back?: boolean;
+  showMenu?: boolean;
 }
-export default function Header({ title, leftRad, rightRad }: HeaderProps) {
-  const { user } = useUser();
+
+export default function Header({ title, back, showMenu }: HeaderProps) {
+  const navigation = useNavigation();
+
   return (
-    <HStack
-      bgColor={"primary.400"}
-      h={"26"}
-      justifyContent={"center"}
-      alignItems={"center"}
-      borderBottomLeftRadius={leftRad}
-      borderBottomRightRadius={rightRad}
-    >
-      <Center mt={8}>
-        <Text
-          fontWeight={"medium"}
-          fontSize={"md"}
-          textTransform={"uppercase"}
-          lineHeight={"2xl"}
+    <View className="bg-white px-4 py-3 border-b border-gray-200 flex-row items-center">
+      {back && (
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className="mr-3 p-1"
         >
-          {title}
-        </Text>
-      </Center>
-      <Box
-        position={"absolute"}
-        right="5"
-        bottom={4}
-        borderColor={"gray.800"}
-        borderWidth={2}
-        borderRadius={24}
-      >
-        <Image
-          size={6}
-          borderRadius={20}
-          source={{
-            uri: `${user.photo}`,
+          <Ionicons name="arrow-back" size={24} color="#374151" />
+        </TouchableOpacity>
+      )}
+
+      <Text className="text-xl font-bold text-gray-900 flex-1">{title}</Text>
+
+      {showMenu && (
+        <TouchableOpacity
+          onPress={() => {
+            // TODO: Implement menu navigation
+            console.log("Menu pressed");
           }}
-          alt="Alternate Text"
-        />
-      </Box>
-    </HStack>
+          className="p-1"
+        >
+          <Ionicons name="menu" size={24} color="#374151" />
+        </TouchableOpacity>
+      )}
+    </View>
   );
 }

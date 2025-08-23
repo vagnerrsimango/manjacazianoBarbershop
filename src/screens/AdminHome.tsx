@@ -1,66 +1,71 @@
-import React, { useState } from "react";
-import { Box, Flex, VStack } from "native-base";
-import MyButton from "../components/MyButton";
-import Content1 from "../components/Content1";
-import Content2 from "../components/Content2";
-import Content3 from "../components/Content3";
+import React from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function AdminScreen() {
-  const [activeContent, setActiveContent] = useState("skeletons");
+const AdminHome = () => {
+  const navigation = useNavigation();
 
-  const renderContent = () => {
-    switch (activeContent) {
-      case "skeletons":
-        return <Content1 />;
-      case "textboxes":
-        return <Content2 />;
-      case "images":
-        return <Content3 />;
-      default:
-        return null;
-    }
-  };
+  const menuItems = [
+    {
+      title: "Gerenciar Clientes",
+      icon: "people",
+      route: "CustomerManagement",
+      description: "Adicionar, editar e gerenciar clientes",
+    },
+    {
+      title: "Gerenciar Usuários",
+      icon: "person",
+      route: "UserManagement",
+      description: "Gerenciar usuários do sistema",
+    },
+    {
+      title: "Relatórios",
+      icon: "bar-chart",
+      route: "Reports",
+      description: "Visualizar relatórios de vendas",
+    },
+    {
+      title: "Configurações",
+      icon: "settings",
+      route: "Settings",
+      description: "Configurações do sistema",
+    },
+  ];
 
   return (
-    <Box bg="primary.100" flex={1}>
-      <Flex direction="row" ml={20}>
-        {/* Sidebar */}
-        <VStack space={4} alignItems="flex-start" p={4} width={200}>
-          <MyButton
-            title="Página Inicial"
-            bg="primary.400"
-            width={180}
-            onPress={() => setActiveContent("skeletons")}
-          />
-          <MyButton
-            title="Serviços"
-            bg="primary.400"
-            width={180}
-            onPress={() => setActiveContent("textboxes")}
-          />
-          <MyButton
-            title="Usuários"
-            bg="primary.400"
-            width={180}
-            onPress={() => setActiveContent("images")}
-          />
-          <MyButton
-            title="Agendamentos"
-            bg="primary.400"
-            width={180}
-            onPress={() => setActiveContent("skeletons")}
-          />
-          <MyButton
-            title="Relatórios"
-            bg="primary.400"
-            width={180}
-            onPress={() => setActiveContent("skeletons")}
-          />
-        </VStack>
+    <ScrollView className="flex-1 bg-gray-50">
+      <View className="p-6">
+        <Text className="text-3xl font-bold text-gray-900 mb-8">
+          Painel Administrativo
+        </Text>
 
-        {/* Render Content */}
-        {renderContent()}
-      </Flex>
-    </Box>
+        <View className="space-y-4">
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              className="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+              onPress={() => navigation.navigate(item.route as never)}
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center">
+                <View className="w-12 h-12 bg-primary-500 rounded-lg items-center justify-center mr-4">
+                  <Ionicons name={item.icon as any} size={24} color="white" />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-lg font-semibold text-gray-900 mb-1">
+                    {item.title}
+                  </Text>
+                  <Text className="text-gray-600">{item.description}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    </ScrollView>
   );
-}
+};
+
+export default AdminHome;

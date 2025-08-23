@@ -1,36 +1,89 @@
-import { Input as NativeInput, IInputProps } from "native-base";
 import React from "react";
+import {
+  TextInput,
+  Text,
+  View,
+  ViewStyle,
+  TextStyle,
+  DimensionValue,
+} from "react-native";
 
-interface MyInputProps extends IInputProps {
-  width?: string | number;
-  height?: string | number;
+interface InputProps {
+  placeholder?: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  label?: string;
+  error?: string;
+  secureTextEntry?: boolean;
+  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  multiline?: boolean;
+  numberOfLines?: number;
+  style?: ViewStyle;
+  inputStyle?: TextStyle;
+  width?: DimensionValue;
+  height?: DimensionValue;
+  fontSize?: number;
+  rounded?: number;
+  leftIcon?: React.ReactNode;
 }
 
-export default function Input({
-  width = "8",
-  height = "12",
-  ...rest
-}: IInputProps) {
+const Input: React.FC<InputProps> = ({
+  placeholder,
+  value,
+  onChangeText,
+  label,
+  error,
+  secureTextEntry = false,
+  keyboardType = "default",
+  multiline = false,
+  numberOfLines = 1,
+  style,
+  inputStyle,
+  width = "100%",
+  height = 48,
+  fontSize = 16,
+  rounded = 4,
+  leftIcon,
+}) => {
   return (
-    <NativeInput
-      {...rest}
-      height={height}
-      width={width}
-      mt={8}
-      bgColor={"primary.200"}
-      borderWidth={0}
-      borderRadius={0}
-      rounded={2}
-      keyboardAppearance={"dark"}
-      px={6}
-      _focus={{
-        bg: "gray.100",
-        borderColor: "primary.400",
-        borderWidth: "0.5",
-        color: "primary.400",
-      }}
-      fontSize={"md"}
-      placeholderTextColor={"primary.300"}
-    />
+    <View className="mb-4" style={style}>
+      {label && (
+        <Text className="text-gray-700 font-medium mb-2 text-sm">{label}</Text>
+      )}
+      <View className="relative">
+        {leftIcon && (
+          <View className="absolute left-4 top-0 bottom-0 justify-center z-10">
+            {leftIcon}
+          </View>
+        )}
+        <TextInput
+          className={`bg-gray-100 border border-primary-400 rounded text-gray-900 px-4 ${
+            leftIcon ? "pl-12" : "pl-4"
+          }`}
+          style={[
+            {
+              width,
+              height,
+              fontSize,
+              minHeight: multiline ? 80 : undefined,
+              borderColor: error ? "#EF4444" : "#FACC15",
+            },
+            inputStyle,
+          ]}
+          placeholder={placeholder}
+          placeholderTextColor="#EAB308"
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType}
+          multiline={multiline}
+          numberOfLines={numberOfLines}
+          textAlignVertical={multiline ? "top" : "center"}
+        />
+      </View>
+      {error && <Text className="text-red-500 text-sm mt-1">{error}</Text>}
+    </View>
   );
-}
+};
+
+export default Input;

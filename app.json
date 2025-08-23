@@ -2,7 +2,7 @@
   "expo": {
     "name": "manjacazianoBarbershop",
     "slug": "manjacazianoBarbershop",
-    "version": "1.0.0",
+    "version": "1.0.6",
     "orientation": "landscape",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -21,10 +21,18 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.eltonvilanculo.manjacazianoBarbershop"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "owner": "eltonvilanculo",
+    "extra": {
+      "eas": {
+        "projectId": "b5468461-a4cc-4e58-b8cd-1a678f1427c3"
+      }
     }
   }
 }

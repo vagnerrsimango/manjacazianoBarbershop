@@ -1,83 +1,85 @@
 import React, { useState } from "react";
-import { Box, Text, Modal, Icon, Center } from "native-base";
-import { theme } from "../utils/theme";
+import { View, Text, TouchableOpacity, Modal, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import Input from "../components/Input";
 import MyButton from "../components/MyButton";
-import { useNavigation } from "@react-navigation/native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomModal from "../components/CustomModal";
-import { User } from "phosphor-react-native";
+import { Lock, User } from "phosphor-react-native";
+import { BubblesBG } from "../utils/Icons";
+import useUser from "../utils/hooks/UserHook";
 
 export default function LoginScreen() {
   const navigation = useNavigation();
   const [showModal, setShowModal] = useState(false);
   const [pin, setPin] = useState(""); // State to store the input value
 
-  const handleEnter = () => {
-    if (pin === "0000") {
-      navigation.navigate("Home");
-    } else if (pin === "1111") {
-      navigation.navigate("Admin");
-    } else {
-      console.log("Invalid input");
-    }
-  };
+  const { loginWithPin, loading } = useUser();
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value: string) => {
     setPin(value); // Update the input value state
   };
 
-  const hanlePinRecover = () => {
+  const handlePinRecover = () => {
     setShowModal(true);
   };
 
   return (
-    <Box
-      bg={"primary.100"}
-      flex={1}
-      alignItems={"center"}
-      justifyContent={"center"}
-    >
-      <Text fontSize="xl" color="primary.300" fontWeight="bold">
+    <View className="flex-1 bg-gray-100 w-full h-screen items-center justify-center">
+      {/* App Logo */}
+      <View className="mb-6 items-center">
+        <Image
+          source={require("../assets/logo.png")}
+          className="w-24 h-24 rounded-full"
+          resizeMode="contain"
+        />
+        <Text className="text-xl text-primary-600 font-bold mt-3">Prímula</Text>
+      </View>
+
+      <Text className="text-3xl text-gray-500 font-black mb-2">
         Iniciar sessão
       </Text>
-      <Text fontSize="sm" color="primary.300" fontWeight={"thin"}>
+      <Text className="text-sm text-gray-600 font-light mb-8">
         Por favor insira o seu PIN de 4 dígitos
       </Text>
-      <Input
-        placeholder="PIN"
-        value={pin} // Set the value prop to the input value state
-        onChangeText={handleInputChange} // Handle input changes
-        width={"50%"}
-        mt={"16"}
-      />
-      <MyButton title="Entrar" onPress={handleEnter} mt={"16"} width={"xs"} />
 
-      <Box position={"absolute"} bottom={"1"}>
-        <TouchableOpacity onPress={hanlePinRecover}>
-          <Text
-            fontSize="md"
-            color="primary.400"
-            fontWeight={"normal"}
-            textTransform={"uppercase"}
-          >
+      <View className="w-4/5 max-w-xs mb-8 px-2">
+        <Input
+          placeholder="PIN"
+          value={pin} // Set the value prop to the input value state
+          onChangeText={handleInputChange} // Handle input changes
+          secureTextEntry
+          leftIcon={
+            <View className="">
+              <Lock size={20} color="#EAB308" weight="fill" />
+            </View>
+          }
+        />
+      </View>
+
+      <View className="w-4/5 max-w-xs">
+        <MyButton
+          title="Entrar"
+          onPress={() => loginWithPin(pin)}
+          loading={loading}
+        />
+      </View>
+
+      <View className="absolute bottom-8">
+        {/* <TouchableOpacity onPress={handlePinRecover}>
+          <Text className="text-base text-primary-600 font-normal uppercase">
             Esqueceu pin ?
           </Text>
-        </TouchableOpacity>
-      </Box>
+        </TouchableOpacity> */}
+      </View>
 
       <CustomModal opened={showModal} onClose={() => setShowModal(false)}>
-        <Box>
-          <Text
-            textTransform={"uppercase"}
-            size={"lg"}
-            fontWeight={"bold"}
-            color={"primary.400"}
-          >
-            Tens novo pin{" "}
+        <View className="items-center">
+          <BubblesBG />
+          <Text className="text-center text-xl text-primary-600 font-bold">
+            Contacte o admin
           </Text>
-        </Box>
+        </View>
       </CustomModal>
-    </Box>
+    </View>
   );
 }

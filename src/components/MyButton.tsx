@@ -1,41 +1,59 @@
-import { Button as NButton, Text, IButtonProps } from "native-base";
-interface ButtonProps extends IButtonProps {
+import React from "react";
+import {
+  TouchableOpacity,
+  Text,
+  ViewStyle,
+  TextStyle,
+  ActivityIndicator,
+} from "react-native";
+
+interface MyButtonProps {
   title: string;
-  type?: "PRIMARY" | "SECONDARY";
+  onPress: () => void;
+  bg?: string;
+  width?: number | string;
+  height?: number;
+  disabled?: boolean;
+  loading?: boolean;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
 }
 
-export default function MyButton({
+const MyButton: React.FC<MyButtonProps> = ({
   title,
-  bg,
-  type = "PRIMARY",
-  ...rest
-}: ButtonProps) {
+  onPress,
+  bg = "#EAB308",
+  width = "auto",
+  height = 48,
+  disabled = false,
+  loading = false,
+  style,
+  textStyle,
+}) => {
   return (
-    <NButton
-      mt={2}
-      w={100}
-      h={12}
-      borderWidth={0}
-      borderRadius={0}
-      textTransform="uppercase"
-      bg={bg || "primary.300"} // Use the passed bg prop or fallback to a default value
-      {...rest}
-      _pressed={{
-        bg: type == "SECONDARY" ? "red.600" : "primary.400",
-      }}
-      _loading={{
-        _spinner: { color: "black" },
-      }}
+    <TouchableOpacity
+      className="bg-primary-500 rounded-lg items-center justify-center active:opacity-70"
+      style={[
+        {
+          width,
+          height,
+          opacity: disabled || loading ? 0.5 : 1,
+        },
+        style,
+      ]}
+      onPress={onPress}
+      disabled={disabled || loading}
+      activeOpacity={0.7}
     >
-      <Text
-        fontSize="xs"
-        color={type == "SECONDARY" ? "white" : "white"}
-        fontFamily="heading"
-        textTransform={"uppercase"}
-        fontWeight="normal"
-      >
-        {title}
-      </Text>
-    </NButton>
+      {loading ? (
+        <ActivityIndicator color="#FFFFFF" size="small" />
+      ) : (
+        <Text className="text-white text-base font-semibold" style={textStyle}>
+          {title}
+        </Text>
+      )}
+    </TouchableOpacity>
   );
-}
+};
+
+export default MyButton;
