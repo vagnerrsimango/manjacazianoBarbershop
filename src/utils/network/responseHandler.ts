@@ -14,9 +14,6 @@ export class ResponseHandler {
     return response.data;
   }
 
-  /**
-   * Handle API errors consistently
-   */
   static handleError(error: AxiosError): ApiError {
     if (error.response) {
       // Server responded with error status
