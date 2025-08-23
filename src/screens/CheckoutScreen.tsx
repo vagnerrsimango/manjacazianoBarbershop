@@ -45,15 +45,10 @@ interface IService {
 }
 
 export default function CheckoutScreen() {
-  const navigation = useNavigation<NavigationProp>();
   const { services, setServices } = useCart();
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [dataService, setDataService] = useState<IServiceResponse>(
-    {} as IServiceResponse
-  );
-  const [selectedServices, setSelectedServices] = useState<IService[]>([]);
-  const [slideAnim] = useState(new Animated.Value(-100));
+  const [loading, setLoading] = useState(false);
+
   const { setUser } = useUser();
 
   const inputsInitalState = {
