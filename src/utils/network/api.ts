@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // API Configuration
-const API_BASE_URL = "https://apimanjacaziano.geome.site";
+const API_BASE_URL = "https://apimanjacaziano.geome.online";
 
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
