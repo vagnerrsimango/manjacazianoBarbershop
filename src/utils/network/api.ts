@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   // baseURL: "http://192.168.18.2:7777",
-  baseURL: "https://apimanjacaziano.geome.site",
+  baseURL: "https://apimanjacaziano.geome.online",
 });
 
 // TODO: Order sales by date, filter by dare
