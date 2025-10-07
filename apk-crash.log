@@ -1,0 +1,372 @@
+09-24 08:22:53.985 D/AndroidRuntime( 6929): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-24 08:22:54.003 I/AndroidRuntime( 6929): Using default boot image
+09-24 08:22:54.003 I/AndroidRuntime( 6929): Leaving lock profiling enabled
+09-24 08:22:54.189 D/AndroidRuntime( 6929): Calling main entry com.android.commands.monkey.Monkey
+09-24 08:22:54.307 I/AndroidRuntime( 6929): VM exiting with result code 0.
+09-24 08:22:55.098 I/ExpoModulesCore( 6945): ✅ AppContext was initialized
+09-24 08:22:55.323 I/ExpoModulesCore( 6945): ✅ JSI interop was installed
+09-24 08:22:55.325 I/ExpoModulesCore( 6945): ✅ Constants were exported
+09-24 08:22:55.336 V/AsyncStorageExpoMigration( 6945): No scoped database found
+09-24 08:22:55.369 W/System.err( 6945): 	at com.swmansion.reanimated.NativeProxy.initHybrid(Native Method)
+09-24 08:22:55.369 W/System.err( 6945): 	at com.swmansion.reanimated.NativeProxy.<init>(NativeProxy.java:47)
+09-24 08:22:55.369 W/System.err( 6945): 	at com.swmansion.reanimated.NodesManager.initWithContext(NodesManager.java:148)
+09-24 08:22:55.369 W/System.err( 6945): 	at com.swmansion.reanimated.ReanimatedModule.installTurboModule(ReanimatedModule.java:159)
+09-24 08:22:55.875 I/ReactNativeJS( 6945): 'SVG Imports:', { Logo: 'function',
+09-24 08:22:55.875 I/ReactNativeJS( 6945):   Hair: 'function',
+09-24 08:22:55.875 I/ReactNativeJS( 6945):   Beard: 'function',
+09-24 08:22:55.875 I/ReactNativeJS( 6945):   Extra: 'function',
+09-24 08:22:55.875 I/ReactNativeJS( 6945):   Combo: 'function',
+09-24 08:22:55.875 I/ReactNativeJS( 6945):   Bubbles: 'function',
+09-24 08:22:55.875 I/ReactNativeJS( 6945):   MenuIcon: 'function' }
+09-24 08:22:55.881 I/ReactNativeJS( 6945): Running "main"
+09-24 08:22:55.929 D/AndroidRuntime( 6945): Shutting down VM
+09-24 08:22:55.929 E/AndroidRuntime( 6945): FATAL EXCEPTION: main
+09-24 08:22:55.929 E/AndroidRuntime( 6945): Process: com.eltonvilanculo.manjacazianoBarbershop, PID: 6945
+09-24 08:22:55.929 E/AndroidRuntime( 6945): java.lang.RuntimeException: Exception thrown when executing UIFrameGuarded
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.fabric.FabricUIManager$DispatchUIFrameCallback.doFrameGuarded(FabricUIManager.java:1400)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.uimanager.GuardedFrameCallback.doFrame(GuardedFrameCallback.kt:25)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.modules.core.ReactChoreographer.frameCallback$lambda$1(ReactChoreographer.kt:59)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.modules.core.ReactChoreographer.$r8$lambda$nSkFhrr5T7rop_XKwzlLov4NLLw(Unknown Source:0)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.modules.core.ReactChoreographer$$ExternalSyntheticLambda0.doFrame(D8$$SyntheticClass:0)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1229)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1239)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.view.Choreographer.doCallbacks(Choreographer.java:899)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.view.Choreographer.doFrame(Choreographer.java:827)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1214)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.os.Handler.handleCallback(Handler.java:942)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.os.Looper.loopOnce(Looper.java:201)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.os.Looper.loop(Looper.java:288)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at android.app.ActivityThread.main(ActivityThread.java:7872)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at java.lang.reflect.Method.invoke(Native Method)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:548)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:936)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): Caused by: com.facebook.react.uimanager.IllegalViewOperationException: ViewManagerResolver returned null for either RNSScreen or RCTRNSScreen, existing names are: [RNSVGFeMerge, RCTSafeAreaView, RNSVGLinearGradient, AndroidProgressBar, RNSVGFeColorMatrix, RNSVGSymbol, RNSVGPattern, RNCSafeAreaView, RNSVGSvgViewAndroid, AndroidSwitch, RNSVGUse, RNSVGTSpan, RNSVGFilter, RNSVGMarker, RNCSafeAreaProvider, RNGestureHandlerButton, RNSVGForeignObject, RNSVGGroup, RNSVGText, RNSVGImage, RNSVGFeComposite, RNSVGRadialGradient, UnimplementedNativeView, RNSVGFeOffset, RNSVGPath, AndroidDrawerLayout, AndroidTextInput, RNSVGDefs, RNSVGFeGaussianBlur, AndroidHorizontalScrollView, RCTText, AndroidHorizontalScrollContentView, RNSVGClipPath, RNSVGFeBlend, RCTView, RNSVGCircle, RCTModalHostView, RNSVGEllipse, RNSVGLine, RCTTextInlineImage, RNSVGFeFlood, RCTImageView, RNSVGMask, RNSVGRect, RNSVGTextPath, RCTScrollView, RCTVirtualText, AndroidSwipeRefreshLayout, RCTRawText, RNGestureHandlerRootView]
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.uimanager.ViewManagerRegistry.get(ViewManagerRegistry.java:83)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.fabric.mounting.SurfaceMountingManager.createViewUnsafe(SurfaceMountingManager.java:671)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.fabric.mounting.SurfaceMountingManager.preallocateView(SurfaceMountingManager.java:1078)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.fabric.mounting.mountitems.PreAllocateViewMountItem.execute(PreAllocateViewMountItem.kt:38)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.executeOrEnqueue(MountItemDispatcher.java:370)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.dispatchMountItems(MountItemDispatcher.java:246)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.tryDispatchMountItems(MountItemDispatcher.java:122)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	at com.facebook.react.fabric.FabricUIManager$DispatchUIFrameCallback.doFrameGuarded(FabricUIManager.java:1396)
+09-24 08:22:55.929 E/AndroidRuntime( 6945): 	... 17 more
+09-24 08:39:20.845 D/StrictMode( 7048): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 08:39:20.845 D/StrictMode( 7048): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 08:39:23.325 I/libc    ( 7206): SetHeapTaggingLevel: tag level set to 0
+09-24 08:39:23.647 E/libc    ( 7220): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 08:56:40.036 I/ExpoModulesCore( 7455): ✅ AppContext was initialized
+09-24 08:56:40.490 I/ExpoModulesCore( 7455): ✅ JSI interop was installed
+09-24 08:56:40.491 I/ExpoModulesCore( 7455): ✅ Constants were exported
+09-24 08:56:40.502 V/AsyncStorageExpoMigration( 7455): No scoped database found
+09-24 08:56:40.539 W/System.err( 7455): 	at com.swmansion.reanimated.NativeProxy.initHybrid(Native Method)
+09-24 08:56:40.539 W/System.err( 7455): 	at com.swmansion.reanimated.NativeProxy.<init>(NativeProxy.java:47)
+09-24 08:56:40.539 W/System.err( 7455): 	at com.swmansion.reanimated.NodesManager.initWithContext(NodesManager.java:148)
+09-24 08:56:40.539 W/System.err( 7455): 	at com.swmansion.reanimated.ReanimatedModule.installTurboModule(ReanimatedModule.java:159)
+09-24 08:56:41.036 I/ReactNativeJS( 7455): 'SVG Imports:', { Logo: 'function',
+09-24 08:56:41.036 I/ReactNativeJS( 7455):   Hair: 'function',
+09-24 08:56:41.036 I/ReactNativeJS( 7455):   Beard: 'function',
+09-24 08:56:41.036 I/ReactNativeJS( 7455):   Extra: 'function',
+09-24 08:56:41.036 I/ReactNativeJS( 7455):   Combo: 'function',
+09-24 08:56:41.036 I/ReactNativeJS( 7455):   Bubbles: 'function',
+09-24 08:56:41.036 I/ReactNativeJS( 7455):   MenuIcon: 'function' }
+09-24 08:56:41.044 I/ReactNativeJS( 7455): Running "main"
+09-24 08:56:41.098 D/AndroidRuntime( 7455): Shutting down VM
+09-24 08:56:41.099 E/AndroidRuntime( 7455): FATAL EXCEPTION: main
+09-24 08:56:41.099 E/AndroidRuntime( 7455): Process: com.eltonvilanculo.manjacazianoBarbershop, PID: 7455
+09-24 08:56:41.099 E/AndroidRuntime( 7455): java.lang.RuntimeException: Exception thrown when executing UIFrameGuarded
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.fabric.FabricUIManager$DispatchUIFrameCallback.doFrameGuarded(FabricUIManager.java:1400)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.uimanager.GuardedFrameCallback.doFrame(GuardedFrameCallback.kt:25)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.modules.core.ReactChoreographer.frameCallback$lambda$1(ReactChoreographer.kt:59)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.modules.core.ReactChoreographer.$r8$lambda$nSkFhrr5T7rop_XKwzlLov4NLLw(Unknown Source:0)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.modules.core.ReactChoreographer$$ExternalSyntheticLambda0.doFrame(D8$$SyntheticClass:0)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1229)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1239)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.view.Choreographer.doCallbacks(Choreographer.java:899)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.view.Choreographer.doFrame(Choreographer.java:827)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1214)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.os.Handler.handleCallback(Handler.java:942)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.os.Looper.loopOnce(Looper.java:201)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.os.Looper.loop(Looper.java:288)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at android.app.ActivityThread.main(ActivityThread.java:7872)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at java.lang.reflect.Method.invoke(Native Method)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:548)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:936)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): Caused by: com.facebook.react.uimanager.IllegalViewOperationException: ViewManagerResolver returned null for either RNSScreen or RCTRNSScreen, existing names are: [RNSVGFeMerge, RCTSafeAreaView, RNSVGLinearGradient, AndroidProgressBar, RNSVGFeColorMatrix, RNSVGSymbol, RNSVGPattern, RNCSafeAreaView, RNSVGSvgViewAndroid, AndroidSwitch, RNSVGUse, RNSVGTSpan, RNSVGFilter, RNSVGMarker, RNCSafeAreaProvider, RNGestureHandlerButton, RNSVGForeignObject, RNSVGGroup, RNSVGText, RNSVGImage, RNSVGFeComposite, RNSVGRadialGradient, UnimplementedNativeView, RNSVGFeOffset, RNSVGPath, AndroidDrawerLayout, AndroidTextInput, RNSVGDefs, RNSVGFeGaussianBlur, AndroidHorizontalScrollView, RCTText, AndroidHorizontalScrollContentView, RNSVGClipPath, RNSVGFeBlend, RCTView, RNSVGCircle, RCTModalHostView, RNSVGEllipse, RNSVGLine, RCTTextInlineImage, RNSVGFeFlood, RCTImageView, RNSVGMask, RNSVGRect, RNSVGTextPath, RCTScrollView, RCTVirtualText, AndroidSwipeRefreshLayout, RCTRawText, RNGestureHandlerRootView]
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.uimanager.ViewManagerRegistry.get(ViewManagerRegistry.java:83)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.fabric.mounting.SurfaceMountingManager.createViewUnsafe(SurfaceMountingManager.java:671)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.fabric.mounting.SurfaceMountingManager.preallocateView(SurfaceMountingManager.java:1078)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.fabric.mounting.mountitems.PreAllocateViewMountItem.execute(PreAllocateViewMountItem.kt:38)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.executeOrEnqueue(MountItemDispatcher.java:370)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.dispatchMountItems(MountItemDispatcher.java:246)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.tryDispatchMountItems(MountItemDispatcher.java:122)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	at com.facebook.react.fabric.FabricUIManager$DispatchUIFrameCallback.doFrameGuarded(FabricUIManager.java:1396)
+09-24 08:56:41.099 E/AndroidRuntime( 7455): 	... 17 more
+09-24 08:56:55.835 I/ExpoModulesCore( 7607): ✅ AppContext was initialized
+09-24 08:56:56.216 I/ExpoModulesCore( 7607): ✅ JSI interop was installed
+09-24 08:56:56.218 I/ExpoModulesCore( 7607): ✅ Constants were exported
+09-24 08:56:56.244 V/AsyncStorageExpoMigration( 7607): No scoped database found
+09-24 08:56:56.341 W/System.err( 7607): 	at com.swmansion.reanimated.NativeProxy.initHybrid(Native Method)
+09-24 08:56:56.341 W/System.err( 7607): 	at com.swmansion.reanimated.NativeProxy.<init>(NativeProxy.java:47)
+09-24 08:56:56.341 W/System.err( 7607): 	at com.swmansion.reanimated.NodesManager.initWithContext(NodesManager.java:148)
+09-24 08:56:56.341 W/System.err( 7607): 	at com.swmansion.reanimated.ReanimatedModule.installTurboModule(ReanimatedModule.java:159)
+09-24 08:56:57.011 I/ReactNativeJS( 7607): 'SVG Imports:', { Logo: 'function',
+09-24 08:56:57.011 I/ReactNativeJS( 7607):   Hair: 'function',
+09-24 08:56:57.011 I/ReactNativeJS( 7607):   Beard: 'function',
+09-24 08:56:57.011 I/ReactNativeJS( 7607):   Extra: 'function',
+09-24 08:56:57.011 I/ReactNativeJS( 7607):   Combo: 'function',
+09-24 08:56:57.011 I/ReactNativeJS( 7607):   Bubbles: 'function',
+09-24 08:56:57.011 I/ReactNativeJS( 7607):   MenuIcon: 'function' }
+09-24 08:56:57.021 I/ReactNativeJS( 7607): Running "main"
+09-24 08:56:57.099 D/AndroidRuntime( 7607): Shutting down VM
+09-24 08:56:57.100 E/AndroidRuntime( 7607): FATAL EXCEPTION: main
+09-24 08:56:57.100 E/AndroidRuntime( 7607): Process: com.eltonvilanculo.manjacazianoBarbershop, PID: 7607
+09-24 08:56:57.100 E/AndroidRuntime( 7607): java.lang.RuntimeException: Exception thrown when executing UIFrameGuarded
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.fabric.FabricUIManager$DispatchUIFrameCallback.doFrameGuarded(FabricUIManager.java:1400)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.uimanager.GuardedFrameCallback.doFrame(GuardedFrameCallback.kt:25)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.modules.core.ReactChoreographer.frameCallback$lambda$1(ReactChoreographer.kt:59)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.modules.core.ReactChoreographer.$r8$lambda$nSkFhrr5T7rop_XKwzlLov4NLLw(Unknown Source:0)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.modules.core.ReactChoreographer$$ExternalSyntheticLambda0.doFrame(D8$$SyntheticClass:0)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1229)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:1239)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.view.Choreographer.doCallbacks(Choreographer.java:899)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.view.Choreographer.doFrame(Choreographer.java:827)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:1214)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.os.Handler.handleCallback(Handler.java:942)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.os.Looper.loopOnce(Looper.java:201)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.os.Looper.loop(Looper.java:288)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at android.app.ActivityThread.main(ActivityThread.java:7872)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at java.lang.reflect.Method.invoke(Native Method)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:548)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:936)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): Caused by: com.facebook.react.uimanager.IllegalViewOperationException: ViewManagerResolver returned null for either RNSScreen or RCTRNSScreen, existing names are: [RNSVGFeMerge, RCTSafeAreaView, RNSVGLinearGradient, AndroidProgressBar, RNSVGFeColorMatrix, RNSVGSymbol, RNSVGPattern, RNCSafeAreaView, RNSVGSvgViewAndroid, AndroidSwitch, RNSVGUse, RNSVGTSpan, RNSVGFilter, RNSVGMarker, RNCSafeAreaProvider, RNGestureHandlerButton, RNSVGForeignObject, RNSVGGroup, RNSVGText, RNSVGImage, RNSVGFeComposite, RNSVGRadialGradient, UnimplementedNativeView, RNSVGFeOffset, RNSVGPath, AndroidDrawerLayout, AndroidTextInput, RNSVGDefs, RNSVGFeGaussianBlur, AndroidHorizontalScrollView, RCTText, AndroidHorizontalScrollContentView, RNSVGClipPath, RNSVGFeBlend, RCTView, RNSVGCircle, RCTModalHostView, RNSVGEllipse, RNSVGLine, RCTTextInlineImage, RNSVGFeFlood, RCTImageView, RNSVGMask, RNSVGRect, RNSVGTextPath, RCTScrollView, RCTVirtualText, AndroidSwipeRefreshLayout, RCTRawText, RNGestureHandlerRootView]
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.uimanager.ViewManagerRegistry.get(ViewManagerRegistry.java:83)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.fabric.mounting.SurfaceMountingManager.createViewUnsafe(SurfaceMountingManager.java:671)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.fabric.mounting.SurfaceMountingManager.preallocateView(SurfaceMountingManager.java:1078)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.fabric.mounting.mountitems.PreAllocateViewMountItem.execute(PreAllocateViewMountItem.kt:38)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.executeOrEnqueue(MountItemDispatcher.java:370)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.dispatchPreMountItemsImpl(MountItemDispatcher.java:349)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.fabric.mounting.MountItemDispatcher.dispatchPreMountItems(MountItemDispatcher.java:322)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	at com.facebook.react.fabric.FabricUIManager$DispatchUIFrameCallback.doFrameGuarded(FabricUIManager.java:1395)
+09-24 08:56:57.100 E/AndroidRuntime( 7607): 	... 17 more
+09-24 09:11:21.051 D/StrictMode( 7746): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 09:11:21.051 D/StrictMode( 7746): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 09:11:23.404 E/libc    ( 7933): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 09:28:39.065 D/AndroidRuntime( 8065): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-24 09:28:39.143 I/AndroidRuntime( 8065): Using default boot image
+09-24 09:28:39.144 I/AndroidRuntime( 8065): Leaving lock profiling enabled
+09-24 09:28:39.988 D/AndroidRuntime( 8065): Calling main entry com.android.commands.monkey.Monkey
+09-24 09:28:39.989 W/Monkey  ( 8065): args: [-p, host.exp.exponent, -c, android.intent.category.LAUNCHER, 1]
+09-24 09:28:39.990 W/Monkey  ( 8065):  arg: "host.exp.exponent"
+09-24 09:28:39.990 W/Monkey  ( 8065): data="host.exp.exponent"
+09-24 09:28:40.054 I/ActivityTaskManager(  578): START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=host.exp.exponent/.experience.HomeActivity} from uid 2000
+09-24 09:28:40.281 D/CoreBackPreview(  578): Window{18c2bbe u0 Splash Screen host.exp.exponent}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@2e6536c, mPriority=0}
+09-24 09:28:40.296 I/AndroidRuntime( 8065): VM exiting with result code 0.
+09-24 09:28:40.298 I/ActivityManager(  578): Start proc 8081:host.exp.exponent/u0a172 for next-top-activity {host.exp.exponent/host.exp.exponent.experience.HomeActivity}
+09-24 09:28:40.456 I/ActivityTaskManager(  578): START u0 {act=android.intent.action.VIEW dat=exp://192.168.0.8:8081/... flg=0x10000000 cmp=host.exp.exponent/.LauncherActivity} from uid 2000
+09-24 09:28:40.582 D/nativeloader( 8081): Configuring classloader-namespace for other apk /system/framework/org.apache.http.legacy.jar. target_sdk_version=35, uses_libraries=ALL, library_path=/data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/lib/arm64:/data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/host.exp.exponent
+09-24 09:28:40.627 D/nativeloader( 8081): Configuring classloader-namespace for other apk /data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/lib/arm64:/data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/host.exp.exponent
+09-24 09:28:40.640 V/GraphicsEnvironment( 8081): ANGLE Developer option for 'host.exp.exponent' set to: 'default'
+09-24 09:28:40.640 V/GraphicsEnvironment( 8081): ANGLE GameManagerService for host.exp.exponent: false
+09-24 09:28:40.743 I/FirebaseCrashlytics( 8081): Initializing Firebase Crashlytics 19.3.0 for host.exp.exponent
+09-24 09:28:40.837 D/libcrashlytics( 8081): Initializing libcrashlytics version 3.2.0
+09-24 09:28:40.856 D/libcrashlytics( 8081): Initializing native crash handling successful.
+09-24 09:28:40.910 I/FA      ( 8081):   adb shell setprop debug.firebase.analytics.app host.exp.exponent
+09-24 09:28:40.962 W/SoLoader( 8081): Recording new base apk path: /data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/base.apk
+09-24 09:28:40.963 I/SoLoader( 8081): Preparing SO source: DirectApkSoSource[root = [/data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/base.apk!/lib/arm64-v8a]]
+09-24 09:28:40.972 I/SoLoader( 8081): Preparing SO source: ApplicationSoSource[DirectorySoSource[root = /data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/lib/arm64 flags = 0]]
+09-24 09:28:41.117 D/i       ( 8081): Using embedded Expo kernel manifest: {"id":"cfa9e22f-8c00-41ff-8905-6dcd098c825e","createdAt":"2025-08-15T00:29:30.452Z","runtimeVersion":"53.0.0","launchAsset":{"hash":"erPOFGX4QhoTv9F4kHrCs5Ifrt4cVSAxgdsK-BUQd48","key":"990d49e8617b511a969d56d6ba94eef6","contentType":"application\/javascript","url":"https:\/\/assets.eascdn.net\/i8wQS0DC4QdNI3nRqmYlktdIIi0TUqHkVqmXQU_uVxE?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},"assets":[{"hash":"npTU2-LofqSV8NQth5FGvHTExOkQd2pJFUoV7vo371k","key":"b62641afc9ab487008e996a5c5865e56","contentType":"font\/ttf","fileExtension":".ttf","url":"https:\/\/assets.eascdn.net\/EnR_3B8bmSZG64EkLOE1g17Fyca2bHJiUpX1EXXH6ss?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"nH-5BxpsKFgsa4RGjL_yx6ceArF-OjtFSKFZk40ikWs","key":"6148e7019854f3bde85b633cb88f3c25","contentType":"font\/ttf","fileExtension":".ttf","url":"https:\/\/assets.eascdn.net\/jdXbRpGkxdrW9JgEjxoV_Wlnli8-gb6Kswc7xqjoAOw?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"7xSfCL3S_wmk4shXNHa3sPP7sVtiOVSt5ZiZ5xdb7do","key":"4e85bc9ebe07e0340c9c4fc2f6c38908","contentType":"font\/ttf","fileExtension":".ttf","url":"https:\/\/assets.eascdn.net\/iIxOYwe_3gl5flQPjaaNzvd8vR7QAtWGZOunEfTbUnk?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"i2Gkx-9w3JJ1PwSUl2SC9m_UFQ7CPfx3KrZeEDc6-lU","key":"778ffc9fe8773a878e9c30a6304784de","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/idnX8z03q4vGLzhYMPaQGBADjhqvWe67_afPqJ1vGzM?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"kGZm3WiTRq2iMs42ia3vkHtCV_obWT8DY40rlJf2SIQ","key":"c79c3606a1cf168006ad3979763c7e0c","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/k-3xHp3vP8mR36WdccUZVPTRJKpP-zlyboWdkXCIQpQ?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"_6fuRbdkBbpzkhSVAI99aMneY5X0tpQdsGNGX244IyA","key":"02bc1fa7c0313217bde2d65ccbff40c9","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/lfqeUjiWFXwowhxVDBEzxsbTOEzYxMLebljy5Bh1mpU?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"hM9es7ICUPaeDkczvrTaX0F_BoKJKlrRteYlcHU8IbE","key":"35ba0eaec5a4f5ed12ca16fabeae451d","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/fMoMrsUeB5xWw_Ugn8FqGJf-M2pld2hkXKR704z0MM8?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"mtuMXvypMuK3MrKT2oE70uMZUiYwVrzp4lF_7A8LanY","key":"0a328cd9c1afd0afe8e3b1ec5165b1b4","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/LM4SxB4vhDe2iN4tYT0dAlPP_dsY-Zme_H-JpULtHa8?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"yGu0he7mh-BsUA_EI09RpnhLRTDCrhHQx2SBEQvOMQU","key":"3cd68ccdb8938e3711da2e8831b85493","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/A08F4i_QzJW79C3BCIZYmmpH_p2FkQbdTQZ_2hVWDeg?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"0Dpc16Zu8QxRR5FvnVh4stCgpa1G9AWjHNmWfvqlWv0","key":"61ca7e64b7d605716c57706cef640b9a","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/04lOdmTXc1loPyqacYwao1j0xlM34n0vGxtIFY7ETTs?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"q1YT0s5w-mfFkm6DE1NmSUUZn8GV-m_nbF_jzsRS4xo","key":"aff2c65b39a296d4f7e96d0f58169170","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/4s0taS6e9_zozzhgsa6FogUB4b0LQc1LMNbBLkxlIz0?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"xOVOagp95jaqFTN4-8YupKQWlb_t-Af5Dfexj_1zP2c","key":"d8e7601e3df962f83c62371ac14964d8","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/g6PisuFJa8j79kTi3ZKboB3DcerIBZXujlFBVhXkh1s?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"yGu0he7mh-BsUA_EI09RpnhLRTDCrhHQx2SBEQvOMQU","key":"3cd68ccdb8938e3711da2e8831b85493","contentType":"image\/png","fileExtension":".png","url":"https:\/\/assets.eascdn.net\/A08F4i_QzJW79C3BCIZYmmpH_p2FkQbdTQZ_2hVWDeg?project=6b6c6660-df76-11e6-b9b4-59d1587e6774"},{"hash":"IyXFOnPlTEOMu8YN_92LUT1HG6QuL1ZxPvQEuV4Mofw","key":"0747a1317bbe9c6fc340b889ef8ab3ae","co
+09-24 09:28:41.121 I/ActivityTaskManager(  578): START u0 {flg=0xc080000 cmp=host.exp.exponent/.experience.ExperienceActivity (has extras)} from uid 10172
+09-24 09:28:41.130 D/CoreBackPreview(  578): Window{74714ef u0 Splash Screen host.exp.exponent}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@fd97285, mPriority=0}
+09-24 09:28:41.182 D/CoreBackPreview(  578): Window{95548a6 u0 host.exp.exponent/host.exp.exponent.LauncherActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@a96be94, mPriority=0}
+09-24 09:28:41.223 D/CoreBackPreview(  578): Window{bfd4932 u0 host.exp.exponent/host.exp.exponent.experience.HomeActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@26b3000, mPriority=0}
+09-24 09:28:41.450 W/dev.expo.updates( 8081): {"timestamp":1758698921450,"message":"The expo-updates system is disabled due to an invalid configuration. Ensure a valid URL is supplied.","code":"InitializationError","level":"warn"}
+09-24 09:28:41.530 D/CoreBackPreview(  578): Window{5814892 u0 host.exp.exponent/host.exp.exponent.experience.ExperienceActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@beeae60, mPriority=0}
+09-24 09:28:41.568 D/CoreBackPreview(  578): Window{95548a6 u0 host.exp.exponent/host.exp.exponent.LauncherActivity}: Setting back callback null
+09-24 09:28:41.576 W/InputManager-JNI(  578): Input channel object '95548a6 host.exp.exponent/host.exp.exponent.LauncherActivity (client)' was disposed without first being removed with the input manager!
+09-24 09:28:41.620 I/ActivityTaskManager(  578): Displayed host.exp.exponent/.experience.ExperienceActivity: +1s158ms
+09-24 09:28:41.661 I/GoogleInputMethodService( 1405): GoogleInputMethodService.onStartInput():1919 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=host.exp.exponent fieldId=-1 fieldName=null extras=null}, false)
+09-24 09:28:41.774 I/ExpoModulesCore( 8081): ✅ AppContext was initialized
+09-24 09:28:41.918 W/InputManager-JNI(  578): Input channel object '74714ef Splash Screen host.exp.exponent (client)' was disposed without first being removed with the input manager!
+09-24 09:28:41.924 D/CoreBackPreview(  578): Window{74714ef u0 Splash Screen host.exp.exponent EXITING}: Setting back callback null
+09-24 09:28:41.941 W/InputManager-JNI(  578): Input channel object '18c2bbe Splash Screen host.exp.exponent (client)' was disposed without first being removed with the input manager!
+09-24 09:28:42.223 D/ConnectivityService(  578): requestNetwork for uid/pid:10172/8081 activeRequest: null callbackRequest: 243 [NetworkRequest [ REQUEST id=244, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+09-24 09:28:42.231 D/WifiNetworkFactory(  578): got request NetworkRequest [ REQUEST id=244, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]
+09-24 09:28:42.232 D/UntrustedWifiNetworkFactory(  578): got request NetworkRequest [ REQUEST id=244, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]
+09-24 09:28:42.234 D/OemPaidWifiNetworkFactory(  578): got request NetworkRequest [ REQUEST id=244, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]
+09-24 09:28:42.235 D/MultiInternetWifiNetworkFactory(  578): got request NetworkRequest [ REQUEST id=244, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]
+09-24 09:28:42.293 W/unknown:ViewManagerPropertyUpdater( 8081): Could not find generated setter for class expo.modules.kotlin.views.GroupViewManagerWrapper
+09-24 09:28:42.295 W/unknown:ViewManagerPropertyUpdater( 8081): Could not find generated setter for class expo.modules.kotlin.views.SimpleViewManagerWrapper
+09-24 09:28:42.456 I/dev.expo.updates( 8081): {"timestamp":1758698922456,"message":"Manifest code signing signature verified successfully","code":"None","level":"info"}
+09-24 09:28:42.538 I/ExpoModulesCore( 8081): ✅ JSI interop was installed
+09-24 09:28:42.543 I/ExpoModulesCore( 8081): ✅ Constants were exported
+09-24 09:28:42.685 W/System.err( 8081): java.lang.NoSuchFieldException: No field mIsFinished in class Lcom/facebook/react/bridge/queue/MessageQueueThreadImpl; (declaration of 'com.facebook.react.bridge.queue.MessageQueueThreadImpl' appears in /data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/base.apk!classes2.dex)
+09-24 09:28:42.702 W/System.err( 8081): 	at com.swmansion.reanimated.NativeProxy.initHybrid(Native Method)
+09-24 09:28:42.702 W/System.err( 8081): 	at com.swmansion.reanimated.NativeProxy.<init>(SourceFile:50)
+09-24 09:28:42.702 W/System.err( 8081): 	at com.swmansion.reanimated.NodesManager.initWithContext(SourceFile:5)
+09-24 09:28:42.702 W/System.err( 8081): 	at com.swmansion.reanimated.ReanimatedModule.installTurboModule(SourceFile:39)
+09-24 09:28:42.918 I/GoogleInputMethodService( 1405): GoogleInputMethodService.onStartInput():1919 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=host.exp.exponent fieldId=-1 fieldName=null extras=null}, true)
+09-24 09:28:43.095 I/WindowManager(  578): finishDrawing of orientation change: Window{5814892 u0 host.exp.exponent/host.exp.exponent.experience.ExperienceActivity} 314ms
+09-24 09:28:43.111 I/WindowManager(  578): Screen frozen for +523ms due to Window{5814892 u0 host.exp.exponent/host.exp.exponent.experience.ExperienceActivity}
+09-24 09:28:43.598 I/GoogleInputMethodService( 1405): GoogleInputMethodService.onStartInput():1919 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=host.exp.exponent fieldId=-1 fieldName=null extras=null}, false)
+09-24 09:28:43.626 D/ConnectivityService(  578): requestNetwork for uid/pid:10172/8081 activeRequest: null callbackRequest: 245 [NetworkRequest [ REQUEST id=246, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+09-24 09:28:43.659 D/WifiNetworkFactory(  578): got request NetworkRequest [ REQUEST id=246, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]
+09-24 09:28:43.660 D/UntrustedWifiNetworkFactory(  578): got request NetworkRequest [ REQUEST id=246, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]
+09-24 09:28:43.660 D/OemPaidWifiNetworkFactory(  578): got request NetworkRequest [ REQUEST id=246, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]
+09-24 09:28:43.660 D/MultiInternetWifiNetworkFactory(  578): got request NetworkRequest [ REQUEST id=246, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]
+09-24 09:28:44.710 I/ReactNativeJS( 8081): Running "main"
+09-24 09:28:46.397 I/cr_VariationsUtils( 8081): Failed reading seed file "/data/user/0/host.exp.exponent/app_webview/variations_seed_new"
+09-24 09:28:46.398 I/cr_VariationsUtils( 8081): Failed reading seed file "/data/user/0/host.exp.exponent/app_webview/variations_seed"
+09-24 09:28:46.628 D/ProfileInstaller( 8081): Skipping profile installation for host.exp.exponent
+09-24 09:28:49.874 W/st.exp.exponent( 8081): Cleared Reference was only reachable from finalizer (only reported once)
+09-24 09:28:49.884 I/st.exp.exponent( 8081): Background concurrent copying GC freed 407594(20MB) AllocSpace objects, 115(4692KB) LOS objects, 48% free, 25MB/49MB, paused 75us,34us total 160.711ms
+09-24 09:28:51.151 I/ExpoModulesCore( 8081): ✅ AppContext was initialized
+09-24 09:28:53.785 I/ExpoModulesCore( 8081): ✅ JSI interop was installed
+09-24 09:28:53.801 I/ExpoModulesCore( 8081): ✅ Constants were exported
+09-24 09:28:53.870 W/System.err( 8081): java.lang.NoSuchFieldException: No field mIsFinished in class Lcom/facebook/react/bridge/queue/MessageQueueThreadImpl; (declaration of 'com.facebook.react.bridge.queue.MessageQueueThreadImpl' appears in /data/app/~~iXMXKOhOT2sPFhJ9Yzi4bg==/host.exp.exponent-vIK8XsIPr-0MZpBuEgDyFg==/base.apk!classes2.dex)
+09-24 09:28:53.870 W/System.err( 8081): 	at com.swmansion.reanimated.NativeProxy.initHybrid(Native Method)
+09-24 09:28:53.870 W/System.err( 8081): 	at com.swmansion.reanimated.NativeProxy.<init>(SourceFile:50)
+09-24 09:28:53.870 W/System.err( 8081): 	at com.swmansion.reanimated.NodesManager.initWithContext(SourceFile:5)
+09-24 09:28:53.870 W/System.err( 8081): 	at com.swmansion.reanimated.ReanimatedModule.installTurboModule(SourceFile:39)
+09-24 09:28:58.976 I/ReactNativeJS( 8081): 'SVG Imports:', { Logo: 'function',
+09-24 09:28:58.976 I/ReactNativeJS( 8081):   Hair: 'function',
+09-24 09:28:58.976 I/ReactNativeJS( 8081):   Beard: 'function',
+09-24 09:28:58.976 I/ReactNativeJS( 8081):   Extra: 'function',
+09-24 09:28:58.976 I/ReactNativeJS( 8081):   Combo: 'function',
+09-24 09:28:58.976 I/ReactNativeJS( 8081):   Bubbles: 'function',
+09-24 09:28:58.976 I/ReactNativeJS( 8081):   MenuIcon: 'function' }
+09-24 09:28:59.163 I/ReactNativeJS( 8081): Running "main" with {"rootTag":31,"initialProps":{"exp":{"initialUri":"exp://192.168.0.8:8081","shell":false,"manifestString":"{\"id\":\"f19f7409-5060-469f-8f0a-d1f887f9cf99\",\"createdAt\":\"2025-09-24T07:28:44.318Z\",\"runtimeVersion\":\"exposdk:53.0.0\",\"launchAsset\":{\"key\":\"bundle\",\"contentType\":\"application\\/javascript\",\"url\":\"http:\\/\\/192.168.0.8:8081\\/node_modules\\/expo\\/AppEntry.bundle?platform=android&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&transform.routerRoot=app&unstable_transformProfile=hermes-stable\"},\"assets\":[],\"metadata\":{},\"extra\":{\"eas\":{\"projectId\":\"b5468461-a4cc-4e58-b8cd-1a678f1427c3\"},\"expoClient\":{\"name\":\"manjacazianoBarbershop\",\"slug\":\"manjacazianoBarbershop\",\"version\":\"1.1.0\",\"orientation\":\"landscape\",\"icon\":\".\\/assets\\/icon.png\",\"userInterfaceStyle\":\"light\",\"splash\":{\"image\":\".\\/assets\\/splash.png\",\"resizeMode\":\"contain\",\"backgroundColor\":\"#ffffff\",\"imageUrl\":\"http:\\/\\/192.168.0.8:8081\\/assets\\/.\\/assets\\/splash.png\"},\"assetBundlePatterns\":[\"**\\/*\"],\"ios\":{\"supportsTablet\":true},\"android\":{\"adaptiveIcon\":{\"foregroundImage\":\".\\/assets\\/adaptive-icon.png\",\"backgroundColor\":\"#ffffff\",\"foregroundImageUrl\":\"http:\\/\\/192.168.0.8:8081\\/assets\\/.\\/assets\\/adaptive-icon.png\"},\"package\":\"com.eltonvilanculo.manjacazianoBarbershop\"},\"web\":{\"favicon\":\".\\/assets\\/favicon.png\",\"bundler\":\"metro\"},\"owner\":\"eltonvilanculo\",\"extra\":{\"eas\":{\"projectId\":\"b5468461-a4cc-4e58-b8cd-1a678f1427c3\"}},\"_internal\":{\"isDebug\":false,\"projectRoot\":\"\\/Users\\/nameless\\/Documents\\/DEVWORLD\\/REACTNATIVE\\/manjacazianoBarbershop\",\"dynamicConfigPath\":null,\"staticConfigPath\":\"\\/Users\\/nameless\\/Documents\\/DEVWORLD\\/REACTNATIVE\\/manjacazianoBarbershop\\/app.json\",\"packageJsonPath\":\"\\/Users\\/nameless\\/Documents\\/DEVWORLD\\/REACTNATIVE\\/manjacazianoBarbershop\\/package.json\"},\"sdkVersion\":\"53.0.0\",\"platforms\":[\"ios\",\"android\",\"web\"],\"iconUrl\":\"http:\\/\\/192.168.0.8:8081\\/assets\\/.\\/assets\\/icon.png\",\"hostUri\":\"192.168.0.8:8081\"},\"expoGo\":{\"debuggerHost\":\"192.168.0.8:8081\",\"developer\":{\"tool\":\"expo-cli\",\"projectRoot\":\"\\/Users\\/nameless\\/Documents\\/DEVWORLD\\/REACTNATIVE\\/manjacazianoBarbershop\"},\"packagerOpts\":{\"dev\":true},\"mainModuleName\":\"node_modules\\/expo\\/AppEntry\",\"__flipperHack\":\"React Native packager is running\"},\"scopeKey\":\"@eltonvilanculo\\/manjacazianoBarbershop\"},\"isVerified\":true}"}},"fabric":true}
+09-24 09:28:59.881 I/st.exp.exponent( 8081): NativeAlloc concurrent copying GC freed 68535(2302KB) AllocSpace objects, 5(100KB) LOS objects, 49% free, 13MB/26MB, paused 223us,2.868ms total 154.689ms
+09-24 09:29:06.122 W/unknown:ReconnectingWebSocket( 8081): Couldn't connect to "ws://192.168.0.8:8081/message?device=sdk_gphone64_arm64%20-%2013%20-%20API%2033&app=host.exp.exponent&clientid=BridgelessDevSupportManager", will silently retry
+09-24 09:29:06.172 W/ReactNativeJS( 8081): Cannot connect to Metro.
+09-24 09:29:06.172 W/ReactNativeJS( 8081): 
+09-24 09:29:06.172 W/ReactNativeJS( 8081): Try the following to fix the issue:
+09-24 09:29:06.172 W/ReactNativeJS( 8081): - Ensure that Metro is running and available on the same network
+09-24 09:29:06.172 W/ReactNativeJS( 8081): - Ensure that your device/emulator is connected to your machine and has USB debugging enabled - run 'adb devices' to see a list of connected devices
+09-24 09:29:06.172 W/ReactNativeJS( 8081): - If you're on a physical device connected to the same machine, run 'adb reverse tcp:8081 tcp:8081' to forward requests from your device
+09-24 09:29:06.172 W/ReactNativeJS( 8081): - If your device is on the same Wi-Fi network, set 'Debug server host & port for device' in 'Dev settings' to your machine's IP address and the port of the local dev server - e.g. 10.0.1.1:8081
+09-24 09:29:06.172 W/ReactNativeJS( 8081): 
+09-24 09:29:06.172 W/ReactNativeJS( 8081): URL: 192.168.0.8:8081
+09-24 09:29:06.172 W/ReactNativeJS( 8081): 
+09-24 09:29:06.172 W/ReactNativeJS( 8081): Error: null
+09-24 09:35:16.569 I/st.exp.exponent( 8081): Background concurrent copying GC freed 394298(12MB) AllocSpace objects, 1(20KB) LOS objects, 49% free, 13MB/26MB, paused 56us,25us total 112.816ms
+09-24 09:42:03.547 I/st.exp.exponent( 8081): Background concurrent copying GC freed 412704(13MB) AllocSpace objects, 44(880KB) LOS objects, 49% free, 12MB/24MB, paused 61us,88us total 159.762ms
+09-24 09:57:48.045 I/st.exp.exponent( 8081): Background young concurrent copying GC freed 379666(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 193us,627us total 123.319ms
+09-24 10:00:55.267 I/st.exp.exponent( 8081): Background concurrent copying GC freed 385077(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 54us,175us total 146.086ms
+09-24 10:04:06.324 I/st.exp.exponent( 8081): Background young concurrent copying GC freed 380968(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 668us,124us total 187.257ms
+09-24 10:07:14.794 I/st.exp.exponent( 8081): Background concurrent copying GC freed 385616(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 58us,100us total 105.502ms
+09-24 10:10:24.761 I/st.exp.exponent( 8081): Background young concurrent copying GC freed 379735(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 169us,879us total 105.054ms
+09-24 10:13:32.790 I/st.exp.exponent( 8081): Background concurrent copying GC freed 385579(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 58us,161us total 119.393ms
+09-24 10:16:44.876 I/st.exp.exponent( 8081): Background young concurrent copying GC freed 379677(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 310us,120us total 119.440ms
+09-24 10:19:53.425 I/st.exp.exponent( 8081): Background concurrent copying GC freed 385619(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 36us,70us total 105.050ms
+09-24 10:26:10.256 I/st.exp.exponent( 8081): Background concurrent copying GC freed 386900(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 70us,80us total 134.585ms
+09-24 10:38:45.323 I/st.exp.exponent( 8081): Background concurrent copying GC freed 385579(12MB) AllocSpace objects, 0(0B) LOS objects, 49% free, 12MB/25MB, paused 51us,128us total 118.950ms
+09-24 10:39:48.174 W/gle.android.gms( 5690): Long monitor contention with owner [com.google.android.gms.chimera.container.intentoperation.GmsIntentOperationChimeraService-Executor] processing com.google.android.gms.nearby.exposurenotification.PackageChangeIntentOperation for action android.intent.action.PACKAGE_ADDED (8788) at void gug.run()(:com.google.android.gms@225014044@22.50.14 (190400-499278674):3) waiters=0 in void gug.run() for 192ms
+09-24 10:39:48.503 I/MediaFocusControl(  578): abandonAudioFocus() from uid/pid 10172/8081 clientId=android.media.AudioManager@a7484b8expo.modules.av.AVManager@ca69154
+09-24 10:39:49.258 I/ExpoModulesCore( 8793): ✅ AppContext was initialized
+09-24 10:39:49.946 I/ExpoModulesCore( 8793): ✅ JSI interop was installed
+09-24 10:39:49.947 I/ExpoModulesCore( 8793): ✅ Constants were exported
+09-24 10:39:49.969 W/System.err( 8793): 	at com.swmansion.reanimated.NativeProxy.initHybrid(Native Method)
+09-24 10:39:49.969 W/System.err( 8793): 	at com.swmansion.reanimated.NativeProxy.<init>(NativeProxy.java:47)
+09-24 10:39:49.969 W/System.err( 8793): 	at com.swmansion.reanimated.NodesManager.initWithContext(NodesManager.java:148)
+09-24 10:39:49.969 W/System.err( 8793): 	at com.swmansion.reanimated.ReanimatedModule.installTurboModule(ReanimatedModule.java:159)
+09-24 10:39:50.081 V/AsyncStorageExpoMigration( 8793): No scoped database found
+09-24 10:39:50.881 I/ReactNativeJS( 8793): 'SVG Imports:', { Logo: 'function',
+09-24 10:39:50.881 I/ReactNativeJS( 8793):   Hair: 'function',
+09-24 10:39:50.881 I/ReactNativeJS( 8793):   Beard: 'function',
+09-24 10:39:50.881 I/ReactNativeJS( 8793):   Extra: 'function',
+09-24 10:39:50.881 I/ReactNativeJS( 8793):   Combo: 'function',
+09-24 10:39:50.881 I/ReactNativeJS( 8793):   Bubbles: 'function',
+09-24 10:39:50.881 I/ReactNativeJS( 8793):   MenuIcon: 'function' }
+09-24 10:39:50.913 I/ReactNativeJS( 8793): Running "main"
+09-24 10:39:53.061 E/ClipboardService(  578): Denying clipboard access to host.exp.exponent, application is not in focus nor is it a system service for user 0
+09-24 10:39:53.165 E/ClipboardService(  578): Denying clipboard access to host.exp.exponent, application is not in focus nor is it a system service for user 0
+09-24 10:39:58.699 I/MediaFocusControl(  578): abandonAudioFocus() from uid/pid 10172/8081 clientId=android.media.AudioManager@a7484b8expo.modules.av.AVManager@ca69154
+09-24 10:39:58.716 D/CoreBackPreview(  578): Window{5814892 u0 host.exp.exponent/host.exp.exponent.experience.ExperienceActivity}: Setting back callback null
+09-24 10:39:58.718 W/InputManager-JNI(  578): Input channel object '5814892 host.exp.exponent/host.exp.exponent.experience.ExperienceActivity (client)' was disposed without first being removed with the input manager!
+09-24 10:39:58.726 W/UsageStatsService(  578): Unexpected activity event reported! (host.exp.exponent/host.exp.exponent.experience.ExperienceActivity event : 23 instanceId : 124613328)
+09-24 10:39:58.811 I/ExpoModulesCore( 8081): ✅ ModuleRegistry was destroyed
+09-24 10:39:58.813 I/ExpoModulesCore( 8081): ✅ AppContext was destroyed
+09-24 10:39:58.813 I/ExpoModulesCore( 8081): ✅ KotlinInteropModuleRegistry was destroyed
+09-24 10:39:59.571 I/ActivityManager(  578): Killing 8081:host.exp.exponent/u0a172 (adj 900): remove task
+09-24 10:39:59.583 D/CoreBackPreview(  578): Window{bfd4932 u0 host.exp.exponent/host.exp.exponent.experience.HomeActivity}: Setting back callback null
+09-24 10:39:59.583 W/InputManager-JNI(  578): Input channel object 'bfd4932 host.exp.exponent/host.exp.exponent.experience.HomeActivity (client)' was disposed without first being removed with the input manager!
+09-24 10:39:59.630 D/ConnectivityService(  578): ConnectivityService NetworkRequestInfo binderDied(uid/pid:10172/8081, [NetworkRequest [ REQUEST id=244, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]], android.os.BinderProxy@59e1f20)
+09-24 10:39:59.630 D/ConnectivityService(  578): ConnectivityService NetworkRequestInfo binderDied(uid/pid:10172/8081, [NetworkRequest [ REQUEST id=246, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ]], android.os.BinderProxy@48f30d9)
+09-24 10:39:59.631 D/ConnectivityService(  578): releasing NetworkRequest [ REQUEST id=244, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ] (release request)
+09-24 10:39:59.631 D/ConnectivityService(  578): releasing NetworkRequest [ REQUEST id=246, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10172 RequestorUid: 10172 RequestorPkg: host.exp.exponent UnderlyingNetworks: Null] ] (release request)
+09-24 10:39:59.640 W/UsageStatsService(  578): Unexpected activity event reported! (host.exp.exponent/host.exp.exponent.experience.HomeActivity event : 23 instanceId : 61837444)
+09-24 10:40:05.094 I/ExpoModulesCore( 8939): ✅ AppContext was initialized
+09-24 10:40:05.361 I/ExpoModulesCore( 8939): ✅ JSI interop was installed
+09-24 10:40:05.364 I/ExpoModulesCore( 8939): ✅ Constants were exported
+09-24 10:40:05.417 W/System.err( 8939): 	at com.swmansion.reanimated.NativeProxy.initHybrid(Native Method)
+09-24 10:40:05.417 W/System.err( 8939): 	at com.swmansion.reanimated.NativeProxy.<init>(NativeProxy.java:47)
+09-24 10:40:05.417 W/System.err( 8939): 	at com.swmansion.reanimated.NodesManager.initWithContext(NodesManager.java:148)
+09-24 10:40:05.417 W/System.err( 8939): 	at com.swmansion.reanimated.ReanimatedModule.installTurboModule(ReanimatedModule.java:159)
+09-24 10:40:05.534 V/AsyncStorageExpoMigration( 8939): No scoped database found
+09-24 10:40:05.751 I/ReactNativeJS( 8939): 'SVG Imports:', { Logo: 'function',
+09-24 10:40:05.751 I/ReactNativeJS( 8939):   Hair: 'function',
+09-24 10:40:05.751 I/ReactNativeJS( 8939):   Beard: 'function',
+09-24 10:40:05.751 I/ReactNativeJS( 8939):   Extra: 'function',
+09-24 10:40:05.751 I/ReactNativeJS( 8939):   Combo: 'function',
+09-24 10:40:05.751 I/ReactNativeJS( 8939):   Bubbles: 'function',
+09-24 10:40:05.751 I/ReactNativeJS( 8939):   MenuIcon: 'function' }
+09-24 10:40:05.757 I/ReactNativeJS( 8939): Running "main"
+09-24 12:05:42.176 W/GAv4    ( 9651): CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+09-24 12:05:44.059 D/StrictMode( 9848): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 12:05:44.059 D/StrictMode( 9848): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 12:05:47.197 I/libc    (10117): SetHeapTaggingLevel: tag level set to 0
+09-24 12:05:47.393 E/libc    (10133): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 12:09:31.254 W/GAv4    (10495): CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+09-24 12:23:18.426 D/StrictMode(10742): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 12:23:18.426 D/StrictMode(10742): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 12:23:20.890 I/libc    (10936): SetHeapTaggingLevel: tag level set to 0
+09-24 12:23:21.025 E/libc    (10948): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 12:43:05.635 W/libc    (11990): Access denied finding property "persist.adb.tls_server.enable"
+09-24 12:43:07.047 D/StrictMode(12177): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 12:43:07.047 D/StrictMode(12177): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 12:43:09.272 I/libc    (12386): SetHeapTaggingLevel: tag level set to 0
+09-24 12:43:09.425 E/libc    (12397): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 14:09:54.847 W/GAv4    (13804): CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+09-24 14:09:55.816 D/StrictMode(13984): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 14:09:55.816 D/StrictMode(13984): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 14:09:57.967 I/libc    (14193): SetHeapTaggingLevel: tag level set to 0
+09-24 14:09:58.087 E/libc    (14203): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 14:33:35.775 D/StrictMode(14764): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 14:33:35.775 D/StrictMode(14764): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 14:33:38.152 I/libc    (14957): SetHeapTaggingLevel: tag level set to 0
+09-24 14:33:38.279 E/libc    (14968): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 15:27:00.744 W/GAv4    (15351): CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+09-24 15:42:29.483 D/StrictMode(15623): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 15:42:29.483 D/StrictMode(15623): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 15:42:31.655 I/libc    (15821): SetHeapTaggingLevel: tag level set to 0
+09-24 15:42:31.776 E/libc    (15833): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 15:46:59.435 W/GAv4    (16243): CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+09-24 16:04:04.767 D/StrictMode(16472): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 16:04:04.767 D/StrictMode(16472): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 16:04:07.069 I/libc    (16697): SetHeapTaggingLevel: tag level set to 0
+09-24 16:04:07.179 E/libc    (16707): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 16:22:14.429 W/GAv4    (17110): CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+09-24 16:44:08.159 D/StrictMode(17486): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 16:44:08.159 D/StrictMode(17486): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 16:44:11.105 I/libc    (17679): SetHeapTaggingLevel: tag level set to 0
+09-24 16:44:11.266 E/libc    (17690): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 17:44:03.847 D/StrictMode(18266): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 17:44:03.847 D/StrictMode(18266): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 17:44:06.067 I/libc    (18459): SetHeapTaggingLevel: tag level set to 0
+09-24 17:44:06.189 E/libc    (18470): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 18:06:08.968 W/GAv4    (18864): CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+09-24 18:27:07.347 D/StrictMode(19100): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 18:27:07.347 D/StrictMode(19100): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 18:27:09.565 I/libc    (19310): SetHeapTaggingLevel: tag level set to 0
+09-24 18:27:09.677 E/libc    (19322): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 18:54:58.723 W/GAv4    (19671): CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+09-24 19:12:11.974 D/StrictMode(20373): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 19:12:11.974 D/StrictMode(20373): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 19:12:15.060 I/libc    (20596): SetHeapTaggingLevel: tag level set to 0
+09-24 19:12:15.287 E/libc    (20608): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported
+09-24 19:36:24.414 D/StrictMode(21150): 	at libcore.io.BlockGuardOs.android_getaddrinfo(BlockGuardOs.java:220)
+09-24 19:36:24.414 D/StrictMode(21150): 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:133)
+09-24 19:36:27.157 E/libc    (21379): SetHeapTaggingLevel: re-enabling tagging after it was disabled is not supported

@@ -24,6 +24,7 @@ type RootStackParamList = {
   Checkout: undefined;
   Clients: undefined;
   Users: undefined;
+  Products: undefined;
   ServiceSelection: undefined;
 };
 

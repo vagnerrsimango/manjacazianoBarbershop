@@ -44,6 +44,17 @@ export const API_ENDPOINTS = {
     UPDATE_PROFILE: "/users/profile",
   },
 
+  // Product endpoints
+  PRODUCTS: {
+    BASE: "/products",
+    CREATE: "/products",
+    GET_ALL: "/products",
+    GET_BY_ID: (id: number) => `/products/${id}`,
+    UPDATE: (id: number) => `/products/${id}`,
+    DELETE: (id: number) => `/products/${id}`,
+    SEARCH: "/products/search",
+  },
+
   // Payment methods
   PAYMENT_METHODS: {
     BASE: "/payment-methods",

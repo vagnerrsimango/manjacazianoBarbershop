@@ -10,6 +10,7 @@ type RootStackParamList = {
   Checkout: undefined;
   Clients: undefined;
   Users: undefined;
+  Products: undefined;
   ServiceSelection: undefined;
 };
 
@@ -59,13 +60,7 @@ export default function GlobalNavigation({
 
   const navigateToScreen = (screen: keyof RootStackParamList) => {
     setShowMenu(false);
-    if (screen === "Home") {
-      navigation.navigate("Home");
-    } else if (screen === "Clients") {
-      navigation.navigate("Clients");
-    } else if (screen === "Users") {
-      navigation.navigate("Users");
-    }
+    navigation.navigate(screen);
   };
 
   const handleBack = () => {
@@ -145,15 +140,26 @@ export default function GlobalNavigation({
 
               {/* User Management - Only for admin users */}
               {isAdmin && (
-                <TouchableOpacity
-                  onPress={() => navigateToScreen("Users")}
-                  className="flex-row items-center p-3 rounded-lg hover:bg-gray-50"
-                >
-                  <Ionicons name="person" size={20} color="#374151" />
-                  <Text className="text-gray-700 ml-3 text-base font-medium">
-                    Gestão de Usuários
-                  </Text>
-                </TouchableOpacity>
+                <>
+                  <TouchableOpacity
+                    onPress={() => navigateToScreen("Users")}
+                    className="flex-row items-center p-3 rounded-lg hover:bg-gray-50"
+                  >
+                    <Ionicons name="person" size={20} color="#374151" />
+                    <Text className="text-gray-700 ml-3 text-base font-medium">
+                      Gestão de Usuários
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => navigateToScreen("Products")}
+                    className="flex-row items-center p-3 rounded-lg hover:bg-gray-50"
+                  >
+                    <Ionicons name="cube" size={20} color="#374151" />
+                    <Text className="text-gray-700 ml-3 text-base font-medium">
+                      Gestão de Produtos
+                    </Text>
+                  </TouchableOpacity>
+                </>
               )}
 
               <TouchableOpacity

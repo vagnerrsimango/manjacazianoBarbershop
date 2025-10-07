@@ -1,9 +1,13 @@
+import "react-native-gesture-handler";
+import { enableScreens } from "react-native-screens";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UserProvider from "./src/utils/UserProvider";
 import CartContextProvider from "./src/utils/CartContexProvider";
 import AppRoutes from "./src/routes/AppRoutes";
 import "./global.css";
+
+enableScreens(true);
 
 const queryClient = new QueryClient({
   defaultOptions: {
