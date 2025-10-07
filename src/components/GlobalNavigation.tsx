@@ -10,6 +10,7 @@ type RootStackParamList = {
   Checkout: undefined;
   Clients: undefined;
   Users: undefined;
+  Profile: undefined;
   Products: undefined;
   ServiceSelection: undefined;
 };
@@ -128,6 +129,17 @@ export default function GlobalNavigation({
 
             {/* Menu Items */}
             <View className="space-y-2">
+              {/* Profile - Available for all users */}
+              <TouchableOpacity
+                onPress={() => navigateToScreen("Profile")}
+                className="flex-row items-center p-3 rounded-lg hover:bg-gray-50"
+              >
+                <Ionicons name="person-circle" size={20} color="#374151" />
+                <Text className="text-gray-700 ml-3 text-base font-medium">
+                  Perfil
+                </Text>
+              </TouchableOpacity>
+
               <TouchableOpacity
                 onPress={() => navigateToScreen("Clients")}
                 className="flex-row items-center p-3 rounded-lg hover:bg-gray-50"

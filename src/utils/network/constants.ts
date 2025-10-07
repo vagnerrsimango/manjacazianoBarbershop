@@ -37,6 +37,11 @@ export const API_ENDPOINTS = {
     VERIFY: "/auth/verify",
   },
 
+  // Profile / Sales endpoints
+  PROFILE: {
+    MY_SALES: "/mysales",
+  },
+
   // User endpoints
   USERS: {
     BASE: "/users",

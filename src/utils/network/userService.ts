@@ -60,6 +60,18 @@ export class UserService {
   }
 
   /**
+   * Get my sales summary (profile)
+   */
+  async getMySales(): Promise<any> {
+    try {
+      const response = await api.get(API_ENDPOINTS.PROFILE.MY_SALES);
+      return response.data;
+    } catch (error: any) {
+      throw ResponseHandler.handleError(error);
+    }
+  }
+
+  /**
    * Create a new user (admin only)
    */
   async createUser(data: UserCreateRequest): Promise<ApiResponse<User>> {

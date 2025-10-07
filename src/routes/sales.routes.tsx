@@ -9,6 +9,7 @@ import SearchScreen from "../screens/search/SeachScreen";
 import CustomerManagementScreen from "../screens/CustomerManagementScreen";
 import UserManagementScreen from "../screens/UserManagementScreen";
 import ProductManagementScreen from "../screens/ProductManagementScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 export default function SaleRoutes() {
   const Stack = createStackNavigator();
@@ -31,6 +32,7 @@ export default function SaleRoutes() {
       <Stack.Screen name="Clients" component={CustomerManagementScreen} />
       <Stack.Screen name="Users" component={UserManagementScreen} />
       <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Products" component={ProductManagementScreen} />
       {/* <Stack.Screen name="Admin" component={AdminHome} />
       <Stack.Screen name="AdminS" component={AdminServices} />

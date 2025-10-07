@@ -11,6 +11,7 @@ export declare global {
       Search: {};
       Admin: {};
       Products: undefined;
+      Profile: undefined;
     }
   }
 }
