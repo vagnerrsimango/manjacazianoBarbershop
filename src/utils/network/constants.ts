@@ -55,6 +55,12 @@ export const API_ENDPOINTS = {
     SEARCH: "/products/search",
   },
 
+  // Category endpoints
+  CATEGORIES: {
+    BASE: "/categories",
+    GET_ALL: "/categories",
+  },
+
   // Payment methods
   PAYMENT_METHODS: {
     BASE: "/payment-methods",

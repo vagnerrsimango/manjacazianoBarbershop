@@ -19,7 +19,9 @@ import {
   productService,
   IProduct,
   IProductFormData,
+  ICategory,
 } from "../utils/network/productService";
+import Select from "../components/Select";
 
 type RootStackParamList = {
   Home: undefined;
@@ -42,14 +44,19 @@ export default function ProductManagementScreen() {
   const [editingProduct, setEditingProduct] = useState<IProduct | null>(null);
   const [formData, setFormData] = useState<IProductFormData>({
     name: "",
-    price: 0,
+    price: "0",
     description: "",
-    category: "",
+    categoryId: undefined,
     isActive: true,
   });
+  const [categories, setCategories] = useState<ICategory[]>([]);
 
   useEffect(() => {
     fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
   }, []);
 
   const fetchProducts = async () => {
@@ -62,6 +69,15 @@ export default function ProductManagementScreen() {
       Alert.alert("Erro", "Falha ao carregar produtos: " + error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await productService.getAllCategories();
+      setCategories(response.data || []);
+    } catch (error: any) {
+      console.error("Error fetching categories:", error);
     }
   };
 
@@ -92,9 +108,9 @@ export default function ProductManagementScreen() {
     setEditingProduct(null);
     setFormData({
       name: "",
-      price: 0,
+      price: "0",
       description: "",
-      category: "",
+      categoryId: undefined,
       isActive: true,
     });
     setShowModal(true);
@@ -104,9 +120,9 @@ export default function ProductManagementScreen() {
     setEditingProduct(product);
     setFormData({
       name: product.name,
-      price: product.price,
+      price: String(product.price ?? "0"),
       description: product.description || "",
-      category: product.category || "",
+      categoryId: product.productCategoryId ?? undefined,
       isActive: product.isActive ?? true,
     });
     setShowModal(true);
@@ -136,8 +152,13 @@ export default function ProductManagementScreen() {
   };
 
   const handleSaveProduct = async () => {
-    if (!formData.name.trim() || formData.price <= 0) {
+    const priceNumber = Number(formData.price);
+    if (!formData.name.trim() || isNaN(priceNumber) || priceNumber <= 0) {
       Alert.alert("Erro", "Nome e preço são obrigatórios");
+      return;
+    }
+    if (!formData.categoryId) {
+      Alert.alert("Erro", "Selecione uma categoria");
       return;
     }
 
@@ -248,9 +269,9 @@ export default function ProductManagementScreen() {
                 Preço (MT) *
               </Text>
               <TextInput
-                value={formData.price.toString()}
+                value={formData.price}
                 onChangeText={(text) =>
-                  setFormData({ ...formData, price: parseFloat(text) || 0 })
+                  setFormData({ ...formData, price: text })
                 }
                 placeholder="0.00"
                 keyboardType="numeric"
@@ -276,13 +297,21 @@ export default function ProductManagementScreen() {
             {/* Category */}
             <View>
               <Text className="text-gray-700 font-medium mb-2">Categoria</Text>
-              <TextInput
-                value={formData.category}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, category: text })
+              <Select
+                selectedValue={
+                  formData.categoryId ? String(formData.categoryId) : ""
                 }
-                placeholder="Categoria do produto (opcional)"
-                className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-800"
+                onValueChange={(value) =>
+                  setFormData({
+                    ...formData,
+                    categoryId: value ? Number(value) : undefined,
+                  })
+                }
+                placeholder="Selecione a categoria"
+                items={categories.map((c) => ({
+                  label: c.name,
+                  value: String(c.id),
+                }))}
               />
             </View>
 

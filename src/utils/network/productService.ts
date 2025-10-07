@@ -5,9 +5,10 @@ import { API_ENDPOINTS } from "./constants";
 export interface IProduct {
   id: number;
   name: string;
-  price: number;
+  price: number | string;
   description?: string;
   category?: string;
+  productCategoryId?: number;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -30,10 +31,19 @@ export interface ISingleProductResponse {
 // Create/Update product interface
 export interface IProductFormData {
   name: string;
-  price: number;
+  price: string; // backend expects string
   description?: string;
-  category?: string;
+  categoryId?: number;
   isActive?: boolean;
+}
+
+export interface ICategory {
+  id: number;
+  name: string;
+}
+
+export interface ICategoryListResponse {
+  data: ICategory[];
 }
 
 // Product service class
@@ -78,9 +88,16 @@ class ProductService {
   ): Promise<ISingleProductResponse> {
     try {
       console.log("🛍️ Creating new product:", productData);
+      const payload = {
+        name: productData.name,
+        price: String(productData.price),
+        description: productData.description ?? undefined,
+        productCategoryId: productData.categoryId,
+        isActive: productData.isActive ?? true,
+      };
       const response = await api.post(
         API_ENDPOINTS.PRODUCTS?.CREATE || "/products",
-        productData
+        payload
       );
       console.log("✅ Product created successfully:", response.data);
       return response.data;
@@ -99,7 +116,14 @@ class ProductService {
   ): Promise<ISingleProductResponse> {
     try {
       console.log(`🛍️ Updating product with ID: ${id}`, productData);
-      const response = await api.put(`/products/${id}`, productData);
+      const payload = {
+        name: productData.name,
+        price: String(productData.price),
+        description: productData.description ?? undefined,
+        productCategoryId: productData.categoryId,
+        isActive: productData.isActive ?? true,
+      };
+      const response = await api.put(`/products/${id}`, payload);
       console.log("✅ Product updated successfully:", response.data);
       return response.data;
     } catch (error: any) {
@@ -138,6 +162,20 @@ class ProductService {
       return response.data;
     } catch (error: any) {
       console.error("❌ Error searching products:", error);
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Get all categories for dropdown
+   */
+  async getAllCategories(): Promise<ICategoryListResponse> {
+    try {
+      const response = await api.get(
+        API_ENDPOINTS.CATEGORIES?.GET_ALL || "/categories"
+      );
+      return response.data;
+    } catch (error: any) {
       throw this.handleError(error);
     }
   }
