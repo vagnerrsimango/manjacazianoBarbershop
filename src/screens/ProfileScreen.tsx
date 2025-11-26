@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, ScrollView, ActivityIndicator, RefreshControl } from "react-native";
 import GlobalNavigation from "../components/GlobalNavigation";
 import { userService } from "../utils/network/userService";
 import useUser from "../utils/hooks/UserHook";
@@ -15,21 +15,36 @@ interface MySaleItem {
 export default function ProfileScreen() {
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [bonus, setBonus] = useState<string>("0.00");
   const [sales, setSales] = useState<MySaleItem[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const res = await userService.getMySales();
-        setBonus(res?.data?.bonus ?? "0.00");
-        setSales(res?.data?.mysales ?? []);
-      } finally {
-        setLoading(false);
-      }
-    })();
+  const fetchSalesData = useCallback(async (forceRefresh = false) => {
+    try {
+      if (!forceRefresh) setLoading(true);
+      setError(null);
+      
+      const res = await userService.getMySales(forceRefresh);
+      setBonus(res?.data?.bonus ?? "0.00");
+      setSales(res?.data?.mysales ?? []);
+    } catch (err: any) {
+      setError(err?.message || "Erro ao carregar vendas");
+      console.error("Error loading sales:", err);
+    } finally {
+      setLoading(false);
+      if (forceRefresh) setRefreshing(false);
+    }
   }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchSalesData(true);
+  }, [fetchSalesData]);
+
+  useEffect(() => {
+    fetchSalesData();
+  }, [fetchSalesData]);
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -37,9 +52,30 @@ export default function ProfileScreen() {
       {loading ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#3B82F6" />
+          <Text className="text-gray-500 mt-4">Carregando vendas...</Text>
+        </View>
+      ) : error ? (
+        <View className="flex-1 items-center justify-center p-6">
+          <Text className="text-red-500 text-center mb-4">{error}</Text>
+          <Text 
+            className="text-blue-500 font-semibold"
+            onPress={() => fetchSalesData()}
+          >
+            Tentar novamente
+          </Text>
         </View>
       ) : (
-        <ScrollView className="flex-1 p-6">
+        <ScrollView 
+          className="flex-1 p-6"
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#3B82F6"]}
+              tintColor="#3B82F6"
+            />
+          }
+        >
           {/* Header */}
           <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
             <Text className="text-xl font-bold text-gray-800">
@@ -69,8 +105,14 @@ export default function ProfileScreen() {
                       <Text className="font-semibold text-gray-800">
                         #{s.id}
                       </Text>
-                      <Text className="text-gray-500">
-                        {new Date(s.finalized_at).toLocaleString()}
+                      <Text className="text-gray-500 text-xs">
+                        {new Date(s.finalized_at).toLocaleString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
+                        })}
                       </Text>
                     </View>
                     <View className="mt-2 flex-row justify-between">

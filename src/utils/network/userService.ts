@@ -61,14 +61,45 @@ export class UserService {
 
   /**
    * Get my sales summary (profile)
+   * Implements caching for better performance on slow connections
    */
-  async getMySales(): Promise<any> {
+  async getMySales(forceRefresh: boolean = false): Promise<any> {
+    const cacheKey = getCacheKey(API_ENDPOINTS.PROFILE.MY_SALES);
+    
+    // Use cache if valid and not forcing refresh
+    if (!forceRefresh) {
+      const cached = cache.get(cacheKey);
+      if (cached && isCacheValid(cached.timestamp)) {
+        return cached.data;
+      }
+    }
+
     try {
-      const response = await api.get(API_ENDPOINTS.PROFILE.MY_SALES);
-      return response.data;
+      const response = await RetryHandler.executeWithRetry(
+        () => api.get(API_ENDPOINTS.PROFILE.MY_SALES),
+        API_CONFIG.MAX_RETRIES,
+        API_CONFIG.RETRY_DELAY
+      );
+
+      const result = response.data;
+
+      // Cache the response for 2 minutes (shorter than default for sales data)
+      cache.set(cacheKey, {
+        data: result,
+        timestamp: Date.now(),
+      });
+
+      return result;
     } catch (error: any) {
       throw ResponseHandler.handleError(error);
     }
+  }
+
+  /**
+   * Clear sales cache (useful for manual refresh)
+   */
+  clearSalesCache(): void {
+    clearCacheByPattern(API_ENDPOINTS.PROFILE.MY_SALES);
   }
 
   /**
