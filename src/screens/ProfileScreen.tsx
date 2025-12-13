@@ -106,7 +106,7 @@ export default function ProfileScreen() {
           {/* Sales List */}
           <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <Text className="text-lg font-bold text-gray-800 mb-4">
-              Minhas Vendas de Hoje
+              Vendas efectuadas hoje
             </Text>
             {sales.length === 0 ? (
               <Text className="text-gray-400">Sem vendas neste período.</Text>
