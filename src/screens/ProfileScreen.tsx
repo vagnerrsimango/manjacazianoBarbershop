@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, ScrollView, ActivityIndicator, RefreshControl } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import GlobalNavigation from "../components/GlobalNavigation";
 import { userService } from "../utils/network/userService";
 import useUser from "../utils/hooks/UserHook";
@@ -46,6 +47,21 @@ export default function ProfileScreen() {
     fetchSalesData();
   }, [fetchSalesData]);
 
+  // Auto-refresh when screen comes into focus (handles user switching)
+  useFocusEffect(
+    useCallback(() => {
+      // Force refresh when screen gains focus to get latest bonus
+      fetchSalesData(true);
+      
+      // Set up periodic refresh every 30 seconds for bonus updates
+      const interval = setInterval(() => {
+        fetchSalesData(true);
+      }, 30000);
+
+      return () => clearInterval(interval);
+    }, [fetchSalesData])
+  );
+
   return (
     <View className="flex-1 bg-gray-50">
       <GlobalNavigation title="Perfil" />
@@ -90,7 +106,7 @@ export default function ProfileScreen() {
           {/* Sales List */}
           <View className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <Text className="text-lg font-bold text-gray-800 mb-4">
-              Minhas Vendas
+              Minhas Vendas de Hoje
             </Text>
             {sales.length === 0 ? (
               <Text className="text-gray-400">Sem vendas neste período.</Text>

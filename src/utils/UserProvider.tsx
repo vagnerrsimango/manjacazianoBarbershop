@@ -16,6 +16,7 @@ export default function UserProvider({ children }: Props) {
   async function loginWithPin(input: string) {
     setLoading(true);
     try {
+   
       const response = await api.post("/login", { password: input });
 
       const myResponse: IStandardResponse = response.data;

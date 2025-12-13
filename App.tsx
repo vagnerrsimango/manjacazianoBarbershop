@@ -1,10 +1,11 @@
 import "react-native-gesture-handler";
 import { enableScreens } from "react-native-screens";
-import React from "react";
+import React, { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UserProvider from "./src/utils/UserProvider";
 import CartContextProvider from "./src/utils/CartContexProvider";
 import AppRoutes from "./src/routes/AppRoutes";
+import { UpdateManager } from "./src/utils/UpdateManager";
 import "./global.css";
 
 enableScreens(true);
@@ -38,6 +39,11 @@ const queryClient = new QueryClient({
 });
 
 export default function App() {
+  useEffect(() => {
+    // Check for updates on app start
+    UpdateManager.checkForUpdates();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <UserProvider>
