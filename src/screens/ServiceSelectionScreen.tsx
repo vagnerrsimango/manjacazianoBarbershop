@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  FlatList,
   Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,8 +11,6 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useCart } from "../utils/LocalHooks";
 import GlobalNavigation from "../components/GlobalNavigation";
-import MyButton from "../components/MyButton";
-import Tag from "../components/Tag";
 import { BeardLogo, ComboLogo, ExtraLogo, HairLogo } from "../utils/Icons";
 import api from "../utils/network/api";
 import { IServiceResponse } from "../utils/Responses";
@@ -41,7 +38,7 @@ interface IService {
 
 export default function ServiceSelectionScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const { services, setServices } = useCart();
+  const { setServices } = useCart();
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [dataService, setDataService] = useState<IServiceResponse>(
@@ -49,6 +46,7 @@ export default function ServiceSelectionScreen() {
   );
   const [selectedServices, setSelectedServices] = useState<IService[]>([]);
   const [slideAnim] = useState(new Animated.Value(-100));
+  const [summaryHeight, setSummaryHeight] = useState(0);
 
   useEffect(() => {
     async function getDataService() {
@@ -72,22 +70,24 @@ export default function ServiceSelectionScreen() {
         return sum + Number(service.price || 0);
       }, 0);
       setTotal(calculatedTotal);
-
-      // Animate bottom bar
-      Animated.spring(slideAnim, {
-        toValue: 0,
-        useNativeDriver: true,
-        tension: 100,
-        friction: 8,
-      }).start();
     } else {
       setTotal(0);
-      Animated.spring(slideAnim, {
-        toValue: -100,
-        useNativeDriver: true,
-      }).start();
     }
   }, [selectedServices]);
+
+  useEffect(() => {
+    if (!selectedServices.length) {
+      slideAnim.setValue(-100);
+      return;
+    }
+
+    Animated.spring(slideAnim, {
+      toValue: 0,
+      useNativeDriver: true,
+      tension: 100,
+      friction: 8,
+    }).start();
+  }, [selectedServices.length, slideAnim]);
 
   const toggleService = (service: IService) => {
     const isSelected = selectedServices.find((s) => s.id === service.id);
@@ -130,7 +130,22 @@ export default function ServiceSelectionScreen() {
           >
             {service.name}
           </Text>
-          <Text className="text-gray-500 text-sm mt-1">{service.price} MT</Text>
+          <View className="flex-row items-center mt-1">
+            <Text
+              className={`text-sm font-medium ${
+                isSelected ? "text-yellow-700" : "text-gray-500"
+              }`}
+            >
+              {service.price} MT
+            </Text>
+            {isSelected && (
+              <View className="ml-2 bg-yellow-200 px-2 py-1 rounded-full">
+                <Text className="text-yellow-900 text-xs font-semibold">
+                  Selecionado
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
 
         <View
@@ -175,6 +190,11 @@ export default function ServiceSelectionScreen() {
               <Text className="text-gray-500 text-sm mt-1">{subtitle}</Text>
             )}
           </View>
+          <View className="bg-gray-100 px-3 py-2 rounded-full">
+            <Text className="text-gray-700 text-xs font-semibold">
+              {services?.length ?? 0} opções
+            </Text>
+          </View>
         </View>
 
         {/* Services List */}
@@ -194,23 +214,55 @@ export default function ServiceSelectionScreen() {
     );
   };
 
-  // Debug: Log selected services and total for debugging
-  console.log("Selected Services:", selectedServices);
-  console.log("Calculated Total:", total);
-
   return (
     <View className="flex-1 bg-gray-50">
       {/* Global Navigation Bar */}
       <GlobalNavigation title="Seleção de Serviços" />
 
-      <ScrollView className="flex-1 p-4">
+      <ScrollView
+        className="flex-1 p-4"
+        contentContainerStyle={{
+          paddingBottom: selectedServices.length > 0 ? summaryHeight + 32 : 32,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Main Instruction */}
         <View className="px-6 py-4">
-          <Text className="text-center text-lg text-gray-700 font-medium mb-2">
-            Por favor, selecione o serviço desejado
+          <Text className="text-center text-2xl text-gray-800 font-bold mb-2">
+            Escolha os serviços
+          </Text>
+          <Text className="text-center text-sm text-gray-500 px-4">
+            Pode selecionar um ou mais serviços antes de seguir para o
+            checkout.
           </Text>
           <View className="w-16 h-1 bg-yellow-500 mx-auto rounded-full"></View>
         </View>
+
+        {selectedServices.length > 0 && (
+          <View className="px-6 mb-4">
+            <View className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
+              <View className="flex-row items-center justify-between">
+                <View>
+                  <Text className="text-sm text-yellow-800 font-medium">
+                    Selecionados
+                  </Text>
+                  <Text className="text-xl font-bold text-yellow-900">
+                    {selectedServices.length} serviço
+                    {selectedServices.length > 1 ? "s" : ""}
+                  </Text>
+                </View>
+                <View className="items-end">
+                  <Text className="text-sm text-yellow-800 font-medium">
+                    Total parcial
+                  </Text>
+                  <Text className="text-xl font-bold text-yellow-900">
+                    {total.toLocaleString()} MT
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        )}
 
         {/* Service Categories */}
         <View className="px-6">
@@ -249,71 +301,71 @@ export default function ServiceSelectionScreen() {
       </ScrollView>
 
       {/* Sticky Bottom Bar */}
-      <Animated.View
-        style={{
-          transform: [{ translateY: slideAnim }],
-        }}
-        className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 shadow-lg"
-      >
-        {selectedServices.length > 0 && (
-          <>
-            {/* Selected Services Summary */}
-            <View className="mb-4">
-              <Text className="text-gray-600 font-medium mb-2 text-center">
-                Serviços Selecionados ({selectedServices.length})
-              </Text>
+      {selectedServices.length > 0 && (
+        <Animated.View
+          onLayout={(event) => setSummaryHeight(event.nativeEvent.layout.height)}
+          style={{
+            transform: [{ translateY: slideAnim }],
+          }}
+          className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 shadow-lg"
+        >
+          {/* Selected Services Summary */}
+          <View className="mb-4">
+            <Text className="text-gray-600 font-medium mb-2 text-center">
+              Serviços Selecionados ({selectedServices.length})
+            </Text>
 
-              {/* Service Tags */}
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className="mb-3"
-              >
-                <View className="flex-row space-x-2 px-1">
-                  {selectedServices.map((service, index) => (
-                    <View
-                      key={service.id}
-                      className="bg-yellow-100 border border-yellow-300 px-3 py-2 rounded-full flex-row items-center"
-                    >
-                      <Text className="text-yellow-800 text-sm font-medium mr-2">
-                        {service.name}
-                      </Text>
-                      <TouchableOpacity onPress={() => toggleService(service)}>
-                        <Ionicons
-                          name="close-circle"
-                          size={16}
-                          color="#D97706"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
-              </ScrollView>
-
-              {/* Total and Checkout */}
-              <View className="flex-row items-center justify-between">
-                <View>
-                  <Text className="text-gray-600 text-sm">Total a Pagar</Text>
-                  <Text className="text-2xl font-bold text-gray-800">
-                    {total.toLocaleString()} MT
-                  </Text>
-                </View>
-
-                <TouchableOpacity
-                  onPress={goToCheckout}
-                  className="bg-yellow-500 px-8 py-4 rounded-xl flex-row items-center shadow-sm"
-                  activeOpacity={0.8}
-                >
-                  <Text className="text-white text-lg font-semibold mr-2">
-                    Concluir
-                  </Text>
-                  <Ionicons name="arrow-forward" size={20} color="white" />
-                </TouchableOpacity>
+            {/* Service Tags */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              className="mb-3"
+            >
+              <View className="flex-row space-x-2 px-1">
+                {selectedServices.map((service) => (
+                  <View
+                    key={service.id}
+                    className="bg-yellow-100 border border-yellow-300 px-3 py-2 rounded-full flex-row items-center"
+                  >
+                    <Text className="text-yellow-800 text-sm font-medium mr-2">
+                      {service.name}
+                    </Text>
+                    <TouchableOpacity onPress={() => toggleService(service)}>
+                      <Ionicons name="close-circle" size={16} color="#D97706" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
               </View>
+            </ScrollView>
+
+            {/* Total and Checkout */}
+            <View className="flex-row items-center justify-between">
+              <View>
+                <Text className="text-gray-600 text-sm">Total a Pagar</Text>
+                <Text className="text-2xl font-bold text-gray-800">
+                  {total.toLocaleString()} MT
+                </Text>
+                <Text className="text-gray-500 text-xs mt-1">
+                  {selectedServices.length} item
+                  {selectedServices.length > 1 ? "s" : ""} selecionado
+                  {selectedServices.length > 1 ? "s" : ""}
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                onPress={goToCheckout}
+                className="bg-yellow-500 px-8 py-4 rounded-xl flex-row items-center shadow-sm"
+                activeOpacity={0.8}
+              >
+                <Text className="text-white text-lg font-semibold mr-2">
+                  Concluir
+                </Text>
+                <Ionicons name="arrow-forward" size={20} color="white" />
+              </TouchableOpacity>
             </View>
-          </>
-        )}
-      </Animated.View>
+          </View>
+        </Animated.View>
+      )}
     </View>
   );
 }

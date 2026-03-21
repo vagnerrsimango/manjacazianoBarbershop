@@ -6,48 +6,22 @@ import {
   ScrollView,
   FlatList,
   Modal,
-  Animated,
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { useCart } from "../utils/LocalHooks";
 import GlobalNavigation from "../components/GlobalNavigation";
-import MyButton from "../components/MyButton";
-import Tag from "../components/Tag";
-import { BeardLogo, ComboLogo, ExtraLogo, HairLogo } from "../utils/Icons";
 import api from "../utils/network/api";
-import { IServiceResponse } from "../utils/Responses";
-import ServiceSkeleton from "../components/ServiceSkeleton";
 import { Button } from "../presentation/components/Button";
 import Input from "../components/Input";
 import useUser from "../utils/hooks/UserHook";
 import AutoCompleteInput from "../components/AutoCompletInput";
 
-type RootStackParamList = {
-  Home: undefined;
-  Checkout: undefined;
-  Clients: undefined;
-  Users: undefined;
-  ServiceSelection: undefined;
-};
-
-type NavigationProp = StackNavigationProp<RootStackParamList>;
-
-interface IService {
-  id: number;
-  name: string;
-  price: number;
-  product_categories: Array<{
-    name: string;
-  }>;
-}
-
 export default function CheckoutScreen() {
   const { services, setServices } = useCart();
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(0);
 
   const { setUser } = useUser();
 
@@ -60,6 +34,8 @@ export default function CheckoutScreen() {
   const [showModal, setShowModal] = useState(false);
   const [inputs, setInputs] = useState(inputsInitalState);
   const [input, setInput] = useState<string>();
+  const hasSelectedCustomer = Boolean(inputs.client_name);
+  const pendingAmount = Math.max(0, total - Number(inputs.paid || 0));
 
   useEffect(() => {
     let auxTotal = 0;
@@ -69,11 +45,9 @@ export default function CheckoutScreen() {
       }, 0);
       setTotal(auxTotal);
       setInputs((prev) => ({ ...prev, paid: auxTotal.toString() }));
+    } else {
+      setTotal(0);
     }
-    console.log(
-      "🚀 ~ file: CheckoutScreen.tsx:29 ~ useEffect ~ auxTotal:",
-      auxTotal
-    );
   }, [services]);
 
   const handleInputChange = (value: string, input: string) => {
@@ -89,14 +63,7 @@ export default function CheckoutScreen() {
   };
 
   const handleSelectedAutoCustomer = (customer: any) => {
-    console.log("=== CUSTOMER SELECTION DEBUG ===");
-    console.log("Customer selected:", customer);
-    console.log("Customer name:", customer.name);
-    console.log("Customer phone:", customer.phone);
-
-    // Check if this is an empty customer (clearing selection)
     if (!customer.name || customer.name === "") {
-      console.log("Clearing customer selection");
       setInput("");
       setInputs((prev) => ({
         ...prev,
@@ -106,30 +73,15 @@ export default function CheckoutScreen() {
       return;
     }
 
-    // Update both input and inputs states
     setInput(customer.name);
     setInputs((prev) => ({
       ...prev,
       client_name: customer.name,
       client_phone: customer.phone.toString(),
     }));
-
-    // Log the updated states to verify
-    console.log("Updated input state:", customer.name);
-    console.log("Updated inputs state:", {
-      client_name: customer.name,
-      client_phone: customer.phone.toString(),
-    });
   };
 
   const showSucess = async () => {
-    console.log("=== SALE VALIDATION ===");
-    console.log("input=>", input);
-    console.log("inputs=>", inputs);
-    console.log("total=>", total);
-    console.log("services=>", services);
-
-    // Check if amount paid is valid
     if (Number(inputs.paid) < Number(total) && !inputs.isChecked) {
       Alert.alert(
         "Erro",
@@ -146,7 +98,6 @@ export default function CheckoutScreen() {
       return;
     }
 
-    // Prepare soldList like the old implementation
     let postList: any = [];
     services.forEach((service) => {
       postList.push({
@@ -155,24 +106,17 @@ export default function CheckoutScreen() {
       });
     });
 
-    // Prepare sale payload based on old working implementation
     const salePayload = {
-      client_name: input, // Use input state like old implementation
+      client_name: input,
       client_phone: inputs.client_phone,
       isChecked: inputs.isChecked,
       paid: inputs.paid,
       soldList: postList,
     };
 
-    console.log("=== SALE PAYLOAD ===");
-    console.log("salePayload=>", salePayload);
-
     setLoading(true);
     try {
       const response = await api.post("/sale", salePayload);
-
-      console.log("=== API RESPONSE ===");
-      console.log("response=>", response.data);
 
       if (response.data.success) {
         setShowModal(true);
@@ -212,14 +156,38 @@ export default function CheckoutScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Global Navigation Bar */}
       <GlobalNavigation title="Checkout" showBack={true} />
 
-      <ScrollView className="flex-1 p-4">
-        {/* Customer Selection */}
-        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+      <ScrollView
+        className="flex-1 p-4"
+        contentContainerStyle={{ paddingBottom: footerHeight + 24 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="bg-white p-4 rounded-2xl mb-4 shadow-sm border border-gray-100">
+          <View className="flex-row items-center justify-between mb-4">
+            <View>
+              <Text className="text-lg font-bold text-gray-900">
+                Resumo da Venda
+              </Text>
+              <Text className="text-sm text-gray-500 mt-1">
+                Confirme os serviços e o pagamento antes de finalizar.
+              </Text>
+            </View>
+            <View className="bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-xl">
+              <Text className="text-xs text-yellow-800 font-medium">Total</Text>
+              <Text className="text-lg font-bold text-yellow-900">
+                {total.toFixed(2)} MT
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <View className="bg-white p-4 rounded-2xl mb-4 shadow-sm border border-gray-100">
           <Text className="text-lg font-bold text-gray-900 mb-4">
             Seleção de Cliente (Opcional)
+          </Text>
+          <Text className="text-sm text-gray-500 mb-4">
+            Associe esta venda a um cliente ou prossiga sem identificação.
           </Text>
 
           <AutoCompleteInput
@@ -229,8 +197,8 @@ export default function CheckoutScreen() {
             setInput={setInput}
           />
 
-          {inputs.client_name ? (
-            <View className="mt-3 p-4 bg-green-50 rounded-lg border border-green-200">
+          {hasSelectedCustomer ? (
+            <View className="mt-3 p-4 bg-green-50 rounded-xl border border-green-200">
               <View className="flex-row items-center mb-2">
                 <Ionicons name="checkmark-circle" size={20} color="#16A34A" />
                 <Text className="text-green-800 font-semibold ml-2 text-base">
@@ -248,7 +216,11 @@ export default function CheckoutScreen() {
               <View className="flex-row mt-3 space-x-2">
                 <TouchableOpacity
                   onPress={() => {
-                    setInputs(inputsInitalState);
+                    setInputs((prev) => ({
+                      ...prev,
+                      client_name: "",
+                      client_phone: "",
+                    }));
                     setInput("");
                   }}
                   className="bg-red-100 px-3 py-2 rounded-lg border border-red-200"
@@ -259,23 +231,10 @@ export default function CheckoutScreen() {
                 </TouchableOpacity>
               </View>
             </View>
-          ) : (
-            <View className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <View className="flex-row items-center mb-2">
-                <Ionicons name="information-circle" size={20} color="#6B7280" />
-                <Text className="text-gray-600 font-medium ml-2 text-base">
-                  Venda sem Cliente
-                </Text>
-              </View>
-              <Text className="text-gray-600 text-sm">
-                Esta venda será processada sem associar a um cliente específico.
-              </Text>
-            </View>
-          )}
+          ) : null}
         </View>
 
-        {/* Services List */}
-        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+        <View className="bg-white p-4 rounded-2xl mb-4 shadow-sm border border-gray-100">
           <Text className="text-lg font-bold text-gray-900 mb-4">
             Serviços Selecionados ({services.length})
           </Text>
@@ -296,15 +255,14 @@ export default function CheckoutScreen() {
           )}
         </View>
 
-        {/* Payment Information */}
-        <View className="bg-white p-4 rounded-lg mb-4 shadow-sm">
+        <View className="bg-white p-4 rounded-2xl mb-4 shadow-sm border border-gray-100">
           <Text className="text-lg font-bold text-gray-900 mb-4">
             Informações de Pagamento
           </Text>
 
           <View className="space-y-4">
-            <View className="flex-row justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <Text className="text-lg font-semibold text-gray-700">
+            <View className="flex-row justify-between items-center p-4 bg-gray-50 rounded-xl">
+              <Text className="text-base font-semibold text-gray-700">
                 Total dos Serviços:
               </Text>
               <Text className="text-2xl font-bold text-primary-600">
@@ -319,6 +277,17 @@ export default function CheckoutScreen() {
               onChangeText={(text) => handleInputChange(text, "paid")}
               keyboardType="numeric"
             />
+
+            <TouchableOpacity
+              onPress={() =>
+                setInputs((prev) => ({ ...prev, paid: total.toFixed(2) }))
+              }
+              className="self-start bg-gray-100 px-4 py-2 rounded-full border border-gray-200"
+            >
+              <Text className="text-gray-700 text-sm font-medium">
+                Preencher com total
+              </Text>
+            </TouchableOpacity>
 
             <View className="flex-row items-center space-x-3">
               <TouchableOpacity
@@ -340,31 +309,68 @@ export default function CheckoutScreen() {
               </Text>
             </View>
 
-            {Number(inputs.paid) < total && !inputs.isChecked && (
-              <View className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                <Text className="text-yellow-800 text-sm">
-                  ⚠️ Valor pendente: {(total - Number(inputs.paid)).toFixed(2)}{" "}
-                  MT
+            {pendingAmount > 0 && !inputs.isChecked && (
+              <View className="p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+                <View className="flex-row items-center mb-2">
+                  <Ionicons name="warning-outline" size={18} color="#92400E" />
+                  <Text className="text-yellow-800 text-sm font-semibold ml-2">
+                    Pagamento incompleto
+                  </Text>
+                </View>
+                <Text className="text-yellow-900 text-base font-bold">
+                  Faltam {pendingAmount.toFixed(2)} MT
+                </Text>
+                <Text className="text-yellow-800 text-sm mt-1">
+                  Para continuar, pague o total ou marque a venda como dívida.
                 </Text>
               </View>
             )}
           </View>
         </View>
-
-        {/* Action Buttons */}
-        <View className="space-y-3 mb-6">
-          <Button
-            title={loading ? "Processando..." : "Finalizar Venda"}
-            onPress={showSucess}
-            variant="primary"
-            loading={loading}
-            disabled={loading || services.length === 0}
-            size="lg"
-          />
-        </View>
       </ScrollView>
 
-      {/* Success Modal */}
+      <View
+        onLayout={(event) => setFooterHeight(event.nativeEvent.layout.height)}
+        className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 pt-3 pb-6 shadow-lg"
+      >
+        <View className="flex-row items-center justify-between mb-3">
+          <View>
+            <Text className="text-sm text-gray-500">A pagar</Text>
+            <Text className="text-2xl font-bold text-gray-900">
+              {total.toFixed(2)} MT
+            </Text>
+          </View>
+          {pendingAmount > 0 && !inputs.isChecked ? (
+            <View className="bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-xl">
+              <Text className="text-xs text-yellow-800 font-medium">
+                Pendente
+              </Text>
+              <Text className="text-sm font-bold text-yellow-900">
+                {pendingAmount.toFixed(2)} MT
+              </Text>
+            </View>
+          ) : (
+            <View className="bg-green-50 border border-green-200 px-3 py-2 rounded-xl">
+              <Text className="text-xs text-green-800 font-medium">
+                Estado
+              </Text>
+              <Text className="text-sm font-bold text-green-900">
+                {inputs.isChecked ? "Dívida" : "Pronto"}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <Button
+          title={loading ? "Processando..." : "Finalizar Venda"}
+          onPress={showSucess}
+          variant="primary"
+          loading={loading}
+          disabled={loading || services.length === 0}
+          size="lg"
+        />
+      </View>
+
       <Modal
         visible={showModal}
         animationType="slide"
@@ -387,7 +393,6 @@ export default function CheckoutScreen() {
             title="Fechar"
             onPress={() => {
               setShowModal(false);
-              // Logout user and return to login screen
               setUser(null);
             }}
             variant="primary"
